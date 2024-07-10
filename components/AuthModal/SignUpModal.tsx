@@ -1,8 +1,10 @@
-import { View, Text, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, TextInput, Alert } from "react-native";
 import React, { useState } from "react";
 
 import styles from "./AuthModal.styles";
 import { supabase } from "@/lib/supabase";
+import { Link, router } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
 
 interface SignUpModalProps {
   email: string;
@@ -10,23 +12,21 @@ interface SignUpModalProps {
 
 const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const { signUp } = useAuth();
 
-  async function signUpWithEmail() {
+  const signUpWithEmail = async (): Promise<void> => {
     setLoading(true);
-    const {
-      data: { session },
-      error,
-    } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-    });
+    const session = await signUp(email, password);
+    if (session) {
+      router.replace("/(tabs)/one");
+    }
 
     // if (error) Alert.alert(error.message);
     // if (!session)
     //   Alert.alert("Please check your inbox for email verification!");
     setLoading(false);
-  }
+  };
 
   return (
     <View style={styles.modalContainer}>
@@ -52,7 +52,11 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
           By creating an account, you agree to the Terms of Sale, Terms of
           Service, and Privacy Policy.
         </Text>
-        <TouchableOpacity style={[styles.continueButton, { marginTop: 15 }]}>
+        <TouchableOpacity
+          style={[styles.continueButton, { marginTop: 15 }]}
+          disabled={loading}
+          onPress={signUpWithEmail}
+        >
           <Text style={styles.continueButtonText}>Create account</Text>
         </TouchableOpacity>
       </View>
