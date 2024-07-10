@@ -1,9 +1,18 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Animated,
+  Easing,
+} from "react-native";
 import { supabase } from "../../lib/supabase";
 
 import styles from "./AuthModal.styles";
 import { useRouter } from "expo-router";
+import EmailInput from "../EmailInput";
 
 interface ContinueWithEmailModalProps {
   signUpLink: string;
@@ -16,48 +25,99 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
 }) => {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
-
-  const closeModal = () => {
-    router.back();
-  };
+  const [isValid, setIsValid] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const invalidInputAnimation = useRef(new Animated.Value(0)).current;
 
   const handleContinueWithEmail = async () => {
-    const { data, error } = await supabase
-      .from("users")
-      .select("email")
-      .eq("email", email)
-      .single();
-    if (data) {
-      router.push(logInLink);
+    Keyboard.dismiss();
+    setLoading(true);
+    if (isValid) {
+      const { data, error } = await supabase
+        .from("users")
+        .select("email")
+        .eq("email", email)
+        .single();
+      if (data) {
+        router.push(logInLink);
+      } else {
+        router.push(signUpLink + `/${email}`);
+      }
     } else {
-      router.push(signUpLink + `/${email}`);
+      startShake();
     }
+    setLoading(false);
+  };
+
+  const startShake = () => {
+    // Reset the animation value
+    invalidInputAnimation.setValue(0);
+
+    // Define the animation sequence
+    Animated.sequence([
+      Animated.timing(invalidInputAnimation, {
+        toValue: 10,
+        duration: 50,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(invalidInputAnimation, {
+        toValue: -10,
+        duration: 50,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(invalidInputAnimation, {
+        toValue: 10,
+        duration: 50,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(invalidInputAnimation, {
+        toValue: -10,
+        duration: 50,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+      Animated.timing(invalidInputAnimation, {
+        toValue: 0,
+        duration: 50,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      }),
+    ]).start();
   };
 
   return (
-    <View style={styles.modalContainer}>
-      {/* Content */}
-      <View style={styles.modalContent}>
-        <Text style={styles.heading}>Log in or create an account</Text>
-        <Text style={styles.terms}>
-          By continuing, you agree to the Terms of Sale, Terms of Service, and
-          Privacy Policy.
-        </Text>
-        <Text style={styles.inputLabel}>Email Address</Text>
-        <TextInput
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <TouchableOpacity
-          style={styles.continueButton}
-          onPress={handleContinueWithEmail}
-        >
-          <Text style={styles.continueButtonText}>Continue with email</Text>
-        </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.modalContainer}>
+        <View style={styles.modalContent}>
+          <Text style={styles.heading}>Log in or create an account</Text>
+          <Text style={styles.terms}>
+            By continuing, you agree to the Terms of Sale, Terms of Service, and
+            Privacy Policy.
+          </Text>
+          <Text style={styles.inputLabel}>Email Address</Text>
+          <Animated.View
+            style={{ transform: [{ translateX: invalidInputAnimation }] }}
+          >
+            <EmailInput
+              email={email}
+              setEmail={setEmail}
+              isValid={isValid}
+              setIsValid={setIsValid}
+            />
+          </Animated.View>
+          <TouchableOpacity
+            style={styles.continueButton}
+            onPress={handleContinueWithEmail}
+            disabled={loading}
+          >
+            <Text style={styles.continueButtonText}>Continue with email</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 

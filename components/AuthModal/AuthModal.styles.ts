@@ -2,11 +2,10 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   modalContainer: {
+    flex: 1,
     backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
-    width: "100%",
-    height: "100%",
   },
   modalHeaderText: {
     fontWeight: "bold",
@@ -41,7 +40,7 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: "#cdcdcd",
     borderRadius: 3,
     padding: 14,
     marginBottom: 16,
@@ -79,6 +78,13 @@ const styles = StyleSheet.create({
     color: "blue",
     textDecorationLine: "underline",
     marginBottom: 20,
+  },
+  invalidInput: {
+    borderColor: "#fcd2cd",
+  },
+  errorText: {
+    color: "#dc303d",
+    marginBottom: 16,
   },
 });
 
