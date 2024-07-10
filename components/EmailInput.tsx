@@ -31,9 +31,7 @@ const EmailInput: React.FC<EmailInputProps> = ({
   };
 
   useEffect(() => {
-    if (hasFocusedOnce) {
-      setIsValid(validateEmail(email));
-    }
+    setIsValid(validateEmail(email));
   }, [email]);
 
   useEffect(() => {

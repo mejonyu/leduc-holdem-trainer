@@ -5,11 +5,11 @@ import styles from "./AuthModal.styles";
 import { router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 
-interface SignUpModalProps {
+interface LogInModalProps {
   email: string;
 }
 
-const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
+const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
@@ -63,4 +63,4 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
   );
 };
 
-export default SignUpModal;
+export default LogInModal;
