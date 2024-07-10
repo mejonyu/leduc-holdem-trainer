@@ -7,10 +7,12 @@ import {
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabase";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -51,18 +53,36 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    // Check for existing session on component mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    // Listen for authentication changes (i.e. user logs in, logs out, or token refreshes)
+    supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+  }, []);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="(auth)"
-          options={{ headerShown: false, presentation: "modal" }}
-        />
-        {/* <Stack.Screen name="(tabs)" options={{ headerShown: false }} /> */}
-        {/* <Stack.Screen name="modal" options={{ presentation: "modal" }} /> */}
-      </Stack>
+      {session && session.user ? (
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+        </Stack>
+      ) : (
+        <Stack>
+          <Stack.Screen name="index" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(auth)"
+            options={{ headerShown: false, presentation: "modal" }}
+          />
+        </Stack>
+      )}
     </ThemeProvider>
   );
 }
