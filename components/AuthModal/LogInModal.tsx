@@ -14,6 +14,7 @@ import styles from "./AuthModal.styles";
 import { router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { startShake } from "@/utils/animations";
+import CustomButton from "../CustomButton/CustomButton";
 
 interface LogInModalProps {
   email: string;
@@ -109,13 +110,11 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
           )}
         </Animated.View>
 
-        <TouchableOpacity
-          style={styles.continueButton}
-          disabled={loading}
+        <CustomButton
+          text="Continue with email"
           onPress={logInWithPassowrd}
-        >
-          <Text style={styles.continueButtonText}>Log In</Text>
-        </TouchableOpacity>
+          loading={loading}
+        />
       </View>
     </View>
   );

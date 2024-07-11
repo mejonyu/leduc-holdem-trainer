@@ -3,7 +3,6 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    backgroundColor: "white",
     borderRadius: 10,
     padding: 20,
   },
@@ -57,7 +56,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   continueButtonText: {
-    color: "white",
+    color: "#efefef",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
@@ -85,6 +84,9 @@ const styles = StyleSheet.create({
   errorText: {
     color: "#dc303d",
     marginBottom: 16,
+  },
+  headerStyle: {
+    backgroundColor: "#efefef",
   },
 });
 

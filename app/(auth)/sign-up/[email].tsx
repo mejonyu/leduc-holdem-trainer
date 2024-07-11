@@ -24,6 +24,7 @@ const SignUp = () => {
       headerShadowVisible: false,
       headerTintColor: "black",
       headerTitleStyle: styles.modalHeaderText,
+      headerStyle: styles.headerStyle,
       headerLeft: () => (
         <Ionicons
           name="return-up-back"

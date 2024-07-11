@@ -6,12 +6,12 @@ import styles from "@/components/LandingPage/LandingPage.styles";
 
 const App: React.FC = () => {
   return (
-    <>
+    <View style={styles.appContainer}>
       <FallingChips />
       <View style={styles.container}>
         <LandingPage />
       </View>
-    </>
+    </View>
   );
 };
 

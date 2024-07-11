@@ -16,6 +16,7 @@ const AuthLayout = () => {
         name="continue-with-email"
         options={{
           headerTitle: "Bluff Buddy",
+          headerStyle: styles.headerStyle,
           headerShadowVisible: false,
           headerTitleStyle: styles.modalHeaderText,
           headerLeft: () => (

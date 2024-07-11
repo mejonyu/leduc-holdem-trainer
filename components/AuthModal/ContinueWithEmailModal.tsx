@@ -14,6 +14,7 @@ import styles from "./AuthModal.styles";
 import { useRouter } from "expo-router";
 import EmailInput from "./EmailInput";
 import { startShake } from "@/utils/animations";
+import CustomButton from "../CustomButton/CustomButton";
 
 interface ContinueWithEmailModalProps {
   signUpLink: string;
@@ -111,14 +112,11 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
             <Text style={styles.errorText}>Must be a valid email</Text>
           )}
         </Animated.View>
-
-        <TouchableOpacity
-          style={styles.continueButton}
+        <CustomButton
+          text="Continue with email"
           onPress={handleContinueWithEmail}
-          disabled={loading}
-        >
-          <Text style={styles.continueButtonText}>Continue with email</Text>
-        </TouchableOpacity>
+          loading={loading}
+        />
       </View>
     </View>
   );

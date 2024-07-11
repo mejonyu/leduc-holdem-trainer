@@ -14,6 +14,7 @@ import styles from "./AuthModal.styles";
 import { router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { startShake } from "@/utils/animations";
+import CustomButton from "../CustomButton/CustomButton";
 
 interface SignUpModalProps {
   email: string;
@@ -108,17 +109,15 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
             <Text style={styles.errorText}>8+ characters required</Text>
           )}
         </Animated.View>
-        <Text style={styles.terms}>
+        <Text style={[styles.terms, { marginBottom: 16 }]}>
           By creating an account, you agree to the Terms of Sale, Terms of
           Service, and Privacy Policy.
         </Text>
-        <TouchableOpacity
-          style={[styles.continueButton, { marginTop: 15 }]}
-          disabled={loading}
+        <CustomButton
+          text="Continue with email"
           onPress={signUpWithEmail}
-        >
-          <Text style={styles.continueButtonText}>Create account</Text>
-        </TouchableOpacity>
+          loading={loading}
+        />
       </View>
     </View>
   );
