@@ -16,9 +16,13 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
 
   const signUpWithEmail = async (): Promise<void> => {
     setLoading(true);
-    const session = await signUp(email, password);
-    if (session) {
-      router.replace("/(tabs)/one");
+    try {
+      const session = await signUp(email, password);
+      if (session) {
+        router.replace("/(tabs)/one");
+      }
+    } catch (error) {
+      console.error(error);
     }
 
     // if (error) Alert.alert(error.message);

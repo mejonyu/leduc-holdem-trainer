@@ -33,13 +33,14 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
     Keyboard.dismiss();
     setLoading(true);
     if (isValid) {
-      const { data, error } = await supabase
-        .from("users")
-        .select("email")
+      let { data, error } = await supabase
+        .from("profiles")
+        .select("id")
         .eq("email", email)
         .single();
+      console.log(data);
       if (data) {
-        router.push(logInLink);
+        router.push(logInLink + `/${email}`);
       } else {
         router.push(signUpLink + `/${email}`);
       }

@@ -1,12 +1,41 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
+import LogInModal from "@/components/AuthModal/LogInModal";
+import { router, useLocalSearchParams, useNavigation } from "expo-router";
+import styles from "@/components/AuthModal/AuthModal.styles";
+import { Ionicons } from "@expo/vector-icons";
 
-const Login = () => {
-  return (
-    <View>
-      <Text>Login</Text>
-    </View>
-  );
+type SearchParam = {
+  email: string;
 };
 
-export default Login;
+const SignUp = () => {
+  const { email } = useLocalSearchParams<SearchParam>();
+  const navigation = useNavigation();
+
+  const backToContinueWithEmail = () => {
+    router.back();
+  };
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTitle: "Create an account",
+      headerBackTitleVisible: "false",
+      headerShadowVisible: false,
+      headerTintColor: "black",
+      headerTitleStyle: styles.modalHeaderText,
+      headerLeft: () => (
+        <Ionicons
+          name="return-up-back"
+          size={24}
+          color="black"
+          onPress={backToContinueWithEmail}
+        />
+      ),
+    });
+  }, []);
+
+  return <LogInModal email={email || ""} />;
+};
+
+export default SignUp;

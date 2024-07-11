@@ -12,11 +12,11 @@ interface LogInModalProps {
 const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { signUp } = useAuth();
+  const { logIn } = useAuth();
 
-  const signUpWithEmail = async (): Promise<void> => {
+  const logInWithPassowrd = async (): Promise<void> => {
     setLoading(true);
-    const session = await signUp(email, password);
+    const session = await logIn(email, password);
     if (session) {
       router.replace("/(tabs)/one");
     }
@@ -30,10 +30,8 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
-        <Text style={styles.heading}>Start Now</Text>
-        <Text style={styles.subheading}>
-          Train your poker intuition by learning GTO Leduc Hold'em.
-        </Text>
+        <Text style={styles.heading}>Welcome Back</Text>
+        <Text style={styles.subheading}>Sign in to your account.</Text>
         <Text style={styles.inputLabel}>Email Address</Text>
         <TextInput
           style={styles.uneditableInput}
@@ -47,16 +45,16 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
           onChangeText={(text) => setPassword(text)}
           secureTextEntry
         />
-        <Text style={styles.terms}>
+        {/* <Text style={styles.terms}>
           By creating an account, you agree to the Terms of Sale, Terms of
           Service, and Privacy Policy.
-        </Text>
+        </Text> */}
         <TouchableOpacity
           style={[styles.continueButton, { marginTop: 15 }]}
           disabled={loading}
-          onPress={signUpWithEmail}
+          onPress={logInWithPassowrd}
         >
-          <Text style={styles.continueButtonText}>Create account</Text>
+          <Text style={styles.continueButtonText}>Log In</Text>
         </TouchableOpacity>
       </View>
     </View>
