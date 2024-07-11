@@ -12,7 +12,7 @@ import { supabase } from "../../lib/supabase";
 
 import styles from "./AuthModal.styles";
 import { useRouter } from "expo-router";
-import EmailInput from "../EmailInput";
+import EmailInput from "./EmailInput";
 import { startShake } from "@/utils/animations";
 
 interface ContinueWithEmailModalProps {

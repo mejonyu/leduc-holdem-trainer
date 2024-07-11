@@ -7,7 +7,7 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import styles from "./AuthModal/AuthModal.styles";
+import styles from "./AuthModal.styles";
 
 interface EmailInputProps {
   email: string;
