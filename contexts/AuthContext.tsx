@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
+import { Alert } from "react-native";
 
 export interface AuthContextType {
   session: Session | null;
@@ -54,8 +55,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       data: { session },
       error,
     } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-    setSession(session);
+    if (session) setSession(session);
     return session;
   };
 

@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useEffect } from "react";
 import SignUpModal from "@/components/AuthModal/SignUpModal";
 import { router, useLocalSearchParams, useNavigation } from "expo-router";
@@ -35,7 +35,11 @@ const SignUp = () => {
     });
   }, []);
 
-  return <SignUpModal email={email || ""} />;
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <SignUpModal email={email || ""} />
+    </TouchableWithoutFeedback>
+  );
 };
 
 export default SignUp;

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import { supabase } from "../../lib/supabase";
 import styles from "./AuthModal.styles";
 import { useRouter } from "expo-router";
 import EmailInput from "../EmailInput";
+import { startShake } from "@/utils/animations";
 
 interface ContinueWithEmailModalProps {
   signUpLink: string;
@@ -27,7 +28,36 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
   const [email, setEmail] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasFocusedOnce, setHasFocusedOnce] = useState(false);
   const invalidInputAnimation = useRef(new Animated.Value(0)).current;
+  const errorAnimation = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!isValid && hasFocusedOnce) {
+      Animated.timing(errorAnimation, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(errorAnimation, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isValid, hasFocusedOnce]);
+
+  const errorOpacity = errorAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+  });
+
+  const errorTranslateY = errorAnimation.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-2, 0],
+  });
 
   const handleContinueWithEmail = async () => {
     Keyboard.dismiss();
@@ -45,80 +75,52 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
         router.push(signUpLink + `/${email}`);
       }
     } else {
-      startShake();
+      startShake(invalidInputAnimation);
     }
     setLoading(false);
   };
 
-  const startShake = () => {
-    // Reset the animation value
-    invalidInputAnimation.setValue(0);
-
-    // Define the animation sequence
-    Animated.sequence([
-      Animated.timing(invalidInputAnimation, {
-        toValue: 10,
-        duration: 50,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      Animated.timing(invalidInputAnimation, {
-        toValue: -10,
-        duration: 50,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      Animated.timing(invalidInputAnimation, {
-        toValue: 10,
-        duration: 50,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      Animated.timing(invalidInputAnimation, {
-        toValue: -10,
-        duration: 50,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-      Animated.timing(invalidInputAnimation, {
-        toValue: 0,
-        duration: 50,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-    ]).start();
-  };
-
   return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.modalContainer}>
-        <View style={styles.modalContent}>
-          <Text style={styles.heading}>Log in or create an account</Text>
-          <Text style={styles.terms}>
-            By continuing, you agree to the Terms of Sale, Terms of Service, and
-            Privacy Policy.
-          </Text>
-          <Text style={styles.inputLabel}>Email Address</Text>
-          <Animated.View
-            style={{ transform: [{ translateX: invalidInputAnimation }] }}
-          >
-            <EmailInput
-              email={email}
-              setEmail={setEmail}
-              isValid={isValid}
-              setIsValid={setIsValid}
-            />
-          </Animated.View>
-          <TouchableOpacity
-            style={styles.continueButton}
-            onPress={handleContinueWithEmail}
-            disabled={loading}
-          >
-            <Text style={styles.continueButtonText}>Continue with email</Text>
-          </TouchableOpacity>
-        </View>
+    <View style={styles.modalContainer}>
+      <View style={styles.modalContent}>
+        <Text style={styles.heading}>Log in or create an account</Text>
+        <Text style={styles.terms}>
+          By continuing, you agree to the Terms of Sale, Terms of Service, and
+          Privacy Policy.
+        </Text>
+        <Text style={styles.inputLabel}>Email Address</Text>
+        <Animated.View
+          style={{ transform: [{ translateX: invalidInputAnimation }] }}
+        >
+          <EmailInput
+            email={email}
+            setEmail={setEmail}
+            isValid={isValid}
+            setIsValid={setIsValid}
+            hasFocusedOnce={hasFocusedOnce}
+            setHasFocusedOnce={setHasFocusedOnce}
+          />
+        </Animated.View>
+        <Animated.View
+          style={{
+            opacity: errorOpacity,
+            transform: [{ translateY: errorTranslateY }],
+          }}
+        >
+          {!isValid && hasFocusedOnce && (
+            <Text style={styles.errorText}>Must be a valid email</Text>
+          )}
+        </Animated.View>
+
+        <TouchableOpacity
+          style={styles.continueButton}
+          onPress={handleContinueWithEmail}
+          disabled={loading}
+        >
+          <Text style={styles.continueButtonText}>Continue with email</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 
