@@ -69,7 +69,6 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
         .select("id")
         .eq("email", email)
         .single();
-      console.log(data);
       if (data) {
         router.push(logInLink + `/${email}`);
       } else {

@@ -54,7 +54,7 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
     setLoading(true);
     const session = await logIn(email, password);
     if (session) {
-      router.replace("/(tabs)/one");
+      router.replace("/home");
     } else {
       startShake(invalidInputAnimation);
       setHasTriedToLogIn(true);
@@ -111,7 +111,7 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
         </Animated.View>
 
         <CustomButton
-          text="Continue with email"
+          text="Log In"
           onPress={logInWithPassowrd}
           loading={loading}
         />

@@ -2,8 +2,25 @@ import { StyleSheet } from "react-native";
 
 import EditScreenInfo from "@/components/EditScreenInfo";
 import { Text, View } from "@/components/Themed";
+import CustomButton from "@/components/CustomButton/CustomButton";
+import { useState } from "react";
+import { router } from "expo-router";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function TabOneScreen() {
+  const [loading, setLoading] = useState(false);
+  const { signOut } = useAuth();
+
+  const handleSignOut = () => {
+    try {
+      signOut();
+      // Navigate back to landing page
+      router.back();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Tab One</Text>
@@ -13,6 +30,7 @@ export default function TabOneScreen() {
         darkColor="rgba(255,255,255,0.1)"
       />
       <EditScreenInfo path="app/(tabs)/one.tsx" />
+      <CustomButton text="Log Out" onPress={handleSignOut} loading={loading} />
     </View>
   );
 }

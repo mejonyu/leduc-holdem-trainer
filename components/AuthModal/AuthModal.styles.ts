@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerStyle: {
-    backgroundColor: "#efefef",
+    backgroundColor: "#f2f2f2",
   },
 });
 

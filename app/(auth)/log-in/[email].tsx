@@ -19,7 +19,7 @@ const SignUp = () => {
 
   useEffect(() => {
     navigation.setOptions({
-      headerTitle: "Create an account",
+      headerTitle: "Log In",
       headerBackTitleVisible: "false",
       headerShadowVisible: false,
       headerTintColor: "black",

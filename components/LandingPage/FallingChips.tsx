@@ -21,7 +21,7 @@ const createChip = (): Chip => ({
 });
 
 const FallingChips: React.FC = () => {
-  const chips = useRef<Chip[]>([...Array(20)].map(createChip)).current;
+  const chips = useRef<Chip[]>([...Array(18)].map(createChip)).current;
 
   useEffect(() => {
     const animate = (chip: Chip) => {

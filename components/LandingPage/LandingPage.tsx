@@ -1,11 +1,25 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, router } from "expo-router";
 import styles from "./LandingPage.styles";
 import CustomButton from "../CustomButton/CustomButton";
+import { useAuth } from "@/hooks/useAuth";
 
 const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
+
+  // const { session } = useAuth();
+  // const [isInitalMount, setIsInitialMount] = useState(true);
+
+  // // Navigate to log in page if there is a current session open
+  // useEffect(() => {
+  //   console.log("entered");
+  //   if (session && isInitalMount) {
+  //     setIsInitialMount(false);
+  //     console.log("exists session");
+  //     router.push("home");
+  //   }
+  // }, [session]);
 
   const handleStart = () => {
     setLoading(true);
