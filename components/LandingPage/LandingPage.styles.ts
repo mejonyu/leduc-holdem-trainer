@@ -4,6 +4,7 @@ const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
     paddingBottom: 10,
+    backgroundColor: "white",
   },
   container: {
     flex: 1,
@@ -27,7 +28,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   continueButtonText: {
-    color: "#efefef",
+    color: "white",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,

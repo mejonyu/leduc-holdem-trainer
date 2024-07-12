@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 const App: React.FC = () => {
   return (
     <View style={styles.appContainer}>
-      {/* <FallingChips /> */}
+      <FallingChips />
       <View style={styles.container}>
         <LandingPage />
       </View>

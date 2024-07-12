@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 10,
     padding: 20,
+    backgroundColor: "white",
   },
   modalHeaderText: {
     fontWeight: "bold",
@@ -56,7 +57,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   continueButtonText: {
-    color: "#efefef",
+    color: "white",
     textAlign: "center",
     fontWeight: "bold",
     fontSize: 16,
@@ -86,7 +87,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   headerStyle: {
-    backgroundColor: "#f2f2f2",
+    backgroundColor: "white",
   },
 });
 
