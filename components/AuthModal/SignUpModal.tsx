@@ -1,9 +1,7 @@
 import {
   View,
   Text,
-  TouchableOpacity,
   TextInput,
-  Alert,
   Keyboard,
   Animated,
   Easing,
@@ -15,6 +13,7 @@ import { router } from "expo-router";
 import { useAuth } from "@/hooks/useAuth";
 import { startShake } from "@/utils/animations";
 import CustomButton from "../CustomButton/CustomButton";
+import PasswordInput from "./PasswordInput";
 
 interface SignUpModalProps {
   email: string;
@@ -85,18 +84,10 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
         <Animated.View
           style={{ transform: [{ translateX: invalidInputAnimation }] }}
         >
-          <TextInput
-            style={[
-              styles.input,
-              hasTriedToSignUp
-                ? [styles.invalidInput, { marginBottom: 3 }]
-                : null,
-            ]}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-            placeholder="Must be at least 8 characters"
-            placeholderTextColor={hasTriedToSignUp ? "#fcd2cd" : ""}
-            secureTextEntry
+          <PasswordInput
+            password={password}
+            setPassword={setPassword}
+            hasSubmitted={hasTriedToSignUp}
           />
         </Animated.View>
         <Animated.View

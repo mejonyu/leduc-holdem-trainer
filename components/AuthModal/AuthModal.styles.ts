@@ -89,6 +89,23 @@ const styles = StyleSheet.create({
   headerStyle: {
     backgroundColor: "white",
   },
+
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    // Copy over any styles from your original input that relate to the container
+    // such as borderWidth, borderColor, borderRadius, etc.
+  },
+  showButton: {
+    position: "absolute",
+    right: 10,
+    top: 14,
+    justifyContent: "center",
+  },
+  showButtonText: {
+    color: "black", // Or any color you prefer
+    fontSize: 16,
+  },
 });
 
 export default styles;
