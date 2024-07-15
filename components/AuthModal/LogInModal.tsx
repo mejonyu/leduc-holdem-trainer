@@ -53,7 +53,7 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
     setLoading(true);
     const session = await logIn(email, password);
     if (session) {
-      router.replace("/home");
+      router.replace("/app");
     } else {
       startShake(invalidInputAnimation);
       setHasTriedToLogIn(true);

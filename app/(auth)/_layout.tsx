@@ -6,7 +6,7 @@ import styles from "@/components/AuthModal/AuthModal.styles";
 const AuthLayout = () => {
   const router = useRouter();
 
-  const closeModal = () => {
+  const navBack = () => {
     router.back();
   };
 
@@ -24,13 +24,49 @@ const AuthLayout = () => {
               name="return-up-back"
               size={24}
               color="black"
-              onPress={closeModal}
+              onPress={navBack}
             />
           ),
         }}
       />
-      <Stack.Screen name="sign-up/[email]" />
-      <Stack.Screen name="log-in/[email]" />
+      <Stack.Screen
+        name="sign-up/[email]"
+        options={{
+          headerTitle: "Create an account",
+          headerBackTitleVisible: false,
+          headerShadowVisible: false,
+          headerTintColor: "black",
+          headerTitleStyle: styles.modalHeaderText,
+          headerStyle: styles.headerStyle,
+          headerLeft: () => (
+            <Ionicons
+              name="return-up-back"
+              size={24}
+              color="black"
+              onPress={navBack}
+            />
+          ),
+        }}
+      />
+      <Stack.Screen
+        name="log-in/[email]"
+        options={{
+          headerTitle: "Log In",
+          headerBackTitleVisible: false,
+          headerShadowVisible: false,
+          headerTintColor: "black",
+          headerTitleStyle: styles.modalHeaderText,
+          headerStyle: styles.headerStyle,
+          headerLeft: () => (
+            <Ionicons
+              name="return-up-back"
+              size={24}
+              color="black"
+              onPress={navBack}
+            />
+          ),
+        }}
+      />
     </Stack>
   );
 };

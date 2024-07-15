@@ -54,7 +54,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
     try {
       const session = await signUp(email, password);
       if (session) {
-        router.replace("/home");
+        router.replace("/app");
       }
     } catch (error) {
       startShake(invalidInputAnimation);

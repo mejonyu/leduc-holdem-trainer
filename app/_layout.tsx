@@ -5,15 +5,15 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "react-native-reanimated";
 
 import { useColorScheme } from "@/components/useColorScheme";
-import { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { Ionicons } from "@expo/vector-icons";
+import styles from "@/components/AuthModal/AuthModal.styles";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -68,6 +68,10 @@ function RootLayoutNav() {
   //   });
   // }, []);
 
+  const navBack = () => {
+    router.back();
+  };
+
   return (
     <AuthProvider>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -78,10 +82,27 @@ function RootLayoutNav() {
             options={{ headerShown: false, presentation: "modal" }}
           />
           <Stack.Screen
-            name="home/(tabs)"
+            name="app/(tabs)"
             options={{ headerShown: false, gestureEnabled: false }}
           />
-          <Stack.Screen name="modal" options={{ presentation: "modal" }} />
+          <Stack.Screen
+            name="app/(modals)/game"
+            options={{
+              presentation: "fullScreenModal",
+              headerTitle: "GTO Training",
+              headerStyle: styles.headerStyle,
+              // headerShadowVisible: false,
+              headerTitleStyle: styles.modalHeaderText,
+              headerLeft: () => (
+                <Ionicons
+                  name="return-up-back"
+                  size={24}
+                  color="black"
+                  onPress={navBack}
+                />
+              ),
+            }}
+          />
         </Stack>
       </ThemeProvider>
     </AuthProvider>

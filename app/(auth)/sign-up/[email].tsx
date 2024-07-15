@@ -1,9 +1,7 @@
-import { View, Text, TouchableWithoutFeedback, Keyboard } from "react-native";
-import React, { useEffect } from "react";
+import { TouchableWithoutFeedback, Keyboard } from "react-native";
+import React from "react";
 import SignUpModal from "@/components/AuthModal/SignUpModal";
-import { router, useLocalSearchParams, useNavigation } from "expo-router";
-import styles from "@/components/AuthModal/AuthModal.styles";
-import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams } from "expo-router";
 
 type SearchParam = {
   email: string;
@@ -11,30 +9,6 @@ type SearchParam = {
 
 const SignUp = () => {
   const { email } = useLocalSearchParams<SearchParam>();
-  const navigation = useNavigation();
-
-  const backToContinueWithEmail = () => {
-    router.back();
-  };
-
-  useEffect(() => {
-    navigation.setOptions({
-      headerTitle: "Create an account",
-      headerBackTitleVisible: "false",
-      headerShadowVisible: false,
-      headerTintColor: "black",
-      headerTitleStyle: styles.modalHeaderText,
-      headerStyle: styles.headerStyle,
-      headerLeft: () => (
-        <Ionicons
-          name="return-up-back"
-          size={24}
-          color="black"
-          onPress={backToContinueWithEmail}
-        />
-      ),
-    });
-  }, []);
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
