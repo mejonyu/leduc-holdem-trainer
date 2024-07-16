@@ -105,30 +105,29 @@ export class State {
     return actions;
   }
 
-  successor(action: string | Card): State {
-    const succ = this.clone();
+  move(action: string | Card): State {
     if (action instanceof Card) {
-      succ._commCard = succ._deck.deal(action);
+      this._commCard = this._deck.deal(action);
     } else {
-      const player = succ.actor();
+      const player = this.actor();
       if (action === "c") {
-        succ._updatePip(player, succ._commCard ? 4 : 2);
+        this._updatePip(player, this._commCard ? 4 : 2);
       } else if (action === "r") {
-        if (!succ._commCard) {
-          succ._updatePip(
+        if (!this._commCard) {
+          this._updatePip(
             player,
-            succ._history && succ._history.endsWith("r") ? 4 : 2
+            this._history && this._history.endsWith("r") ? 4 : 2
           );
         } else {
-          succ._updatePip(player, succ._history.endsWith("r") ? 8 : 4);
+          this._updatePip(player, this._history.endsWith("r") ? 8 : 4);
         }
       }
-      succ._updateHistory(action);
-      if (succ.isEndOfFirstRound()) {
-        succ._updateHistory("|");
+      this._updateHistory(action);
+      if (this.isEndOfFirstRound()) {
+        this._updateHistory("|");
       }
     }
-    return succ;
+    return this;
   }
 
   getDeck(): LeducDeck {
@@ -211,20 +210,20 @@ export class State {
     } history: ${this._history} p1_pip: ${this._p1Pip} p2_pip: ${this._p2Pip}`;
   }
 
-  private clone(): State {
-    const clonedState = new State(
-      new LeducDeck(), // You might want to implement a proper clone method for LeducDeck
-      new Card(this._p1Card.getRank(), this._p1Card.getSuit()),
-      new Card(this._p2Card.getRank(), this._p2Card.getSuit()),
-      this._commCard
-        ? new Card(this._commCard.getRank(), this._commCard.getSuit())
-        : null,
-      this._history
-    );
-    clonedState._p1Pip = this._p1Pip;
-    clonedState._p2Pip = this._p2Pip;
-    return clonedState;
-  }
+  // private clone(): State {
+  //   const clonedState = new State(
+  //     new LeducDeck(), // You might want to implement a proper clone method for LeducDeck
+  //     new Card(this._p1Card.getRank(), this._p1Card.getSuit()),
+  //     new Card(this._p2Card.getRank(), this._p2Card.getSuit()),
+  //     this._commCard
+  //       ? new Card(this._commCard.getRank(), this._commCard.getSuit())
+  //       : null,
+  //     this._history
+  //   );
+  //   clonedState._p1Pip = this._p1Pip;
+  //   clonedState._p2Pip = this._p2Pip;
+  //   return clonedState;
+  // }
 }
 
 export default class LeducMCCFRGame {

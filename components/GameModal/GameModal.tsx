@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { View, Animated, Easing } from "react-native";
 import styles from "./GameModal.styles";
 import Card from "./Card";
-import { useLeducMCCFRGame } from "@/hooks/useLeducMCCFRGame";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
@@ -10,9 +9,8 @@ import { Ionicons } from "@expo/vector-icons";
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isPlayer1, setIsPlayer1] = useState(true);
-  const { game, setGame } = useLeducMCCFRGame();
-
-  //   console.log(game?.getState().getP1Card().getRank());
+  const [game, setGame] = useState<LeducMCCFRGame | null>(null);
+  const [actions, setActions] = useState(["Deal Cards"]);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -22,7 +20,8 @@ const GameModal: React.FC = () => {
 
   const dealCards = () => {
     setLoading(true);
-    setGame(new LeducMCCFRGame());
+    const newGame = new LeducMCCFRGame();
+    setGame(newGame);
 
     // Reset positions and rotations
     playerCardPosition.setValue(0);
@@ -50,6 +49,9 @@ const GameModal: React.FC = () => {
     ]).start(() => {
       // Animation complete
       setLoading(false);
+      console.log(newGame);
+      console.log(newGame.getState().getActions());
+      setActions(newGame.getState().getActions() || ["Something went wrong."]);
     });
   };
 
@@ -65,6 +67,47 @@ const GameModal: React.FC = () => {
       inputRange: [0, 180],
       outputRange: ["0deg", "180deg"],
     });
+  };
+
+  const handleCheck = () => {};
+
+  const handleRaise = () => {};
+
+  const handleFold = () => {};
+
+  const getActionButton = (action: string) => {
+    let buttonOnPress: () => void;
+    let buttonText: string = "";
+
+    switch (action) {
+      case "Deal Cards":
+        buttonText = action;
+        buttonOnPress = dealCards;
+        break;
+      case "x":
+        buttonText = "Check";
+        buttonOnPress = handleCheck;
+        break;
+      case "r":
+        buttonText = "Raise";
+        buttonOnPress = handleRaise;
+        break;
+      case "f":
+        buttonText = "Fold";
+        buttonOnPress = handleFold;
+        break;
+      default:
+        buttonOnPress = () => {};
+    }
+
+    return (
+      <CustomButton
+        text={buttonText}
+        onPress={buttonOnPress}
+        loading={loading}
+        customStyles={{ marginTop: 50, flex: 1, marginHorizontal: 3 }}
+      />
+    );
   };
 
   return (
@@ -181,12 +224,9 @@ const GameModal: React.FC = () => {
           </>
         ) : null}
       </View>
-      <CustomButton
-        text="Deal Cards"
-        onPress={dealCards}
-        loading={loading}
-        customStyles={{ marginTop: 50 }}
-      />
+      <View style={styles.flexRow}>
+        {actions.map((action) => getActionButton(action))}
+      </View>
     </View>
   );
 };

@@ -83,6 +83,13 @@ const styles = StyleSheet.create({
   opponentCard: {
     position: "absolute",
   },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    paddingHorizontal: 30,
+  },
 });
 
 export default styles;
