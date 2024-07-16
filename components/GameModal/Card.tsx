@@ -1,40 +1,49 @@
-import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image } from "react-native";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
 import styles from "./GameModal.styles";
 
 interface CardProps {
-  type: "jack" | "queen" | "king" | "opponent";
+  type: string;
+  // revealed: boolean;
 }
 
 const Card: React.FC<CardProps> = ({ type }) => {
   const getLetter = () => {
     switch (type) {
-      case "jack":
+      case "J":
         return "J";
-      case "queen":
+      case "Q":
         return "Q";
-      case "king":
+      case "K":
         return "K";
-      default:
+      case "deck":
         return "";
     }
   };
 
   const renderIcon = () => {
+    // if (!revealed) {
+    //   return (
+    //     <Image
+    //       source={require("../../assets/images/bluff-buddy-logo-white.png")}
+    //       style={styles.opponentIcon}
+    //     />
+    //   );
+    // }
     switch (type) {
-      case "jack":
+      case "J":
         return (
           <Image
             source={require("../../assets/images/jack.png")}
             style={styles.jackIcon}
           />
         );
-      case "queen":
-        return <FontAwesome6 name="chess-queen" size={50} color="black" />;
-      case "king":
-        return <FontAwesome5 name="crown" size={40} color="black" />;
-      case "opponent":
+      case "Q":
+        return <FontAwesome6 name="chess-queen" size={30} color="black" />;
+      case "K":
+        return <FontAwesome5 name="crown" size={27} color="black" />;
+      case "back":
         return (
           <Image
             source={require("../../assets/images/bluff-buddy-logo-white.png")}
@@ -44,11 +53,23 @@ const Card: React.FC<CardProps> = ({ type }) => {
     }
   };
 
+  // return (
+  //   <View
+  //     style={[
+  //       styles.frontCardContainer,
+  //       !revealed ? { backgroundColor: "black" } : null,
+  //     ]}
+  //   >
+  //     {getLetter() && <Text style={styles.cardLetter}>{getLetter()}</Text>}
+  //     <View style={styles.cardIconContainer}>{renderIcon()}</View>
+  //   </View>
+  // );
+
   return (
     <View
       style={[
         styles.cardContainer,
-        type === "opponent" ? { backgroundColor: "black" } : null,
+        type === "back" ? { backgroundColor: "black" } : null,
       ]}
     >
       {getLetter() && <Text style={styles.cardLetter}>{getLetter()}</Text>}

@@ -2,7 +2,7 @@ import { Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 const tableWidth = width * 0.8;
-const tableHeight = height * 0.7;
+const tableHeight = height * 0.6;
 
 const styles = StyleSheet.create({
   modalContainer: {
@@ -20,25 +20,25 @@ const styles = StyleSheet.create({
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 10,
+    borderWidth: 5,
     borderColor: "black",
   },
   cardContainer: {
-    width: 100,
-    height: 140,
+    position: "relative",
     backgroundColor: "white",
+    width: 70,
+    height: 98,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: "black",
     justifyContent: "center",
     alignItems: "center",
-    position: "relative",
   },
   cardLetter: {
     position: "absolute",
     top: 5,
     left: 5,
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: "bold",
     color: "black",
   },
@@ -48,14 +48,40 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   jackIcon: {
-    width: 50,
-    height: 50,
+    width: 35,
+    height: 35,
     resizeMode: "contain",
   },
   opponentIcon: {
-    width: 92,
-    height: 92,
+    width: 70,
+    height: 70,
     resizeMode: "contain",
+  },
+  opponentLabel: {
+    position: "absolute",
+    backgroundColor: "#eeeeee",
+    borderWidth: 2,
+    borderRadius: 100,
+    padding: 5,
+    top: 0,
+    left: 0,
+  },
+  playerLabel: {
+    position: "absolute",
+    backgroundColor: "#eeeeee",
+    borderWidth: 2,
+    borderRadius: 100,
+    padding: 5,
+    bottom: 0,
+    right: 0,
+  },
+  // Add these to your existing styles
+
+  playerCard: {
+    position: "absolute",
+  },
+  opponentCard: {
+    position: "absolute",
   },
 });
 
