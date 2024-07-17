@@ -33,6 +33,13 @@ const styles = StyleSheet.create({
     borderColor: "black",
     justifyContent: "center",
     alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 5,
   },
   cardLetter: {
     position: "absolute",
@@ -88,7 +95,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    marginTop: 55,
+    marginTop: 50,
     paddingHorizontal: 30,
   },
   cardGlow: {

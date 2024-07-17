@@ -50,6 +50,13 @@ const Card: React.FC<CardProps> = ({ type }) => {
             style={styles.opponentIcon}
           />
         );
+      case "deck":
+        return (
+          <Image
+            source={require("../../assets/images/bluff-buddy-logo-white.png")}
+            style={styles.opponentIcon}
+          />
+        );
     }
   };
 
@@ -69,7 +76,9 @@ const Card: React.FC<CardProps> = ({ type }) => {
     <View
       style={[
         styles.cardContainer,
-        type === "back" ? { backgroundColor: "black" } : null,
+        type === "back" || type === "deck"
+          ? { backgroundColor: "black" }
+          : null,
       ]}
     >
       {getLetter() && <Text style={styles.cardLetter}>{getLetter()}</Text>}

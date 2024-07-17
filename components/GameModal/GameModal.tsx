@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Animated, Easing, Alert } from "react-native";
+import { View, Animated, Easing, Alert, Pressable, Text } from "react-native";
 import styles from "./GameModal.styles";
 import Card from "./Card";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
@@ -9,6 +9,7 @@ import {
   player1Strategy,
   player2Strategy,
 } from "@/lib/game/LeducMCCFRStrategy";
+import MoveRanking from "./MoveRanking";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -16,6 +17,7 @@ const GameModal: React.FC = () => {
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
   const [actions, setActions] = useState(["Deal Cards"]);
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
+  const [displayMoveRanking, setDisplayMoveRanking] = useState(false);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -125,7 +127,11 @@ const GameModal: React.FC = () => {
     Alert.alert("CPU made the move " + action);
 
     // Deal community card if needed.
-    if (game?.getState().isEndOfFirstRound()) {
+    if (game?.getState().isTerminal()) {
+      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+      revealOpponentCard();
+      setActions(["Deal Cards"]);
+    } else if (game?.getState().isEndOfFirstRound()) {
       const commCard = game.getState().getDeck().getCards()[
         Math.floor(Math.random() * game.getState().getDeck().getCards().length)
       ];
@@ -134,10 +140,6 @@ const GameModal: React.FC = () => {
       setActions(game.getState().getActions());
       // Update player turn.
       setIsPlayerTurn(true);
-    } else if (game?.getState().isTerminal()) {
-      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-      revealOpponentCard();
-      setActions(["Deal Cards"]);
     } else {
       setActions(game?.getState().getActions() || ["Something went wrong."]);
       setIsPlayerTurn(true);
@@ -238,6 +240,11 @@ const GameModal: React.FC = () => {
     );
   };
 
+  const renderMoveRanking = () => {
+    return <MoveRanking game={game} />;
+  };
+
+  const handleContinue = () => {};
   return (
     <View style={styles.modalContainer}>
       <View style={styles.pokerTable}>
@@ -255,7 +262,10 @@ const GameModal: React.FC = () => {
             <Ionicons name="people" size={24} color="black" />
           )}
         </View>
-        <Card type="back" />
+        {/* Deck */}
+        <Card type="deck" />
+        {/* Move Ranking */}
+        {displayMoveRanking ? renderMoveRanking() : null}
         {game ? (
           <>
             {/* Player card. */}
@@ -356,6 +366,13 @@ const GameModal: React.FC = () => {
       <View style={styles.flexRow}>
         {actions.map((action) => getActionButton(action))}
       </View>
+      {displayMoveRanking ? (
+        <View style={styles.flexRow}>
+          <Pressable onPress={handleContinue}>
+            <Text>Continue</Text>
+          </Pressable>
+        </View>
+      ) : null}
     </View>
   );
 };
