@@ -5,6 +5,7 @@ import Card from "./Card";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
+import { player1Strategy } from "@/lib/game/LeducMCCFRStrategy";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,8 @@ const GameModal: React.FC = () => {
   const opponentCardPosition = useRef(new Animated.Value(0)).current;
   const playerCardFlip = useRef(new Animated.Value(0)).current;
   const opponentCardFlip = useRef(new Animated.Value(0)).current;
+
+  console.log(player1Strategy["Q,Q"]["xrc|"]);
 
   const dealCards = () => {
     setLoading(true);
@@ -49,8 +52,6 @@ const GameModal: React.FC = () => {
     ]).start(() => {
       // Animation complete
       setLoading(false);
-      console.log(newGame);
-      console.log(newGame.getState().getActions());
       setActions(newGame.getState().getActions() || ["Something went wrong."]);
     });
   };
@@ -105,7 +106,7 @@ const GameModal: React.FC = () => {
         text={buttonText}
         onPress={buttonOnPress}
         loading={loading}
-        customStyles={{ marginTop: 50, flex: 1, marginHorizontal: 3 }}
+        customStyles={{ flex: 1, marginHorizontal: 3 }}
       />
     );
   };
