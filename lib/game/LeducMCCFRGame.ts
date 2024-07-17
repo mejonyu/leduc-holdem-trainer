@@ -19,7 +19,7 @@ const HAND_RANKINGS: HandRankings = {
 
 export class State {
   private _deck: LeducDeck;
-  _p1Card: Card;
+  private _p1Card: Card;
   private _p2Card: Card;
   private _commCard: Card | null;
   private _history: string;

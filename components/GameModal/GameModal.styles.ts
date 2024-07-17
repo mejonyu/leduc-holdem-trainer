@@ -91,6 +91,11 @@ const styles = StyleSheet.create({
     marginTop: 55,
     paddingHorizontal: 30,
   },
+  cardGlow: {
+    shadowColor: "red",
+    shadowOpacity: 0.8,
+    shadowRadius: 10,
+  },
 });
 
 export default styles;

@@ -1,25 +1,27 @@
 import React, { useEffect, useState, useRef } from "react";
-import { View, Animated, Easing } from "react-native";
+import { View, Animated, Easing, Alert } from "react-native";
 import styles from "./GameModal.styles";
 import Card from "./Card";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
-import { player1Strategy } from "@/lib/game/LeducMCCFRStrategy";
+import {
+  player1Strategy,
+  player2Strategy,
+} from "@/lib/game/LeducMCCFRStrategy";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [isPlayer1, setIsPlayer1] = useState(true);
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
   const [actions, setActions] = useState(["Deal Cards"]);
+  const [isPlayerTurn, setIsPlayerTurn] = useState(false);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
   const opponentCardPosition = useRef(new Animated.Value(0)).current;
   const playerCardFlip = useRef(new Animated.Value(0)).current;
   const opponentCardFlip = useRef(new Animated.Value(0)).current;
-
-  console.log(player1Strategy["Q,Q"]["xrc|"]);
 
   const dealCards = () => {
     setLoading(true);
@@ -53,6 +55,18 @@ const GameModal: React.FC = () => {
       // Animation complete
       setLoading(false);
       setActions(newGame.getState().getActions() || ["Something went wrong."]);
+      setIsPlayerTurn(true);
+    });
+  };
+
+  const revealOpponentCard = () => {
+    setLoading(true);
+    Animated.timing(opponentCardFlip, {
+      toValue: 180,
+      duration: 400,
+      useNativeDriver: true,
+    }).start(() => {
+      setLoading(false);
     });
   };
 
@@ -70,41 +84,154 @@ const GameModal: React.FC = () => {
     });
   };
 
-  const handleCheck = () => {};
+  const handleCPUMove = () => {
+    let CPUStrategy;
+    let CPUHand;
+    let currentHistory;
+    if (isPlayer1) {
+      CPUHand = game?.getState().getP2Card().getRank() || "";
+      if (game?.getState().getCommCard()) {
+        const commCard = game?.getState().getCommCard();
+        CPUHand += `,${commCard}`;
+        // Sort them so that lookup keys are uniform.
+        const [a, b] = CPUHand.split(",");
+        CPUHand = a.localeCompare(b) <= 0 ? `${a},${b}` : `${b},${a}`;
+      }
+      currentHistory = game?.getState().getHistory() || "";
+      CPUStrategy = player2Strategy[CPUHand][currentHistory];
+    } else {
+      CPUHand = game?.getState().getP1Card().getRank() || "";
+      if (game?.getState().getCommCard()) {
+        const commCard = game?.getState().getCommCard();
+        CPUHand += `,${commCard}`;
+        // Sort them so that lookup keys are uniform.
+        const [a, b] = CPUHand.split(",");
+        CPUHand = a.localeCompare(b) <= 0 ? `${a},${b}` : `${b},${a}`;
+      }
+      currentHistory = game?.getState().getHistory() || "";
+      CPUStrategy = player1Strategy[CPUHand][currentHistory];
+    }
+    console.log(CPUHand);
+    console.log(currentHistory);
+    console.log(CPUStrategy);
 
-  const handleRaise = () => {};
+    let randomValue = Math.random();
+    const action =
+      Object.entries(CPUStrategy).find(([action, probability]) => {
+        randomValue -= probability;
+        return randomValue < 0;
+      })?.[0] || Object.keys(CPUStrategy)[0];
+    game?.getState().move(action);
+    Alert.alert("CPU made the move " + action);
 
-  const handleFold = () => {};
+    // Deal community card if needed.
+    if (game?.getState().isEndOfFirstRound()) {
+      const commCard = game.getState().getDeck().getCards()[
+        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
+      ];
+      game.getState().move(commCard);
+      Alert.alert("Community card is", commCard.getRank());
+      setActions(game.getState().getActions());
+      // Update player turn.
+      setIsPlayerTurn(true);
+    } else if (game?.getState().isTerminal()) {
+      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+      revealOpponentCard();
+      setActions(["Deal Cards"]);
+    } else {
+      setActions(game?.getState().getActions() || ["Something went wrong."]);
+      setIsPlayerTurn(true);
+    }
+  };
+
+  const handleCheck = () => {
+    game?.getState().move("x");
+    setIsPlayerTurn(false);
+    // Check if game is finished.
+    if (game?.getState().isTerminal()) {
+      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+      revealOpponentCard();
+      setActions(["Deal Cards"]);
+    } else if (game?.getState().isEndOfFirstRound()) {
+      const commCard = game.getState().getDeck().getCards()[
+        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
+      ];
+      game.getState().move(commCard);
+      Alert.alert("Community card is", commCard.getRank());
+      setActions(game.getState().getActions());
+    } else {
+      // Otherwise, move CPU.
+      handleCPUMove();
+    }
+  };
+
+  const handleCall = () => {
+    game?.getState().move("c");
+    setIsPlayerTurn(false);
+    // Check if game is finished.
+    if (game?.getState().isTerminal()) {
+      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+      revealOpponentCard();
+      setActions(["Deal Cards"]);
+    } else if (game?.getState().isEndOfFirstRound()) {
+      const commCard = game.getState().getDeck().getCards()[
+        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
+      ];
+      game.getState().move(commCard);
+      Alert.alert("Community card is", commCard.getRank());
+      setActions(game.getState().getActions());
+    } else {
+      // Otherwise, move CPU.
+      handleCPUMove();
+    }
+  };
+
+  const handleRaise = () => {
+    game?.getState().move("r");
+    setIsPlayerTurn(false);
+    handleCPUMove();
+  };
+
+  const handleFold = () => {
+    setIsPlayerTurn(false);
+    Alert.alert(`Player 1 makes ${game?.getState().payoff()}`);
+    revealOpponentCard();
+    setActions(["Deal Cards"]);
+  };
 
   const getActionButton = (action: string) => {
-    let buttonOnPress: () => void;
+    let onButtonPress: () => void;
     let buttonText: string = "";
 
     switch (action) {
       case "Deal Cards":
         buttonText = action;
-        buttonOnPress = dealCards;
+        onButtonPress = dealCards;
         break;
       case "x":
         buttonText = "Check";
-        buttonOnPress = handleCheck;
+        onButtonPress = handleCheck;
+        break;
+      case "c":
+        buttonText = "Call";
+        onButtonPress = handleCall;
         break;
       case "r":
         buttonText = "Raise";
-        buttonOnPress = handleRaise;
+        onButtonPress = handleRaise;
         break;
       case "f":
         buttonText = "Fold";
-        buttonOnPress = handleFold;
+        onButtonPress = handleFold;
         break;
       default:
-        buttonOnPress = () => {};
+        onButtonPress = () => {};
     }
 
     return (
       <CustomButton
         text={buttonText}
-        onPress={buttonOnPress}
+        onPress={onButtonPress}
         loading={loading}
         customStyles={{ flex: 1, marginHorizontal: 3 }}
       />
@@ -139,6 +266,7 @@ const GameModal: React.FC = () => {
                 {
                   transform: [{ translateY: playerCardPosition }],
                 },
+                isPlayerTurn ? styles.cardGlow : null,
               ]}
             >
               {/* Back of player card. */}
