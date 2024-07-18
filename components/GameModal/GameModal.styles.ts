@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
     alignItems: "center",
     width: 100,
-    paddingVertical: 5,
+    paddingVertical: 9,
   },
   moveRankingText: {
     fontWeight: "bold",

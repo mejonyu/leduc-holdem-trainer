@@ -77,7 +77,7 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
           style={[styles.moveRankingContainer, { backgroundColor: "#ffd300" }]}
         >
           <Entypo name="circle-with-minus" size={24} color="black" />
-          <Text style={styles.moveRankingText}>Okay</Text>
+          <Text style={[styles.moveRankingText, { marginTop: 5 }]}>Okay</Text>
         </View>
       );
     } else {
@@ -86,7 +86,9 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
           style={[styles.moveRankingContainer, { backgroundColor: "#ff5252" }]}
         >
           <AntDesign name="warning" size={24} color="black" />
-          <Text style={styles.moveRankingText}>Incorrect</Text>
+          <Text style={[styles.moveRankingText, { marginTop: 5 }]}>
+            Blunder
+          </Text>
         </View>
       );
     }
