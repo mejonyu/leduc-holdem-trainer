@@ -71,12 +71,12 @@ const styles = StyleSheet.create({
   },
   countContainer: {
     position: "absolute",
-    right: 0,
+    right: -2,
     backgroundColor: "black",
     borderRadius: 10,
     padding: 2,
-    width: 15,
-    height: 15,
+    width: 17,
+    height: 17,
     justifyContent: "center",
   },
   countText: {

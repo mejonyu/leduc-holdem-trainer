@@ -14,6 +14,7 @@ import ChipStack from "../GameModal/ChipStack";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
+  const [continueButtonIsLoading, setContinueButtonIsLoading] = useState(false);
   const [isPlayer1, setIsPlayer1] = useState(true);
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
   const [actions, setActions] = useState(["Deal Cards"]);
@@ -42,6 +43,7 @@ const GameModal: React.FC = () => {
   const opponentBetChipsPosition = useRef(new Animated.Value(0)).current;
   const opponentBetChipsZIndex = useRef(new Animated.Value(0)).current;
   const opponentBetChipsOpacity = useRef(new Animated.Value(1)).current;
+  const middleChipsOpacity = useRef(new Animated.Value(1)).current;
 
   const dealCards = () => {
     setLoading(true);
@@ -50,6 +52,11 @@ const GameModal: React.FC = () => {
     // Check if we need to animate deck back to center
     if (oldGame?.getState().isPostFlop()) {
       Animated.parallel([
+        Animated.timing(middleChipsOpacity, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: true,
+        }),
         Animated.timing(deckPosition, {
           toValue: 0,
           duration: 500,
@@ -88,7 +95,6 @@ const GameModal: React.FC = () => {
     opponentCardOpacity.setValue(1);
     playerCardFlip.setValue(0);
     opponentCardFlip.setValue(0);
-
     Animated.sequence([
       Animated.timing(playerCardPosition, {
         toValue: 265,
@@ -138,17 +144,16 @@ const GameModal: React.FC = () => {
         }),
       ]).start(() => {
         // Animation complete
-        setLoading(false);
         setActions(
           newGame.getState().getActions() || ["Something went wrong."]
         );
+        setLoading(false);
         setIsPlayerTurn(true);
       });
     });
   };
 
   const revealOpponentCard = () => {
-    setLoading(true);
     Animated.timing(opponentCardFlip, {
       toValue: 180,
       duration: 400,
@@ -175,12 +180,10 @@ const GameModal: React.FC = () => {
       useNativeDriver: true,
     }).start(() => {
       setDisplayMoveRanking(false);
-      setLoading(false);
       // Check if game is finished.
       if (game?.getState().isTerminal()) {
-        Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-        revealOpponentCard();
-        setActions(["Deal Cards"]);
+        // Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+        doMoveBetsToMiddleAnimation(true);
       } else if (game?.getState().isEndOfFirstRound()) {
         const commCard = game.getState().getDeck().getCards()[
           Math.floor(
@@ -283,7 +286,7 @@ const GameModal: React.FC = () => {
     }
   };
 
-  const doMoveBetsToMiddleAnimation = () => {
+  const doMoveBetsToMiddleAnimation = (gameOver?: boolean) => {
     Animated.parallel([
       Animated.parallel([
         Animated.timing(playerBetChipsPosition, {
@@ -311,8 +314,15 @@ const GameModal: React.FC = () => {
       ]),
     ]).start(() => {
       setChipsToDisplayInMiddle(game?.getState().getMoneyInPot() || 0);
-      doDealCommunityCardAnimation();
-      setActions(game?.getState().getActions() || ["Something went wrong."]);
+      if (!gameOver) {
+        doRevealMiddleChipsAnimation();
+        doDealCommunityCardAnimation();
+        setActions(game?.getState().getActions() || ["Something went wrong."]);
+      } else {
+        doRevealMiddleChipsAnimation();
+        revealOpponentCard();
+        setActions(["Deal Cards"]);
+      }
       // Reset bet stacks to 0
       setPlayerBetChips(0);
       setOpponentBetChips(0);
@@ -324,6 +334,14 @@ const GameModal: React.FC = () => {
       opponentBetChipsPosition.setValue(0);
       opponentBetChipsZIndex.setValue(0);
     });
+  };
+
+  const doRevealMiddleChipsAnimation = () => {
+    Animated.timing(middleChipsOpacity, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
   };
 
   const flipFrontInterpolate = (flipAnimation: Animated.Value) => {
@@ -387,9 +405,8 @@ const GameModal: React.FC = () => {
 
     // Deal community card if needed.
     if (game?.getState().isTerminal()) {
-      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-      revealOpponentCard();
-      setActions(["Deal Cards"]);
+      //   Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+      doMoveBetsToMiddleAnimation(true);
     } else if (game?.getState().isEndOfFirstRound()) {
       const commCard = game.getState().getDeck().getCards()[
         Math.floor(Math.random() * game.getState().getDeck().getCards().length)
@@ -400,6 +417,7 @@ const GameModal: React.FC = () => {
       setIsPlayerTurn(true);
     } else {
       setActions(game?.getState().getActions() || ["Something went wrong."]);
+      setLoading(false);
       setIsPlayerTurn(true);
     }
   };
@@ -482,7 +500,13 @@ const GameModal: React.FC = () => {
   };
 
   const handleContinue = () => {
+    console.log("Pressed");
+    setLoading(true);
+    setContinueButtonIsLoading(true);
     doRemoveMoveRankingAnimation();
+    setTimeout(() => {
+      setContinueButtonIsLoading(false);
+    }, 1000);
   };
 
   const renderPlayerBetChips = () => {
@@ -504,7 +528,7 @@ const GameModal: React.FC = () => {
                 {
                   translateY: playerBetChipsPosition.interpolate({
                     inputRange: [0, 1, 2],
-                    outputRange: [50, 0, -100],
+                    outputRange: [50, 0, -70],
                   }),
                 },
               ],
@@ -536,7 +560,7 @@ const GameModal: React.FC = () => {
                 {
                   translateY: opponentBetChipsPosition.interpolate({
                     inputRange: [0, 1, 2],
-                    outputRange: [-50, 0, 100],
+                    outputRange: [-50, 0, 70],
                   }),
                 },
               ],
@@ -552,9 +576,11 @@ const GameModal: React.FC = () => {
   const renderMiddleChips = () => {
     if (chipsToDisplayInMiddle) {
       return (
-        <View style={styles.middleChipStack}>
+        <Animated.View
+          style={[styles.middleChipStack, { opacity: middleChipsOpacity }]}
+        >
           <ChipStack count={chipsToDisplayInMiddle} />
-        </View>
+        </Animated.View>
       );
     }
   };
@@ -773,7 +799,11 @@ const GameModal: React.FC = () => {
       </View>
       {displayMoveRanking ? (
         <View style={styles.continueContainer}>
-          <Pressable onPress={handleContinue} style={styles.continueButton}>
+          <Pressable
+            onPress={handleContinue}
+            style={styles.continueButton}
+            disabled={continueButtonIsLoading}
+          >
             <Text style={styles.continueButtonText}>Continue</Text>
             <Ionicons name="chevron-forward" size={20} color="white" />
           </Pressable>

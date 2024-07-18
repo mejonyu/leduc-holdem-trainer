@@ -77,7 +77,7 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
     } else {
       return (
         <View
-          style={[styles.moveRankingContainer, { backgroundColor: "#ff5252" }]}
+          style={[styles.moveRankingContainer, { backgroundColor: "#e74c3c" }]}
         >
           <AntDesign name="warning" size={24} color="black" />
           <Text style={[styles.moveRankingText, { marginTop: 5 }]}>
