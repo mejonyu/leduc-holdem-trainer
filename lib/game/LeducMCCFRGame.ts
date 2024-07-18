@@ -66,6 +66,15 @@ export class State {
     return false;
   }
 
+  isPostFlop(): boolean {
+    const currentRoundHistory = this._history.split("|");
+    if (currentRoundHistory.length === 2) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   payoff(): number {
     if (this._p1Pip > this._p2Pip) {
       return this._p2Pip;
@@ -103,6 +112,13 @@ export class State {
       }
     }
     return actions;
+  }
+
+  getLastMove(): string {
+    if (this.isEndOfFirstRound()) {
+      return this._history[this._history.length - 2];
+    }
+    return this._history[this._history.length - 1];
   }
 
   move(action: string | Card): State {

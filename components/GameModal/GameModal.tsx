@@ -16,36 +16,78 @@ const GameModal: React.FC = () => {
   const [isPlayer1, setIsPlayer1] = useState(true);
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
   const [actions, setActions] = useState(["Deal Cards"]);
+  const [communityCard, setCommunityCard] = useState<string | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
   const [displayMoveRanking, setDisplayMoveRanking] = useState(false);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
   const opponentCardPosition = useRef(new Animated.Value(0)).current;
+  const playerCardOpacity = useRef(new Animated.Value(1)).current;
+  const opponentCardOpacity = useRef(new Animated.Value(1)).current;
   const playerCardFlip = useRef(new Animated.Value(0)).current;
   const opponentCardFlip = useRef(new Animated.Value(0)).current;
+  const moveRankingAnimation = useRef(new Animated.Value(0)).current;
+  const deckPosition = useRef(new Animated.Value(0)).current;
+  const communityCardPosition = useRef(new Animated.Value(0)).current;
+  const communityCardFlip = useRef(new Animated.Value(0)).current;
+  const communitycardOpacity = useRef(new Animated.Value(1)).current;
 
   const dealCards = () => {
     setLoading(true);
+    const oldGame = game;
     const newGame = new LeducMCCFRGame();
-    setGame(newGame);
+    // Check if we need to animate deck back to center
+    if (oldGame?.getState().isPostFlop()) {
+      Animated.parallel([
+        Animated.timing(deckPosition, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerCardOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opponentCardOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(communitycardOpacity, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setGame(newGame);
+        doDealCardsAnimation(newGame);
+      });
+    } else {
+      setGame(newGame);
+      doDealCardsAnimation(newGame);
+    }
+  };
 
-    // Reset positions and rotations
+  const doDealCardsAnimation = (newGame: LeducMCCFRGame) => {
+    // Reset positions, opacities, and rotations
     playerCardPosition.setValue(0);
     opponentCardPosition.setValue(0);
+    playerCardOpacity.setValue(1);
+    opponentCardOpacity.setValue(1);
     playerCardFlip.setValue(0);
     opponentCardFlip.setValue(0);
 
-    // Animate player card
     Animated.sequence([
       Animated.timing(playerCardPosition, {
         toValue: 265,
-        duration: 500,
+        duration: 450,
         useNativeDriver: true,
       }),
       Animated.timing(opponentCardPosition, {
         toValue: -265,
-        duration: 500,
+        duration: 450,
         useNativeDriver: true,
       }),
       Animated.timing(playerCardFlip, {
@@ -68,6 +110,72 @@ const GameModal: React.FC = () => {
       duration: 400,
       useNativeDriver: true,
     }).start(() => {
+      setLoading(false);
+    });
+  };
+
+  // Display move ranking animation
+  const doDisplayMoveRankingAnimation = () => {
+    moveRankingAnimation.setValue(0);
+    Animated.timing(moveRankingAnimation, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const doRemoveMoveRankingAnimation = () => {
+    Animated.timing(moveRankingAnimation, {
+      toValue: 2,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => {
+      setDisplayMoveRanking(false);
+      setLoading(false);
+      // Check if game is finished.
+      if (game?.getState().isTerminal()) {
+        Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
+        revealOpponentCard();
+        setActions(["Deal Cards"]);
+      } else if (game?.getState().isEndOfFirstRound()) {
+        const commCard = game.getState().getDeck().getCards()[
+          Math.floor(
+            Math.random() * game.getState().getDeck().getCards().length
+          )
+        ];
+        game.getState().move(commCard);
+
+        doDealCommunityCardAnimation();
+
+        setActions(game.getState().getActions());
+      } else {
+        // Otherwise, move CPU.
+        handleCPUMove();
+      }
+    });
+  };
+
+  const doDealCommunityCardAnimation = () => {
+    setLoading(true);
+    Animated.timing(deckPosition, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      setCommunityCard(game?.getState().getCommCard()?.getRank() || null);
+      communitycardOpacity.setValue(1);
+      Animated.sequence([
+        Animated.timing(communityCardPosition, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(communityCardFlip, {
+          toValue: 180,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start();
       setLoading(false);
     });
   };
@@ -113,9 +221,6 @@ const GameModal: React.FC = () => {
       currentHistory = game?.getState().getHistory() || "";
       CPUStrategy = player1Strategy[CPUHand][currentHistory];
     }
-    console.log(CPUHand);
-    console.log(currentHistory);
-    console.log(CPUStrategy);
 
     let randomValue = Math.random();
     const action =
@@ -136,7 +241,10 @@ const GameModal: React.FC = () => {
         Math.floor(Math.random() * game.getState().getDeck().getCards().length)
       ];
       game.getState().move(commCard);
-      Alert.alert("Community card is", commCard.getRank());
+
+      doDealCommunityCardAnimation();
+
+      //   Alert.alert("Community card is", commCard.getRank());
       setActions(game.getState().getActions());
       // Update player turn.
       setIsPlayerTurn(true);
@@ -147,58 +255,35 @@ const GameModal: React.FC = () => {
   };
 
   const handleCheck = () => {
+    setLoading(true);
     game?.getState().move("x");
     setIsPlayerTurn(false);
-    // Check if game is finished.
-    if (game?.getState().isTerminal()) {
-      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-      revealOpponentCard();
-      setActions(["Deal Cards"]);
-    } else if (game?.getState().isEndOfFirstRound()) {
-      const commCard = game.getState().getDeck().getCards()[
-        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
-      ];
-      game.getState().move(commCard);
-      Alert.alert("Community card is", commCard.getRank());
-      setActions(game.getState().getActions());
-    } else {
-      // Otherwise, move CPU.
-      handleCPUMove();
-    }
+    setDisplayMoveRanking(true);
+    doDisplayMoveRankingAnimation();
   };
 
   const handleCall = () => {
+    setLoading(true);
     game?.getState().move("c");
     setIsPlayerTurn(false);
-    // Check if game is finished.
-    if (game?.getState().isTerminal()) {
-      Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-      revealOpponentCard();
-      setActions(["Deal Cards"]);
-    } else if (game?.getState().isEndOfFirstRound()) {
-      const commCard = game.getState().getDeck().getCards()[
-        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
-      ];
-      game.getState().move(commCard);
-      Alert.alert("Community card is", commCard.getRank());
-      setActions(game.getState().getActions());
-    } else {
-      // Otherwise, move CPU.
-      handleCPUMove();
-    }
+    setDisplayMoveRanking(true);
+    doDisplayMoveRankingAnimation();
   };
 
   const handleRaise = () => {
+    setLoading(true);
     game?.getState().move("r");
     setIsPlayerTurn(false);
-    handleCPUMove();
+    setDisplayMoveRanking(true);
+    doDisplayMoveRankingAnimation();
   };
 
   const handleFold = () => {
+    setLoading(true);
+    game?.getState().move("f");
     setIsPlayerTurn(false);
-    Alert.alert(`Player 1 makes ${game?.getState().payoff()}`);
-    revealOpponentCard();
-    setActions(["Deal Cards"]);
+    setDisplayMoveRanking(true);
+    doDisplayMoveRankingAnimation();
   };
 
   const getActionButton = (action: string) => {
@@ -240,11 +325,10 @@ const GameModal: React.FC = () => {
     );
   };
 
-  const renderMoveRanking = () => {
-    return <MoveRanking game={game} />;
+  const handleContinue = () => {
+    doRemoveMoveRankingAnimation();
   };
 
-  const handleContinue = () => {};
   return (
     <View style={styles.modalContainer}>
       <View style={styles.pokerTable}>
@@ -263,9 +347,91 @@ const GameModal: React.FC = () => {
           )}
         </View>
         {/* Deck */}
-        <Card type="deck" />
+        <Animated.View
+          style={{
+            transform: [
+              {
+                translateX: deckPosition.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 40],
+                }),
+              },
+            ],
+          }}
+        >
+          <Card type="deck" />
+        </Animated.View>
+        {/* Community Card */}
+        {communityCard ? (
+          <Animated.View
+            style={{
+              position: "absolute",
+              opacity: communitycardOpacity,
+              transform: [
+                {
+                  translateX: communityCardPosition.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -40],
+                  }),
+                },
+              ],
+            }}
+          >
+            {/* Back of community card. */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    { rotateY: flipBackInterpolate(communityCardFlip) },
+                  ],
+                },
+                { backfaceVisibility: "hidden" },
+              ]}
+            >
+              <View style={{ position: "absolute" }}>
+                <Card type="back" />
+              </View>
+            </Animated.View>
+            {/* Front of community card. */}
+            <Animated.View
+              style={[
+                {
+                  transform: [
+                    { rotateY: flipFrontInterpolate(communityCardFlip) },
+                  ],
+                },
+                { backfaceVisibility: "hidden" },
+              ]}
+            >
+              <Card type={communityCard} />
+            </Animated.View>
+          </Animated.View>
+        ) : null}
+
         {/* Move Ranking */}
-        {displayMoveRanking ? renderMoveRanking() : null}
+        {displayMoveRanking ? (
+          <Animated.View
+            style={[
+              {
+                opacity: moveRankingAnimation.interpolate({
+                  inputRange: [0, 1, 2],
+                  outputRange: [0, 1, 0],
+                }),
+                transform: [
+                  {
+                    translateX: moveRankingAnimation.interpolate({
+                      inputRange: [0, 1, 2],
+                      outputRange: [-90, -50, -10],
+                    }),
+                  },
+                ],
+              },
+            ]}
+          >
+            <MoveRanking game={game} isPlayer1={isPlayer1} />
+          </Animated.View>
+        ) : null}
+
         {game ? (
           <>
             {/* Player card. */}
@@ -274,6 +440,7 @@ const GameModal: React.FC = () => {
                 styles.playerCard,
                 isPlayer1 ? { zIndex: 2 } : { zIndex: 1 },
                 {
+                  opacity: playerCardOpacity,
                   transform: [{ translateY: playerCardPosition }],
                 },
                 isPlayerTurn ? styles.cardGlow : null,
@@ -320,7 +487,10 @@ const GameModal: React.FC = () => {
               style={[
                 styles.opponentCard,
                 isPlayer1 ? { zIndex: 1 } : { zIndex: 2 },
-                { transform: [{ translateY: opponentCardPosition }] },
+                {
+                  opacity: opponentCardOpacity,
+                  transform: [{ translateY: opponentCardPosition }],
+                },
               ]}
             >
               {/* Back of opponent card. */}
@@ -367,9 +537,10 @@ const GameModal: React.FC = () => {
         {actions.map((action) => getActionButton(action))}
       </View>
       {displayMoveRanking ? (
-        <View style={styles.flexRow}>
-          <Pressable onPress={handleContinue}>
-            <Text>Continue</Text>
+        <View style={styles.continueContainer}>
+          <Pressable onPress={handleContinue} style={styles.continueButton}>
+            <Text style={styles.continueButtonText}>Continue</Text>
+            <Ionicons name="chevron-forward" size={20} color="white" />
           </Pressable>
         </View>
       ) : null}

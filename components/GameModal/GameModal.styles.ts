@@ -103,6 +103,43 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.8,
     shadowRadius: 10,
   },
+  continueContainer: {
+    position: "absolute",
+    bottom: 33,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 5,
+  },
+  continueButton: {
+    backgroundColor: "#6495ED",
+    padding: 15,
+    borderRadius: 3,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingLeft: 23,
+  },
+  continueButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  moveRankingContainer: {
+    position: "absolute",
+    borderRadius: 6,
+    borderWidth: 2,
+    marginTop: 40,
+    alignItems: "center",
+    width: 100,
+    paddingVertical: 5,
+  },
+  moveRankingText: {
+    fontWeight: "bold",
+    textAlign: "center",
+  },
 });
 
 export default styles;
