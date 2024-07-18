@@ -45,14 +45,8 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
     }
     strategy = player1Strategy[hand][currentHistory];
   }
-  console.log(hand);
-  console.log(currentHistory);
-  console.log(strategy);
-
   const getRanking = () => {
     const moveStrategyWeight = strategy[movePlayed];
-    console.log("Move Played:", movePlayed);
-    console.log("Move weight:", moveStrategyWeight);
     if (moveStrategyWeight >= 0.5) {
       return (
         <View

@@ -8,20 +8,38 @@ interface ChipStackProps {
 const ChipStack: React.FC<ChipStackProps> = ({ count }) => {
   // Limit the number of visually rendered chips to improve performance
   const maxVisibleChips = 10;
-  const visibleChips = Math.min(count, maxVisibleChips);
+  const fiveDollarChips = Math.floor(count / 5);
+  const oneDollarChips = count % 5;
+  const visibleFiveChips = Math.min(fiveDollarChips, maxVisibleChips);
+  const visibleOneChips = Math.min(
+    oneDollarChips,
+    maxVisibleChips - visibleFiveChips
+  );
 
   return (
     <View style={styles.container}>
-      {[...Array(visibleChips)].map((_, index) => (
+      {[...Array(visibleFiveChips)].map((_, index) => (
         <View
-          key={index}
+          key={`five-${index}`}
+          style={[styles.chip, styles.fiveDollarChip, { bottom: index * 4 }]}
+        />
+      ))}
+      {[...Array(visibleOneChips)].map((_, index) => (
+        <View
+          key={`one-${index}`}
           style={[
             styles.chip,
-            { bottom: index * 4 }, // Offset each chip slightly
+            styles.oneDollarChip,
+            { bottom: (visibleFiveChips + index) * 4 },
           ]}
         />
       ))}
-      <View style={[styles.countContainer, { bottom: 15 + count * 4 }]}>
+      <View
+        style={[
+          styles.countContainer,
+          { bottom: 15 + (visibleFiveChips + visibleOneChips) * 4 },
+        ]}
+      >
         <Text style={styles.countText}>{count}</Text>
       </View>
     </View>
@@ -41,8 +59,14 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 15,
-    backgroundColor: "#e74c3c",
     borderWidth: 2,
+  },
+  fiveDollarChip: {
+    backgroundColor: "#3498db",
+    borderColor: "#2980b9",
+  },
+  oneDollarChip: {
+    backgroundColor: "#e74c3c",
     borderColor: "#c0392b",
   },
   countContainer: {

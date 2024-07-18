@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     borderRadius: 6,
     borderWidth: 2,
-    marginTop: 40,
+    top: -215,
     alignItems: "center",
     width: 100,
     paddingVertical: 9,
@@ -139,6 +139,21 @@ const styles = StyleSheet.create({
   moveRankingText: {
     fontWeight: "bold",
     textAlign: "center",
+  },
+  playerBetChips: {
+    position: "absolute",
+    bottom: 66,
+    zIndex: 3,
+  },
+  opponentBetChips: {
+    position: "absolute",
+    top: 49,
+    zIndex: 3,
+  },
+  middleChipStack: {
+    position: "absolute",
+    bottom: 181,
+    zIndex: 3,
   },
 });
 

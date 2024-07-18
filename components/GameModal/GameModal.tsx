@@ -10,7 +10,7 @@ import {
   player2Strategy,
 } from "@/lib/game/LeducMCCFRStrategy";
 import MoveRanking from "./MoveRanking";
-import ChipStack from "./ChipStack";
+import ChipStack from "../GameModal/ChipStack";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -20,6 +20,9 @@ const GameModal: React.FC = () => {
   const [communityCard, setCommunityCard] = useState<string | null>(null);
   const [isPlayerTurn, setIsPlayerTurn] = useState(false);
   const [displayMoveRanking, setDisplayMoveRanking] = useState(false);
+  const [playerBetChips, setPlayerBetChips] = useState(0);
+  const [opponentBetChips, setOpponentBetChips] = useState(0);
+  const [chipsToDisplayInMiddle, setChipsToDisplayInMiddle] = useState(0);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -33,6 +36,12 @@ const GameModal: React.FC = () => {
   const communityCardPosition = useRef(new Animated.Value(0)).current;
   const communityCardFlip = useRef(new Animated.Value(0)).current;
   const communitycardOpacity = useRef(new Animated.Value(1)).current;
+  const playerBetChipsPosition = useRef(new Animated.Value(0)).current;
+  const playerBetChipsZIndex = useRef(new Animated.Value(0)).current;
+  const playerBetChipsOpacity = useRef(new Animated.Value(1)).current;
+  const opponentBetChipsPosition = useRef(new Animated.Value(0)).current;
+  const opponentBetChipsZIndex = useRef(new Animated.Value(0)).current;
+  const opponentBetChipsOpacity = useRef(new Animated.Value(1)).current;
 
   const dealCards = () => {
     setLoading(true);
@@ -91,16 +100,50 @@ const GameModal: React.FC = () => {
         duration: 450,
         useNativeDriver: true,
       }),
-      Animated.timing(playerCardFlip, {
-        toValue: 180,
-        duration: 400,
-        useNativeDriver: true,
-      }),
     ]).start(() => {
-      // Animation complete
-      setLoading(false);
-      setActions(newGame.getState().getActions() || ["Something went wrong."]);
-      setIsPlayerTurn(true);
+      // Push out antes and flip player card
+      setPlayerBetChips(1);
+      setOpponentBetChips(1);
+      Animated.sequence([
+        Animated.parallel([
+          Animated.parallel([
+            Animated.timing(playerBetChipsPosition, {
+              toValue: 1,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(playerBetChipsZIndex, {
+              toValue: 1,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]),
+          Animated.parallel([
+            Animated.timing(opponentBetChipsPosition, {
+              toValue: 1,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+            Animated.timing(opponentBetChipsZIndex, {
+              toValue: 1,
+              duration: 300,
+              useNativeDriver: true,
+            }),
+          ]),
+        ]),
+        Animated.timing(playerCardFlip, {
+          toValue: 180,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        // Animation complete
+        setLoading(false);
+        setActions(
+          newGame.getState().getActions() || ["Something went wrong."]
+        );
+        setIsPlayerTurn(true);
+      });
     });
   };
 
@@ -145,10 +188,7 @@ const GameModal: React.FC = () => {
           )
         ];
         game.getState().move(commCard);
-
-        doDealCommunityCardAnimation();
-
-        setActions(game.getState().getActions());
+        doMoveBetsToMiddleAnimation();
       } else {
         // Otherwise, move CPU.
         handleCPUMove();
@@ -178,6 +218,111 @@ const GameModal: React.FC = () => {
         }),
       ]).start();
       setLoading(false);
+    });
+  };
+
+  const doPutInPot = (isPlayer: boolean) => {
+    // todo: generalize to opponent chips too
+    if (isPlayer) {
+      if (!playerBetChips) {
+        setPlayerBetChips(
+          (isPlayer1
+            ? game?.getState().getP1PipOnCurrentStreet()
+            : game?.getState().getP2PipOnCurrentStreet()) || 0
+        );
+        Animated.parallel([
+          Animated.timing(playerBetChipsPosition, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(playerBetChipsZIndex, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        console.log(
+          isPlayer1
+            ? game?.getState().getP1PipOnCurrentStreet()
+            : game?.getState().getP2PipOnCurrentStreet()
+        );
+        setPlayerBetChips(
+          (isPlayer1
+            ? game?.getState().getP1PipOnCurrentStreet()
+            : game?.getState().getP2PipOnCurrentStreet()) || 0
+        );
+      }
+    } else {
+      if (!opponentBetChips) {
+        setOpponentBetChips(
+          (isPlayer1
+            ? game?.getState().getP2PipOnCurrentStreet()
+            : game?.getState().getP1PipOnCurrentStreet()) || 0
+        );
+        Animated.parallel([
+          Animated.timing(opponentBetChipsPosition, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opponentBetChipsZIndex, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      } else {
+        setOpponentBetChips(
+          (isPlayer1
+            ? game?.getState().getP2Pip()
+            : game?.getState().getP1PipOnCurrentStreet()) || 0
+        );
+      }
+    }
+  };
+
+  const doMoveBetsToMiddleAnimation = () => {
+    Animated.parallel([
+      Animated.parallel([
+        Animated.timing(playerBetChipsPosition, {
+          toValue: 2,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerBetChipsOpacity, {
+          toValue: 2,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]),
+      Animated.parallel([
+        Animated.timing(opponentBetChipsPosition, {
+          toValue: 2,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opponentBetChipsOpacity, {
+          toValue: 2,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start(() => {
+      setChipsToDisplayInMiddle(game?.getState().getMoneyInPot() || 0);
+      doDealCommunityCardAnimation();
+      setActions(game?.getState().getActions() || ["Something went wrong."]);
+      // Reset bet stacks to 0
+      setPlayerBetChips(0);
+      setOpponentBetChips(0);
+      // Reset animation values
+      playerBetChipsOpacity.setValue(0);
+      playerBetChipsPosition.setValue(0);
+      playerBetChipsZIndex.setValue(0);
+      opponentBetChipsOpacity.setValue(0);
+      opponentBetChipsPosition.setValue(0);
+      opponentBetChipsZIndex.setValue(0);
     });
   };
 
@@ -229,8 +374,16 @@ const GameModal: React.FC = () => {
         randomValue -= probability;
         return randomValue < 0;
       })?.[0] || Object.keys(CPUStrategy)[0];
+
     game?.getState().move(action);
-    Alert.alert("CPU made the move " + action);
+
+    // Handle raise/call animation
+    if (action === "r" || action === "c") {
+      doPutInPot(false);
+    }
+
+    // Alert.alert("CPU made the move " + action);
+    console.log("CPU made the move " + action);
 
     // Deal community card if needed.
     if (game?.getState().isTerminal()) {
@@ -242,11 +395,7 @@ const GameModal: React.FC = () => {
         Math.floor(Math.random() * game.getState().getDeck().getCards().length)
       ];
       game.getState().move(commCard);
-
-      doDealCommunityCardAnimation();
-
-      //   Alert.alert("Community card is", commCard.getRank());
-      setActions(game.getState().getActions());
+      doMoveBetsToMiddleAnimation();
       // Update player turn.
       setIsPlayerTurn(true);
     } else {
@@ -266,6 +415,9 @@ const GameModal: React.FC = () => {
   const handleCall = () => {
     setLoading(true);
     game?.getState().move("c");
+
+    doPutInPot(true);
+
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
     doDisplayMoveRankingAnimation();
@@ -274,6 +426,9 @@ const GameModal: React.FC = () => {
   const handleRaise = () => {
     setLoading(true);
     game?.getState().move("r");
+
+    doPutInPot(true);
+
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
     doDisplayMoveRankingAnimation();
@@ -330,10 +485,83 @@ const GameModal: React.FC = () => {
     doRemoveMoveRankingAnimation();
   };
 
+  const renderPlayerBetChips = () => {
+    if (playerBetChips) {
+      return (
+        <Animated.View
+          style={[
+            styles.playerBetChips,
+            {
+              zIndex: playerBetChipsZIndex.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 3],
+              }),
+              opacity: playerBetChipsOpacity.interpolate({
+                inputRange: [0, 1, 2],
+                outputRange: [1, 1, 0],
+              }),
+              transform: [
+                {
+                  translateY: playerBetChipsPosition.interpolate({
+                    inputRange: [0, 1, 2],
+                    outputRange: [50, 0, -100],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <ChipStack count={playerBetChips} />
+        </Animated.View>
+      );
+    }
+  };
+
+  const renderOpponentBetChips = () => {
+    if (opponentBetChips) {
+      return (
+        <Animated.View
+          style={[
+            styles.opponentBetChips,
+            {
+              zIndex: opponentBetChipsZIndex.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 3],
+              }),
+              opacity: opponentBetChipsOpacity.interpolate({
+                inputRange: [0, 1, 2],
+                outputRange: [1, 1, 0],
+              }),
+              transform: [
+                {
+                  translateY: opponentBetChipsPosition.interpolate({
+                    inputRange: [0, 1, 2],
+                    outputRange: [-50, 0, 100],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <ChipStack count={opponentBetChips} />
+        </Animated.View>
+      );
+    }
+  };
+
+  const renderMiddleChips = () => {
+    if (chipsToDisplayInMiddle) {
+      return (
+        <View style={styles.middleChipStack}>
+          <ChipStack count={chipsToDisplayInMiddle} />
+        </View>
+      );
+    }
+  };
+
   return (
     <View style={styles.modalContainer}>
       <View style={styles.pokerTable}>
-        <ChipStack count={5} />
         <View style={styles.opponentLabel}>
           {isPlayer1 ? (
             <Ionicons name="people" size={24} color="black" />
@@ -483,7 +711,6 @@ const GameModal: React.FC = () => {
                 />
               </Animated.View>
             </Animated.View>
-
             {/* Opponent card. */}
             <Animated.View
               style={[
@@ -532,6 +759,12 @@ const GameModal: React.FC = () => {
                 />
               </Animated.View>
             </Animated.View>
+            {/* Player bet chips */}
+            {renderPlayerBetChips()}
+            {/* Opponent bet chips */}
+            {renderOpponentBetChips()}
+            {/* Chips put in pot on previous streets */}
+            {renderMiddleChips()}
           </>
         ) : null}
       </View>

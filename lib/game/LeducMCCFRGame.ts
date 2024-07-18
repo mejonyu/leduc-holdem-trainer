@@ -95,6 +95,10 @@ export class State {
     }
   }
 
+  getMoneyInPot(): number {
+    return this._p1Pip + this._p2Pip;
+  }
+
   getActions(): string[] {
     const actions: string[] = [];
     let currentRoundHistory = this._history.split("|");
@@ -182,6 +186,102 @@ export class State {
 
   getP2Card(): Card {
     return this._p2Card;
+  }
+
+  getP1Pip(): number {
+    return this._p1Pip;
+  }
+
+  getP2Pip(): number {
+    return this._p2Pip;
+  }
+
+  getP1PipOnCurrentStreet(): number {
+    const streets = this._history.split("|");
+    let currentStreet = streets[streets.length - 1];
+    let isStreet2 = streets.length > 1;
+    let raiseSize = isStreet2 ? 4 : 2;
+    if (streets.length === 2 && !currentStreet) {
+      currentStreet = streets[0];
+      isStreet2 = false;
+      raiseSize = 2;
+    }
+
+    let player1Contribution = 0;
+    let isPlayer1Turn = true;
+    let p2Bet = 0;
+
+    if (!isStreet2) {
+      player1Contribution += 1;
+    }
+
+    for (const action of currentStreet) {
+      if (isPlayer1Turn) {
+        switch (action) {
+          case "x":
+            // Check - no money added
+            break;
+          case "r":
+            // Raise
+            player1Contribution += raiseSize + p2Bet;
+            break;
+          case "c":
+            // Call
+            player1Contribution += raiseSize;
+            break;
+        }
+      } else {
+        if (action === "r") {
+          p2Bet += raiseSize;
+        }
+      }
+      isPlayer1Turn = !isPlayer1Turn;
+    }
+    return player1Contribution;
+  }
+
+  getP2PipOnCurrentStreet(): number {
+    const streets = this._history.split("|");
+    let currentStreet = streets[streets.length - 1];
+    let isStreet2 = streets.length > 1;
+    let raiseSize = isStreet2 ? 4 : 2;
+    if (streets.length === 2 && !currentStreet) {
+      currentStreet = streets[0];
+      isStreet2 = false;
+      raiseSize = 2;
+    }
+
+    let player2Contribution = 0;
+    let isPlayer2Turn = false;
+    let p1Bet = 0;
+
+    if (!isStreet2) {
+      player2Contribution += 1;
+    }
+
+    for (const action of currentStreet) {
+      if (isPlayer2Turn) {
+        switch (action) {
+          case "x":
+            // Check - no money added
+            break;
+          case "r":
+            // Raise
+            player2Contribution += raiseSize + p1Bet;
+            break;
+          case "c":
+            // Call
+            player2Contribution += raiseSize;
+            break;
+        }
+      } else {
+        if (action === "r") {
+          p1Bet += raiseSize;
+        }
+      }
+      isPlayer2Turn = !isPlayer2Turn;
+    }
+    return player2Contribution;
   }
 
   isEndOfFirstRound(): boolean {
