@@ -1,5 +1,5 @@
 type Action = string;
-type Strategy = { [key in Action]: number };
+export type Strategy = { [key in Action]: number };
 type HistoryMap = { [key: string]: Strategy };
 type Hand = string | [string, string];
 type PlayerStrategy = { [key: string]: HistoryMap };

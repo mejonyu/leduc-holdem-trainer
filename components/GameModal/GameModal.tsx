@@ -10,6 +10,7 @@ import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  Strategy,
   player1Strategy,
   player2Strategy,
 } from "@/lib/game/LeducMCCFRStrategy";
@@ -28,6 +29,16 @@ const GameModal: React.FC = () => {
   const [playerBetChips, setPlayerBetChips] = useState(0);
   const [opponentBetChips, setOpponentBetChips] = useState(0);
   const [chipsToDisplayInMiddle, setChipsToDisplayInMiddle] = useState(0);
+  const [checkSubText, setCheckSubText] = useState("");
+  const [raiseSubText, setRaiseSubText] = useState("");
+  const [callSubText, setCallSubText] = useState("");
+  const [foldSubText, setFoldSubText] = useState("");
+  const [glowCheck, setGlowCheck] = useState(false);
+  const [glowRaise, setGlowRaise] = useState(false);
+  const [glowCall, setGlowCall] = useState(false);
+  const [glowFold, setGlowFold] = useState(false);
+  const [computedStrategy, setComputedStrategy] = useState<Strategy>({});
+  const [rankingColor, setRankingColor] = useState("");
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -48,6 +59,7 @@ const GameModal: React.FC = () => {
   const opponentBetChipsZIndex = useRef(new Animated.Value(0)).current;
   const opponentBetChipsOpacity = useRef(new Animated.Value(1)).current;
   const middleChipsOpacity = useRef(new Animated.Value(1)).current;
+  const middleChipsPosition = useRef(new Animated.Value(0)).current;
 
   const dealCards = () => {
     setLoading(true);
@@ -95,6 +107,7 @@ const GameModal: React.FC = () => {
     // Reset positions, opacities, and rotations
     playerCardPosition.setValue(0);
     opponentCardPosition.setValue(0);
+    middleChipsPosition.setValue(0);
     playerCardOpacity.setValue(1);
     opponentCardOpacity.setValue(1);
     playerCardFlip.setValue(0);
@@ -163,6 +176,40 @@ const GameModal: React.FC = () => {
       duration: 400,
       useNativeDriver: true,
     }).start(() => {
+      // Case 1: P1 wins
+      if (game && game?.getState().payoff() > 0) {
+        if (isPlayer1) {
+          Animated.timing(middleChipsPosition, {
+            toValue: scaleHeight(115),
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        } else {
+          Animated.timing(middleChipsPosition, {
+            toValue: scaleHeight(-255),
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        }
+        // Case 2: P2 wins
+      } else if (game && game?.getState().payoff() < 0) {
+        if (!isPlayer1) {
+          Animated.timing(middleChipsPosition, {
+            toValue: scaleHeight(115),
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        } else {
+          Animated.timing(middleChipsPosition, {
+            toValue: scaleHeight(-270),
+            duration: 300,
+            useNativeDriver: true,
+          }).start();
+        }
+        // Case 3: Chop
+      } else {
+      }
+
       setLoading(false);
     });
   };
@@ -420,6 +467,7 @@ const GameModal: React.FC = () => {
 
   const handleCheck = () => {
     setLoading(true);
+    setGlowCheck(true);
     game?.getState().move("x");
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
@@ -428,6 +476,7 @@ const GameModal: React.FC = () => {
 
   const handleCall = () => {
     setLoading(true);
+    setGlowCall(true);
     game?.getState().move("c");
 
     doPutInPot(true);
@@ -439,6 +488,7 @@ const GameModal: React.FC = () => {
 
   const handleRaise = () => {
     setLoading(true);
+    setGlowRaise(true);
     game?.getState().move("r");
 
     doPutInPot(true);
@@ -450,6 +500,7 @@ const GameModal: React.FC = () => {
 
   const handleFold = () => {
     setLoading(true);
+    setGlowFold(true);
     game?.getState().move("f");
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
@@ -459,6 +510,8 @@ const GameModal: React.FC = () => {
   const getActionButton = (action: string) => {
     let onButtonPress: () => void;
     let buttonText: string = "";
+    let buttonSubText: string = "";
+    let customGlowState;
 
     switch (action) {
       case "Deal Cards":
@@ -467,19 +520,27 @@ const GameModal: React.FC = () => {
         break;
       case "x":
         buttonText = "Check";
+        buttonSubText = checkSubText;
         onButtonPress = handleCheck;
+        customGlowState = glowCheck;
         break;
       case "c":
         buttonText = "Call";
+        buttonSubText = callSubText;
         onButtonPress = handleCall;
+        customGlowState = glowCall;
         break;
       case "r":
         buttonText = "Raise";
+        buttonSubText = raiseSubText;
         onButtonPress = handleRaise;
+        customGlowState = glowRaise;
         break;
       case "f":
         buttonText = "Fold";
+        buttonSubText = foldSubText;
         onButtonPress = handleFold;
+        customGlowState = glowFold;
         break;
       default:
         onButtonPress = () => {};
@@ -487,17 +548,60 @@ const GameModal: React.FC = () => {
 
     return (
       <CustomButton
+        key={buttonText}
         text={buttonText}
         onPress={onButtonPress}
         loading={loading}
-        customStyles={{ flex: 1, marginHorizontal: scaleWidth(2) }}
+        customStyles={[
+          { flex: 1, marginHorizontal: scaleWidth(2) },
+          customGlowState
+            ? {
+                borderWidth: scaleWidth(3),
+                borderRadius: scaleWidth(3),
+                margin: scaleWidth(-3),
+                borderColor: rankingColor,
+              }
+            : null,
+        ]}
+        subText={buttonSubText}
       />
     );
   };
 
+  useEffect(() => {
+    for (const action of actions) {
+      const strategyWeightText = Math.floor(
+        computedStrategy[action] * 100
+      ).toString();
+      switch (action) {
+        case "x":
+          setCheckSubText(strategyWeightText + "%");
+          break;
+        case "r":
+          setRaiseSubText(strategyWeightText + "%");
+          break;
+        case "c":
+          setCallSubText(strategyWeightText + "%");
+          break;
+        case "f":
+          setFoldSubText(strategyWeightText + "%");
+          break;
+      }
+    }
+  }, [computedStrategy]);
+
   const handleContinue = () => {
+    // setActions(["Loading"]);
     setLoading(true);
     setContinueButtonIsLoading(true);
+    setCheckSubText("");
+    setRaiseSubText("");
+    setCallSubText("");
+    setFoldSubText("");
+    setGlowCheck(false);
+    setGlowRaise(false);
+    setGlowCall(false);
+    setGlowFold(false);
     doRemoveMoveRankingAnimation();
     setTimeout(() => {
       setContinueButtonIsLoading(false);
@@ -572,7 +676,13 @@ const GameModal: React.FC = () => {
     if (chipsToDisplayInMiddle) {
       return (
         <Animated.View
-          style={[styles.middleChipStack, { opacity: middleChipsOpacity }]}
+          style={[
+            styles.middleChipStack,
+            {
+              opacity: middleChipsOpacity,
+              transform: [{ translateY: middleChipsPosition }],
+            },
+          ]}
         >
           <ChipStack count={chipsToDisplayInMiddle} />
         </Animated.View>
@@ -683,7 +793,12 @@ const GameModal: React.FC = () => {
               },
             ]}
           >
-            <MoveRanking game={game} isPlayer1={isPlayer1} />
+            <MoveRanking
+              game={game}
+              isPlayer1={isPlayer1}
+              setComputedStrategy={setComputedStrategy}
+              setRankingColor={setRankingColor}
+            />
           </Animated.View>
         ) : null}
 
@@ -800,15 +915,17 @@ const GameModal: React.FC = () => {
         <View style={styles.continueContainer}>
           <Pressable
             onPress={handleContinue}
-            style={styles.continueButton}
+            style={[styles.continueButton, { backgroundColor: rankingColor }]}
             disabled={continueButtonIsLoading}
           >
             <Text style={styles.continueButtonText}>Continue</Text>
-            <Ionicons
-              name="chevron-forward"
-              size={scaleIconSize(20)}
-              color="white"
-            />
+            <View style={styles.continueButtonIcon}>
+              <Ionicons
+                name="chevron-forward"
+                size={scaleIconSize(20)}
+                color="white"
+              />
+            </View>
           </Pressable>
         </View>
       ) : null}

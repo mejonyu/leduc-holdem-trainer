@@ -7,12 +7,14 @@ import {
 } from "react-native";
 import React from "react";
 import styles from "./CustomButton.styles";
+import { View } from "react-native";
 
 interface CustomButtonProps {
   text: string;
   onPress: () => void;
   loading: boolean;
   customStyles?: StyleProp<ViewStyle>;
+  subText?: string;
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -20,6 +22,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   onPress,
   loading,
   customStyles,
+  subText,
 }) => {
   return (
     <TouchableOpacity
@@ -27,7 +30,10 @@ const CustomButton: React.FC<CustomButtonProps> = ({
       onPress={onPress}
       disabled={loading}
     >
-      <Text style={styles.buttonText}>{text}</Text>
+      <View style={styles.flexRow}>
+        <Text style={styles.buttonText}>{text}</Text>
+        {subText ? <Text style={styles.buttonSubText}>{subText}</Text> : null}
+      </View>
     </TouchableOpacity>
   );
 };
