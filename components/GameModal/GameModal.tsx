@@ -250,11 +250,6 @@ const GameModal: React.FC = () => {
           }),
         ]).start();
       } else {
-        console.log(
-          isPlayer1
-            ? game?.getState().getP1PipOnCurrentStreet()
-            : game?.getState().getP2PipOnCurrentStreet()
-        );
         setPlayerBetChips(
           (isPlayer1
             ? game?.getState().getP1PipOnCurrentStreet()
@@ -283,7 +278,7 @@ const GameModal: React.FC = () => {
       } else {
         setOpponentBetChips(
           (isPlayer1
-            ? game?.getState().getP2Pip()
+            ? game?.getState().getP2PipOnCurrentStreet()
             : game?.getState().getP1PipOnCurrentStreet()) || 0
         );
       }
@@ -404,9 +399,6 @@ const GameModal: React.FC = () => {
       doPutInPot(false);
     }
 
-    // Alert.alert("CPU made the move " + action);
-    console.log("CPU made the move " + action);
-
     // Deal community card if needed.
     if (game?.getState().isTerminal()) {
       //   Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
@@ -504,7 +496,6 @@ const GameModal: React.FC = () => {
   };
 
   const handleContinue = () => {
-    console.log("Pressed");
     setLoading(true);
     setContinueButtonIsLoading(true);
     doRemoveMoveRankingAnimation();
