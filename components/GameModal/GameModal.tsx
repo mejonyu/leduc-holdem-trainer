@@ -16,6 +16,7 @@ import {
 } from "@/lib/game/LeducMCCFRStrategy";
 import MoveRanking from "./MoveRanking";
 import ChipStack from "../GameModal/ChipStack";
+import OpponentMove from "./OpponentMove";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -693,6 +694,7 @@ const GameModal: React.FC = () => {
   return (
     <View style={styles.modalContainer}>
       <View style={styles.pokerTable}>
+        <OpponentMove move="x" />
         <View style={styles.opponentLabel}>
           {isPlayer1 ? (
             <Ionicons name="people" size={scaleIconSize(24)} color="black" />

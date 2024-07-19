@@ -214,6 +214,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
   },
+  opponentMoveContainer: {
+    alignItems: "center",
+  },
 });
 
 export default styles;
