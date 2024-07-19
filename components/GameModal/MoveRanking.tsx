@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
-import styles from "./GameModal.styles";
+import styles, { scaleHeight, scaleIconSize } from "./GameModal.styles";
 import {
   player1Strategy,
   player2Strategy,
@@ -52,7 +52,11 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
         <View
           style={[styles.moveRankingContainer, { backgroundColor: "#6495ED" }]}
         >
-          <Ionicons name="checkmark-done-outline" size={40} color="black" />
+          <Ionicons
+            name="checkmark-done-outline"
+            size={scaleIconSize(40)}
+            color="black"
+          />
           <Text style={styles.moveRankingText}>Optimal</Text>
         </View>
       );
@@ -61,7 +65,11 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
         <View
           style={[styles.moveRankingContainer, { backgroundColor: "#72bf6a" }]}
         >
-          <Ionicons name="checkmark-outline" size={40} color="black" />
+          <Ionicons
+            name="checkmark-outline"
+            size={scaleIconSize(40)}
+            color="black"
+          />
           <Text style={styles.moveRankingText}>Good</Text>
         </View>
       );
@@ -70,8 +78,14 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
         <View
           style={[styles.moveRankingContainer, { backgroundColor: "#ffd300" }]}
         >
-          <Entypo name="circle-with-minus" size={24} color="black" />
-          <Text style={[styles.moveRankingText, { marginTop: 5 }]}>Okay</Text>
+          <Entypo
+            name="circle-with-minus"
+            size={scaleIconSize(24)}
+            color="black"
+          />
+          <Text style={[styles.moveRankingText, { marginTop: scaleHeight(5) }]}>
+            Okay
+          </Text>
         </View>
       );
     } else {
@@ -79,8 +93,8 @@ const MoveRanking: React.FC<MoveRankingProps> = ({ game, isPlayer1 }) => {
         <View
           style={[styles.moveRankingContainer, { backgroundColor: "#e74c3c" }]}
         >
-          <AntDesign name="warning" size={24} color="black" />
-          <Text style={[styles.moveRankingText, { marginTop: 5 }]}>
+          <AntDesign name="warning" size={scaleIconSize(24)} color="black" />
+          <Text style={[styles.moveRankingText, { marginTop: scaleHeight(5) }]}>
             Blunder
           </Text>
         </View>

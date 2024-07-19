@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, Image } from "react-native";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
-import styles from "./GameModal.styles";
+import styles, { scaleIconSize } from "./GameModal.styles";
 
 interface CardProps {
   type: string;
@@ -40,9 +40,17 @@ const Card: React.FC<CardProps> = ({ type }) => {
           />
         );
       case "Q":
-        return <FontAwesome6 name="chess-queen" size={30} color="black" />;
+        return (
+          <FontAwesome6
+            name="chess-queen"
+            size={scaleIconSize(30)}
+            color="black"
+          />
+        );
       case "K":
-        return <FontAwesome5 name="crown" size={27} color="black" />;
+        return (
+          <FontAwesome5 name="crown" size={scaleIconSize(27)} color="black" />
+        );
       case "back":
         return (
           <Image

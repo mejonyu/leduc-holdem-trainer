@@ -1,22 +1,38 @@
 import { Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get("window");
-const tableWidth = width * 0.8;
-const tableHeight = height * 0.6;
+
+// Original dev done for iPhone 15 Pro Max.
+const IPHONE_15_PRO_MAX_WIDTH = 430;
+const IPHONE_15_PRO_MAX_HEIGHT = 932;
+
+export const scaleHeight = (size: number) => {
+  return (size / IPHONE_15_PRO_MAX_HEIGHT) * height;
+};
+
+export const scaleWidth = (size: number) => {
+  return (size / IPHONE_15_PRO_MAX_WIDTH) * width;
+};
+
+export const scaleIconSize = (size: number) => {
+  return (size / IPHONE_15_PRO_MAX_HEIGHT) * height;
+};
 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 20,
+    // padding: 20,
+    paddingVertical: scaleHeight(20),
+    paddingHorizontal: scaleWidth(20),
     backgroundColor: "white",
   },
   pokerTable: {
-    width: tableWidth,
-    height: tableHeight,
+    width: width * 0.8,
+    height: height * 0.6,
     backgroundColor: "#cccccc",
-    borderRadius: tableWidth / 2,
+    borderRadius: (width * 0.8) / 2,
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
@@ -26,26 +42,26 @@ const styles = StyleSheet.create({
   cardContainer: {
     position: "relative",
     backgroundColor: "white",
-    width: 70,
-    height: 98,
+    width: scaleWidth(70),
+    height: scaleHeight(98),
     borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: scaleWidth(2),
     borderColor: "black",
     justifyContent: "center",
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
-      width: 2,
-      height: 2,
+      width: scaleWidth(2),
+      height: scaleHeight(2),
     },
     shadowOpacity: 1,
-    shadowRadius: 5,
+    shadowRadius: scaleHeight(5),
   },
   cardLetter: {
     position: "absolute",
-    top: 5,
-    left: 5,
-    fontSize: 18,
+    top: scaleHeight(5),
+    left: scaleWidth(5),
+    fontSize: scaleHeight(18),
     fontWeight: "bold",
     color: "black",
   },
@@ -55,35 +71,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   jackIcon: {
-    width: 35,
-    height: 35,
+    width: scaleWidth(35),
+    height: scaleHeight(35),
     resizeMode: "contain",
   },
   opponentIcon: {
-    width: 70,
-    height: 70,
+    width: scaleWidth(70),
+    height: scaleHeight(70),
     resizeMode: "contain",
   },
   opponentLabel: {
     position: "absolute",
     backgroundColor: "#eeeeee",
-    borderWidth: 2,
+    borderWidth: scaleHeight(2),
     borderRadius: 100,
-    padding: 5,
+    padding: scaleHeight(5),
     top: 0,
     left: 0,
   },
   playerLabel: {
     position: "absolute",
     backgroundColor: "#eeeeee",
-    borderWidth: 2,
+    borderWidth: scaleHeight(2),
     borderRadius: 100,
-    padding: 5,
+    padding: scaleHeight(5),
     bottom: 0,
     right: 0,
   },
-  // Add these to your existing styles
-
   playerCard: {
     position: "absolute",
   },
@@ -95,8 +109,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    marginTop: 50,
-    paddingHorizontal: 30,
+    marginTop: scaleHeight(50),
+    paddingHorizontal: scaleWidth(30),
   },
   cardGlow: {
     shadowColor: "red",
@@ -105,36 +119,36 @@ const styles = StyleSheet.create({
   },
   continueContainer: {
     position: "absolute",
-    bottom: 33,
+    bottom: scaleHeight(33),
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
     width: "100%",
-    marginTop: 5,
   },
   continueButton: {
     backgroundColor: "#6495ED",
-    padding: 15,
+    paddingVertical: scaleHeight(15),
+    paddingHorizontal: scaleWidth(15),
     borderRadius: 3,
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingLeft: 23,
+    paddingLeft: scaleWidth(23),
   },
   continueButtonText: {
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: scaleHeight(16),
   },
   moveRankingContainer: {
     position: "absolute",
     borderRadius: 6,
     borderWidth: 2,
-    top: -215,
+    top: scaleHeight(-215),
     alignItems: "center",
-    width: 100,
-    paddingVertical: 9,
+    width: scaleWidth(100),
+    paddingVertical: scaleHeight(9),
   },
   moveRankingText: {
     fontWeight: "bold",
@@ -142,18 +156,57 @@ const styles = StyleSheet.create({
   },
   playerBetChips: {
     position: "absolute",
-    bottom: 66,
+    bottom: scaleHeight(66),
     zIndex: 3,
   },
   opponentBetChips: {
     position: "absolute",
-    top: 49,
+    top: scaleHeight(49),
     zIndex: 3,
   },
   middleChipStack: {
     position: "absolute",
-    bottom: 181,
+    bottom: scaleHeight(181),
     zIndex: 3,
+  },
+  chipContainer: {
+    position: "relative",
+    alignItems: "center",
+    justifyContent: "flex-end",
+    height: scaleHeight(50),
+    width: scaleWidth(40),
+  },
+  chip: {
+    position: "absolute",
+    width: scaleWidth(30),
+    height: scaleHeight(30),
+    borderRadius: 15,
+    borderWidth: scaleHeight(2),
+  },
+  fiveDollarChip: {
+    backgroundColor: "#3498db",
+    borderColor: "#2980b9",
+  },
+  oneDollarChip: {
+    backgroundColor: "#e74c3c",
+    borderColor: "#c0392b",
+  },
+  chipCountContainer: {
+    position: "absolute",
+    right: scaleWidth(-2),
+    backgroundColor: "black",
+    borderRadius: 10,
+    paddingVertical: scaleHeight(2),
+    paddingHorizontal: scaleWidth(2),
+    width: scaleWidth(17),
+    height: scaleHeight(17),
+    justifyContent: "center",
+  },
+  countText: {
+    color: "white",
+    fontSize: scaleHeight(10),
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 

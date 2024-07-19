@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import { View, Animated, Easing, Alert, Pressable, Text } from "react-native";
-import styles from "./GameModal.styles";
+import styles, {
+  scaleHeight,
+  scaleIconSize,
+  scaleWidth,
+} from "./GameModal.styles";
 import Card from "./Card";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
@@ -97,12 +101,12 @@ const GameModal: React.FC = () => {
     opponentCardFlip.setValue(0);
     Animated.sequence([
       Animated.timing(playerCardPosition, {
-        toValue: 265,
+        toValue: scaleHeight(265),
         duration: 450,
         useNativeDriver: true,
       }),
       Animated.timing(opponentCardPosition, {
-        toValue: -265,
+        toValue: scaleHeight(-265),
         duration: 450,
         useNativeDriver: true,
       }),
@@ -494,7 +498,7 @@ const GameModal: React.FC = () => {
         text={buttonText}
         onPress={onButtonPress}
         loading={loading}
-        customStyles={{ flex: 1, marginHorizontal: 3 }}
+        customStyles={{ flex: 1, marginHorizontal: scaleWidth(2) }}
       />
     );
   };
@@ -528,7 +532,7 @@ const GameModal: React.FC = () => {
                 {
                   translateY: playerBetChipsPosition.interpolate({
                     inputRange: [0, 1, 2],
-                    outputRange: [50, 0, -70],
+                    outputRange: [scaleHeight(50), 0, scaleHeight(-70)],
                   }),
                 },
               ],
@@ -560,7 +564,7 @@ const GameModal: React.FC = () => {
                 {
                   translateY: opponentBetChipsPosition.interpolate({
                     inputRange: [0, 1, 2],
-                    outputRange: [-50, 0, 70],
+                    outputRange: [scaleHeight(-50), 0, scaleHeight(70)],
                   }),
                 },
               ],
@@ -590,16 +594,16 @@ const GameModal: React.FC = () => {
       <View style={styles.pokerTable}>
         <View style={styles.opponentLabel}>
           {isPlayer1 ? (
-            <Ionicons name="people" size={24} color="black" />
+            <Ionicons name="people" size={scaleIconSize(24)} color="black" />
           ) : (
-            <Ionicons name="person" size={24} color="black" />
+            <Ionicons name="person" size={scaleIconSize(24)} color="black" />
           )}
         </View>
         <View style={styles.playerLabel}>
           {isPlayer1 ? (
-            <Ionicons name="person" size={24} color="black" />
+            <Ionicons name="person" size={scaleIconSize(24)} color="black" />
           ) : (
-            <Ionicons name="people" size={24} color="black" />
+            <Ionicons name="people" size={scaleIconSize(24)} color="black" />
           )}
         </View>
         {/* Deck */}
@@ -609,7 +613,7 @@ const GameModal: React.FC = () => {
               {
                 translateX: deckPosition.interpolate({
                   inputRange: [0, 1],
-                  outputRange: [0, 40],
+                  outputRange: [0, scaleWidth(40)],
                 }),
               },
             ],
@@ -627,7 +631,7 @@ const GameModal: React.FC = () => {
                 {
                   translateX: communityCardPosition.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -40],
+                    outputRange: [0, scaleWidth(-40)],
                   }),
                 },
               ],
@@ -677,7 +681,11 @@ const GameModal: React.FC = () => {
                   {
                     translateX: moveRankingAnimation.interpolate({
                       inputRange: [0, 1, 2],
-                      outputRange: [-90, -50, -10],
+                      outputRange: [
+                        scaleWidth(-90),
+                        scaleWidth(-50),
+                        scaleWidth(-10),
+                      ],
                     }),
                   },
                 ],
@@ -805,7 +813,11 @@ const GameModal: React.FC = () => {
             disabled={continueButtonIsLoading}
           >
             <Text style={styles.continueButtonText}>Continue</Text>
-            <Ionicons name="chevron-forward" size={20} color="white" />
+            <Ionicons
+              name="chevron-forward"
+              size={scaleIconSize(20)}
+              color="white"
+            />
           </Pressable>
         </View>
       ) : null}
