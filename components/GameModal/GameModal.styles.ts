@@ -215,7 +215,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   opponentMoveContainer: {
+    position: "absolute",
     alignItems: "center",
+    top: scaleHeight(110),
+    zIndex: 5,
+  },
+  opponentMoveText: {
+    color: "black",
+    fontWeight: "bold",
+    fontSize: scaleHeight(20),
   },
 });
 

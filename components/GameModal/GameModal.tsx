@@ -17,6 +17,7 @@ import {
 import MoveRanking from "./MoveRanking";
 import ChipStack from "../GameModal/ChipStack";
 import OpponentMove from "./OpponentMove";
+import { transform } from "@babel/core";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -40,6 +41,8 @@ const GameModal: React.FC = () => {
   const [glowFold, setGlowFold] = useState(false);
   const [computedStrategy, setComputedStrategy] = useState<Strategy>({});
   const [rankingColor, setRankingColor] = useState("");
+  const [opponentMove, setOpponentMove] = useState("");
+  const [showOpponentMove, setShowOpponentMove] = useState(false);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -61,8 +64,11 @@ const GameModal: React.FC = () => {
   const opponentBetChipsOpacity = useRef(new Animated.Value(1)).current;
   const middleChipsOpacity = useRef(new Animated.Value(1)).current;
   const middleChipsPosition = useRef(new Animated.Value(0)).current;
+  const opponentMoveSize = useRef(new Animated.Value(1)).current;
+  const opponentMoveOpacity = useRef(new Animated.Value(1)).current;
 
   const dealCards = () => {
+    doOpponentMoveTransitionOut();
     setLoading(true);
     const oldGame = game;
     const newGame = new LeducMCCFRGame();
@@ -391,6 +397,16 @@ const GameModal: React.FC = () => {
     }).start();
   };
 
+  const doOpponentMoveTransitionOut = () => {
+    Animated.timing(opponentMoveOpacity, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => {
+      setShowOpponentMove(false);
+    });
+  };
+
   const flipFrontInterpolate = (flipAnimation: Animated.Value) => {
     return flipAnimation.interpolate({
       inputRange: [0, 180],
@@ -442,31 +458,64 @@ const GameModal: React.FC = () => {
 
     game?.getState().move(action);
 
-    // Handle raise/call animation
-    if (action === "r" || action === "c") {
-      doPutInPot(false);
-    }
+    displayCPUMove(action);
+  };
 
-    // Deal community card if needed.
-    if (game?.getState().isTerminal()) {
-      //   Alert.alert(`Player 1 makes ${game.getState().payoff()}`);
-      doMoveBetsToMiddleAnimation(true);
-    } else if (game?.getState().isEndOfFirstRound()) {
-      const commCard = game.getState().getDeck().getCards()[
-        Math.floor(Math.random() * game.getState().getDeck().getCards().length)
-      ];
-      game.getState().move(commCard);
-      doMoveBetsToMiddleAnimation();
-      // Update player turn.
-      setIsPlayerTurn(true);
-    } else {
-      setActions(game?.getState().getActions() || ["Something went wrong."]);
-      setLoading(false);
-      setIsPlayerTurn(true);
-    }
+  const displayCPUMove = (action: string) => {
+    setOpponentMove(action);
+    setShowOpponentMove(true);
+    Animated.sequence([
+      Animated.timing(opponentMoveOpacity, {
+        toValue: 1,
+        duration: 0,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opponentMoveSize, {
+        toValue: 1.2,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opponentMoveSize, {
+        toValue: 0.8,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opponentMoveSize, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      // Handle raise/call animation
+      if (action === "r" || action === "c") {
+        doPutInPot(false);
+      }
+
+      // Deal community card if needed.
+      if (game?.getState().isTerminal()) {
+        doOpponentMoveTransitionOut();
+        doMoveBetsToMiddleAnimation(true);
+      } else if (game?.getState().isEndOfFirstRound()) {
+        doOpponentMoveTransitionOut();
+        const commCard = game.getState().getDeck().getCards()[
+          Math.floor(
+            Math.random() * game.getState().getDeck().getCards().length
+          )
+        ];
+        game.getState().move(commCard);
+        doMoveBetsToMiddleAnimation();
+        // Update player turn.
+        setIsPlayerTurn(true);
+      } else {
+        setActions(game?.getState().getActions() || ["Something went wrong."]);
+        setLoading(false);
+        setIsPlayerTurn(true);
+      }
+    });
   };
 
   const handleCheck = () => {
+    doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCheck(true);
     game?.getState().move("x");
@@ -476,6 +525,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleCall = () => {
+    doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCall(true);
     game?.getState().move("c");
@@ -488,6 +538,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleRaise = () => {
+    doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowRaise(true);
     game?.getState().move("r");
@@ -500,6 +551,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleFold = () => {
+    doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowFold(true);
     game?.getState().move("f");
@@ -691,10 +743,13 @@ const GameModal: React.FC = () => {
     }
   };
 
+  const renderOpponentMove = () => {
+    return <OpponentMove move={opponentMove} />;
+  };
+
   return (
     <View style={styles.modalContainer}>
       <View style={styles.pokerTable}>
-        <OpponentMove move="x" />
         <View style={styles.opponentLabel}>
           {isPlayer1 ? (
             <Ionicons name="people" size={scaleIconSize(24)} color="black" />
@@ -768,6 +823,20 @@ const GameModal: React.FC = () => {
             >
               <Card type={communityCard} />
             </Animated.View>
+          </Animated.View>
+        ) : null}
+        {/* Opponent Move */}
+        {showOpponentMove ? (
+          <Animated.View
+            style={[
+              styles.opponentMoveContainer,
+              {
+                opacity: opponentMoveOpacity,
+                transform: [{ scale: opponentMoveSize }],
+              },
+            ]}
+          >
+            {renderOpponentMove()}
           </Animated.View>
         ) : null}
 
