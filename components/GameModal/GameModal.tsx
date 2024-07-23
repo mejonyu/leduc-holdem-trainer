@@ -188,6 +188,7 @@ const GameModal: React.FC = () => {
     opponentCardOpacity.setValue(1);
     playerCardFlip.setValue(0);
     opponentCardFlip.setValue(0);
+    communityCardFlip.setValue(0);
     getDealCardsAnimationSequence().start(() => {
       // Push out antes and flip player card
       setPlayerBetChips(1);
@@ -344,7 +345,16 @@ const GameModal: React.FC = () => {
           duration: 400,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]).start(() => {
+        if (isPlayer1) {
+          setActions(
+            game?.getState().getActions() || ["Something went wrong."]
+          );
+          doActionButtonsFadeIn();
+        } else {
+          handleCPUMove();
+        }
+      });
       setLoading(false);
     });
   };
@@ -437,14 +447,6 @@ const GameModal: React.FC = () => {
       if (!gameOver) {
         doRevealMiddleChipsAnimation();
         doDealCommunityCardAnimation();
-        if (isPlayer1) {
-          setActions(
-            game?.getState().getActions() || ["Something went wrong."]
-          );
-          doActionButtonsFadeIn();
-        } else {
-          handleCPUMove();
-        }
       } else {
         doRevealMiddleChipsAnimation();
         revealOpponentCard();
