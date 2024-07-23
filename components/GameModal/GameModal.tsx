@@ -20,6 +20,7 @@ import OpponentMove from "./OpponentMove";
 import PotTotal from "./PotTotal";
 
 const GameModal: React.FC = () => {
+  const [isFirstGame, setIsFirstGame] = useState(true);
   const [loading, setLoading] = useState(false);
   const [isPlayer1, setIsPlayer1] = useState(true);
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
@@ -44,6 +45,7 @@ const GameModal: React.FC = () => {
   const [showOpponentMove, setShowOpponentMove] = useState(false);
   const [displayContinueButton, setDisplayContinueButton] = useState(false);
   const [potSize, setPotSize] = useState(0);
+  const [cardDealFinished, setCardDealFinished] = useState(false);
 
   // Callback functions for setting state in child components
   const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
@@ -79,14 +81,22 @@ const GameModal: React.FC = () => {
   const continueButtonOpacity = useRef(new Animated.Value(1)).current;
   const potTotalOpacity = useRef(new Animated.Value(0)).current;
 
+  // Runs whenever card game is finished and CPU needs to move first (i.e. the user is player 2).
+  useEffect(() => {
+    if (cardDealFinished && !isPlayer1) {
+      handleCPUMove();
+    }
+  }, [cardDealFinished]);
+
   const dealCards = () => {
+    // Fade out components from prior games
     doPotTotalFadeOut();
     doOpponentMoveTransitionOut();
+    setCardDealFinished(false);
     setLoading(true);
-    const oldGame = game;
-    const newGame = new LeducMCCFRGame();
+
     // Check if we need to animate deck back to center
-    if (oldGame?.getState().isPostFlop()) {
+    if (game?.getState().isPostFlop()) {
       Animated.parallel([
         Animated.timing(middleChipsOpacity, {
           toValue: 0,
@@ -114,12 +124,58 @@ const GameModal: React.FC = () => {
           useNativeDriver: true,
         }),
       ]).start(() => {
+        // Switch player if not first game
+        if (!isFirstGame) {
+          setIsPlayer1((prevPosition) => !prevPosition);
+        } else {
+          setIsFirstGame(false);
+        }
+        // Intialize new game
+        const newGame = new LeducMCCFRGame();
         setGame(newGame);
         doDealCardsAnimation(newGame);
       });
     } else {
+      // Switch player if not first game
+      if (!isFirstGame) {
+        setIsPlayer1((prevPosition) => !prevPosition);
+      } else {
+        setIsFirstGame(false);
+      }
+      const newGame = new LeducMCCFRGame();
       setGame(newGame);
       doDealCardsAnimation(newGame);
+    }
+  };
+
+  const getDealCardsAnimationSequence = () => {
+    // Have to invert because state doesn't update until later, so we just take the opposite of what the last game was.
+    if (isFirstGame || !isPlayer1) {
+      return Animated.sequence([
+        Animated.timing(playerCardPosition, {
+          toValue: scaleHeight(265),
+          duration: 450,
+          useNativeDriver: true,
+        }),
+        Animated.timing(opponentCardPosition, {
+          toValue: scaleHeight(-265),
+          duration: 450,
+          useNativeDriver: true,
+        }),
+      ]);
+    } else {
+      return Animated.sequence([
+        Animated.timing(opponentCardPosition, {
+          toValue: scaleHeight(-265),
+          duration: 450,
+          useNativeDriver: true,
+        }),
+        Animated.timing(playerCardPosition, {
+          toValue: scaleHeight(265),
+          duration: 450,
+          useNativeDriver: true,
+        }),
+      ]);
     }
   };
 
@@ -132,18 +188,7 @@ const GameModal: React.FC = () => {
     opponentCardOpacity.setValue(1);
     playerCardFlip.setValue(0);
     opponentCardFlip.setValue(0);
-    Animated.sequence([
-      Animated.timing(playerCardPosition, {
-        toValue: scaleHeight(265),
-        duration: 450,
-        useNativeDriver: true,
-      }),
-      Animated.timing(opponentCardPosition, {
-        toValue: scaleHeight(-265),
-        duration: 450,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
+    getDealCardsAnimationSequence().start(() => {
       // Push out antes and flip player card
       setPlayerBetChips(1);
       setOpponentBetChips(1);
@@ -184,11 +229,17 @@ const GameModal: React.FC = () => {
         // Initalize pot size
         setPotSize(2);
         doPotTotalFadeIn();
-        setActions(
-          newGame.getState().getActions() || ["Something went wrong."]
-        );
-        setLoading(false);
-        setIsPlayerTurn(true);
+        // Have to invert because state doesn't update until later, so we just take the opposite of what the last game was.
+        if (isFirstGame || !isPlayer1) {
+          setActions(
+            newGame.getState().getActions() || ["Something went wrong."]
+          );
+          setLoading(false);
+          setIsPlayerTurn(true);
+        } else {
+          setCardDealFinished(true);
+          // CPU moves --> handled in useEffect
+        }
       });
     });
   };
@@ -386,8 +437,14 @@ const GameModal: React.FC = () => {
       if (!gameOver) {
         doRevealMiddleChipsAnimation();
         doDealCommunityCardAnimation();
-        setActions(game?.getState().getActions() || ["Something went wrong."]);
-        doActionButtonsFadeIn();
+        if (isPlayer1) {
+          setActions(
+            game?.getState().getActions() || ["Something went wrong."]
+          );
+          doActionButtonsFadeIn();
+        } else {
+          handleCPUMove();
+        }
       } else {
         doRevealMiddleChipsAnimation();
         revealOpponentCard();

@@ -35,7 +35,11 @@ const MoveRanking: React.FC<MoveRankingProps> = ({
         const [a, b] = hand.split(",");
         hand = a.localeCompare(b) <= 0 ? `${a},${b}` : `${b},${a}`;
       }
-      currentHistory = game?.getState().getHistory().slice(0, -1) || "";
+      if (game?.getState().isEndOfFirstRound()) {
+        currentHistory = game?.getState().getHistory().slice(0, -2) || "";
+      } else {
+        currentHistory = game?.getState().getHistory().slice(0, -1) || "";
+      }
       strategy = player2Strategy[hand][currentHistory];
     } else {
       hand = game?.getState().getP1Card().getRank() || "";
@@ -60,6 +64,9 @@ const MoveRanking: React.FC<MoveRankingProps> = ({
     const movePlayed = game?.getState().getLastMove() || "";
     const strategy = computeStrategy();
     setComputedStrategy(strategy);
+    // console.log("isPlyaer1", isPlayer1);
+    // console.log("strategy", strategy);
+    // console.log("movePlayed", movePlayed);
     const moveStrategyWeight = strategy[movePlayed];
     if (moveStrategyWeight >= 0.5) {
       setRankingColor("#6495ED");
