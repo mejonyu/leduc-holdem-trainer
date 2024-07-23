@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable, Image } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
@@ -24,7 +24,7 @@ export default function TabLayout() {
       screenOptions={{
         // tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
         tabBarActiveTintColor: "black",
-        // tabBarInactiveTintColor: "black",
+        tabBarInactiveTintColor: "black",
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
         // headerShown: useClientOnlyValue(false, true),
@@ -35,13 +35,18 @@ export default function TabLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size, focused }) => (
-            <MaterialCommunityIcons
-              name={focused ? "home-variant" : "home-variant-outline"}
-              size={30}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <Image
+                source={
+                  focused
+                    ? require("../../../assets/images/home-selected.png")
+                    : require("../../../assets/images/home-unselected.png")
+                }
+                style={{ width: size, height: size, tintColor: color }}
+              />
+            );
+          },
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>
@@ -62,13 +67,18 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, size, focused }) => (
-            <Ionicons
-              name={focused ? "person-circle" : "person-circle-outline"}
-              size={30}
-              color={color}
-            />
-          ),
+          tabBarIcon: ({ color, size, focused }) => {
+            return (
+              <Image
+                source={
+                  focused
+                    ? require("../../../assets/images/profile-selected.png")
+                    : require("../../../assets/images/profile-unselected.png")
+                }
+                style={{ width: size, height: size, tintColor: color }}
+              />
+            );
+          },
           headerRight: () => (
             <Link href="/modal" asChild>
               <Pressable>

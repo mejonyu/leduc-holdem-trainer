@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     color: "black",
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: scaleHeight(16),
+    fontSize: scaleHeight(14),
   },
   potTotalSubText: {
     color: "black",
