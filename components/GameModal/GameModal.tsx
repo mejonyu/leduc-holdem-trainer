@@ -17,6 +17,7 @@ import {
 import MoveRanking from "./MoveRanking";
 import ChipStack from "../GameModal/ChipStack";
 import OpponentMove from "./OpponentMove";
+import PotTotal from "./PotTotal";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -42,6 +43,7 @@ const GameModal: React.FC = () => {
   const [opponentMove, setOpponentMove] = useState("");
   const [showOpponentMove, setShowOpponentMove] = useState(false);
   const [displayContinueButton, setDisplayContinueButton] = useState(false);
+  const [potSize, setPotSize] = useState(0);
 
   // Callback functions for setting state in child components
   const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
@@ -75,8 +77,10 @@ const GameModal: React.FC = () => {
   const opponentMoveOpacity = useRef(new Animated.Value(1)).current;
   const actionButtonsOpacity = useRef(new Animated.Value(1)).current;
   const continueButtonOpacity = useRef(new Animated.Value(1)).current;
+  const potTotalOpacity = useRef(new Animated.Value(0)).current;
 
   const dealCards = () => {
+    doPotTotalFadeOut();
     doOpponentMoveTransitionOut();
     setLoading(true);
     const oldGame = game;
@@ -177,6 +181,9 @@ const GameModal: React.FC = () => {
         }),
       ]).start(() => {
         // Animation complete
+        // Initalize pot size
+        setPotSize(2);
+        doPotTotalFadeIn();
         setActions(
           newGame.getState().getActions() || ["Something went wrong."]
         );
@@ -457,6 +464,24 @@ const GameModal: React.FC = () => {
     }).start();
   };
 
+  const doPotTotalFadeOut = () => {
+    Animated.timing(potTotalOpacity, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => {
+      setDisplayContinueButton(false);
+    });
+  };
+
+  const doPotTotalFadeIn = () => {
+    Animated.timing(potTotalOpacity, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
   const flipFrontInterpolate = (flipAnimation: Animated.Value) => {
     return flipAnimation.interpolate({
       inputRange: [0, 180],
@@ -507,6 +532,7 @@ const GameModal: React.FC = () => {
       })?.[0] || Object.keys(CPUStrategy)[0];
 
     game?.getState().move(action);
+    setPotSize(game?.getState().getMoneyInPot() || 0);
 
     displayCPUMove(action);
   };
@@ -582,6 +608,7 @@ const GameModal: React.FC = () => {
     setLoading(true);
     setGlowCall(true);
     game?.getState().move("c");
+    setPotSize(game?.getState().getMoneyInPot() || 0);
 
     doPutInPot(true);
 
@@ -597,6 +624,7 @@ const GameModal: React.FC = () => {
     setLoading(true);
     setGlowRaise(true);
     game?.getState().move("r");
+    setPotSize(game?.getState().getMoneyInPot() || 0);
 
     doPutInPot(true);
 
@@ -1028,6 +1056,14 @@ const GameModal: React.FC = () => {
             {renderOpponentBetChips()}
             {/* Chips put in pot on previous streets */}
             {renderMiddleChips()}
+            {/* Pot Total */}
+            {potSize ? (
+              <Animated.View
+                style={[styles.potTotalContainer, { opacity: potTotalOpacity }]}
+              >
+                <PotTotal total={potSize} />
+              </Animated.View>
+            ) : null}
           </>
         ) : null}
       </View>

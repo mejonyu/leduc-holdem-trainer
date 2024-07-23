@@ -229,7 +229,26 @@ const styles = StyleSheet.create({
   opponentMoveText: {
     color: "black",
     fontWeight: "bold",
-    // fontSize: scaleHeight(20),
+  },
+  potTotalContainer: {
+    position: "absolute",
+    top: scaleHeight(205),
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+  },
+  potTotalText: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: scaleHeight(16),
+  },
+  potTotalSubText: {
+    color: "black",
+    // fontWeight: "bold",
+    fontSize: scaleHeight(12),
   },
 });
 
