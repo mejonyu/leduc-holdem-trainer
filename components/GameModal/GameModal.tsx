@@ -20,7 +20,6 @@ import OpponentMove from "./OpponentMove";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
-  const [continueButtonIsLoading, setContinueButtonIsLoading] = useState(false);
   const [isPlayer1, setIsPlayer1] = useState(true);
   const [game, setGame] = useState<LeducMCCFRGame | null>(null);
   const [actions, setActions] = useState(["Deal Cards"]);
@@ -42,6 +41,7 @@ const GameModal: React.FC = () => {
   const [rankingColor, setRankingColor] = useState("");
   const [opponentMove, setOpponentMove] = useState("");
   const [showOpponentMove, setShowOpponentMove] = useState(false);
+  const [displayContinueButton, setDisplayContinueButton] = useState(false);
 
   // Callback functions for setting state in child components
   const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
@@ -73,6 +73,8 @@ const GameModal: React.FC = () => {
   const middleChipsPosition = useRef(new Animated.Value(0)).current;
   const opponentMoveSize = useRef(new Animated.Value(1)).current;
   const opponentMoveOpacity = useRef(new Animated.Value(1)).current;
+  const actionButtonsOpacity = useRef(new Animated.Value(1)).current;
+  const continueButtonOpacity = useRef(new Animated.Value(1)).current;
 
   const dealCards = () => {
     doOpponentMoveTransitionOut();
@@ -378,10 +380,12 @@ const GameModal: React.FC = () => {
         doRevealMiddleChipsAnimation();
         doDealCommunityCardAnimation();
         setActions(game?.getState().getActions() || ["Something went wrong."]);
+        doActionButtonsFadeIn();
       } else {
         doRevealMiddleChipsAnimation();
         revealOpponentCard();
         setActions(["Deal Cards"]);
+        doActionButtonsFadeIn();
       }
       // Reset bet stacks to 0
       setPlayerBetChips(0);
@@ -412,6 +416,45 @@ const GameModal: React.FC = () => {
     }).start(() => {
       setShowOpponentMove(false);
     });
+  };
+
+  const doActionButtonsFadeOut = () => {
+    Animated.timing(actionButtonsOpacity, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => {
+      setCheckSubText("");
+      setRaiseSubText("");
+      setCallSubText("");
+      setFoldSubText("");
+    });
+  };
+
+  const doActionButtonsFadeIn = () => {
+    Animated.timing(actionButtonsOpacity, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const doContinueButtonFadeOut = () => {
+    Animated.timing(continueButtonOpacity, {
+      toValue: 0,
+      duration: 100,
+      useNativeDriver: true,
+    }).start(() => {
+      setDisplayContinueButton(false);
+    });
+  };
+
+  const doContinueButtonFadeIn = () => {
+    Animated.timing(continueButtonOpacity, {
+      toValue: 1,
+      duration: 100,
+      useNativeDriver: true,
+    }).start();
   };
 
   const flipFrontInterpolate = (flipAnimation: Animated.Value) => {
@@ -514,6 +557,7 @@ const GameModal: React.FC = () => {
         // Update player turn.
         setIsPlayerTurn(true);
       } else {
+        doActionButtonsFadeIn();
         setActions(game?.getState().getActions() || ["Something went wrong."]);
         setLoading(false);
         setIsPlayerTurn(true);
@@ -528,6 +572,8 @@ const GameModal: React.FC = () => {
     game?.getState().move("x");
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
+    setDisplayContinueButton(true);
+    doContinueButtonFadeIn();
     doDisplayMoveRankingAnimation();
   };
 
@@ -541,6 +587,8 @@ const GameModal: React.FC = () => {
 
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
+    setDisplayContinueButton(true);
+    doContinueButtonFadeIn();
     doDisplayMoveRankingAnimation();
   };
 
@@ -554,6 +602,8 @@ const GameModal: React.FC = () => {
 
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
+    setDisplayContinueButton(true);
+    doContinueButtonFadeIn();
     doDisplayMoveRankingAnimation();
   };
 
@@ -564,6 +614,8 @@ const GameModal: React.FC = () => {
     game?.getState().move("f");
     setIsPlayerTurn(false);
     setDisplayMoveRanking(true);
+    setDisplayContinueButton(true);
+    doContinueButtonFadeIn();
     doDisplayMoveRankingAnimation();
   };
 
@@ -651,21 +703,14 @@ const GameModal: React.FC = () => {
   }, [computedStrategy]);
 
   const handleContinue = () => {
-    // setActions(["Loading"]);
+    doContinueButtonFadeOut();
     setLoading(true);
-    setContinueButtonIsLoading(true);
-    setCheckSubText("");
-    setRaiseSubText("");
-    setCallSubText("");
-    setFoldSubText("");
     setGlowCheck(false);
     setGlowRaise(false);
     setGlowCall(false);
     setGlowFold(false);
     doRemoveMoveRankingAnimation();
-    setTimeout(() => {
-      setContinueButtonIsLoading(false);
-    }, 1000);
+    doActionButtonsFadeOut();
   };
 
   const renderPlayerBetChips = () => {
@@ -986,15 +1031,18 @@ const GameModal: React.FC = () => {
           </>
         ) : null}
       </View>
-      <View style={styles.flexRow}>
-        {actions.map((action) => getActionButton(action))}
-      </View>
-      {displayMoveRanking ? (
-        <View style={styles.continueContainer}>
+      <Animated.View style={{ opacity: actionButtonsOpacity }}>
+        <View style={styles.flexRow}>
+          {actions.map((action) => getActionButton(action))}
+        </View>
+      </Animated.View>
+      {displayContinueButton ? (
+        <Animated.View
+          style={[styles.continueContainer, { opacity: continueButtonOpacity }]}
+        >
           <Pressable
             onPress={handleContinue}
             style={[styles.continueButton, { backgroundColor: rankingColor }]}
-            disabled={continueButtonIsLoading}
           >
             <Text style={styles.continueButtonText}>Continue</Text>
             <View style={styles.continueButtonIcon}>
@@ -1005,7 +1053,7 @@ const GameModal: React.FC = () => {
               />
             </View>
           </Pressable>
-        </View>
+        </Animated.View>
       ) : null}
     </View>
   );
