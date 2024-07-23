@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { View, Animated, Easing, Alert, Pressable, Text } from "react-native";
 import styles, {
   scaleHeight,
@@ -17,7 +17,6 @@ import {
 import MoveRanking from "./MoveRanking";
 import ChipStack from "../GameModal/ChipStack";
 import OpponentMove from "./OpponentMove";
-import { transform } from "@babel/core";
 
 const GameModal: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -43,6 +42,14 @@ const GameModal: React.FC = () => {
   const [rankingColor, setRankingColor] = useState("");
   const [opponentMove, setOpponentMove] = useState("");
   const [showOpponentMove, setShowOpponentMove] = useState(false);
+
+  // Callback functions for setting state in child components
+  const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
+    setComputedStrategy(newStrategy);
+  }, []);
+  const handleRankingColorChange = useCallback((newColor: string) => {
+    setRankingColor(newColor);
+  }, []);
 
   // Animated values
   const playerCardPosition = useRef(new Animated.Value(0)).current;
@@ -867,8 +874,8 @@ const GameModal: React.FC = () => {
             <MoveRanking
               game={game}
               isPlayer1={isPlayer1}
-              setComputedStrategy={setComputedStrategy}
-              setRankingColor={setRankingColor}
+              setComputedStrategy={handleComputedStrategyChange}
+              setRankingColor={handleRankingColorChange}
             />
           </Animated.View>
         ) : null}

@@ -149,12 +149,13 @@ const styles = StyleSheet.create({
   },
   moveRankingContainer: {
     position: "absolute",
-    borderRadius: 6,
-    borderWidth: 2,
+    borderRadius: scaleHeight(6),
+    borderWidth: scaleHeight(2),
     top: scaleHeight(-215),
     alignItems: "center",
+    justifyContent: "center",
     width: scaleWidth(100),
-    paddingVertical: scaleHeight(9),
+    height: scaleHeight(80),
   },
   moveRankingText: {
     fontWeight: "bold",
@@ -217,13 +218,18 @@ const styles = StyleSheet.create({
   opponentMoveContainer: {
     position: "absolute",
     alignItems: "center",
+    justifyContent: "center",
     top: scaleHeight(110),
-    zIndex: 5,
+    borderRadius: scaleHeight(6),
+    borderWidth: scaleHeight(2),
+    width: scaleWidth(100),
+    height: scaleHeight(80),
+    backgroundColor: "white",
   },
   opponentMoveText: {
     color: "black",
     fontWeight: "bold",
-    fontSize: scaleHeight(20),
+    // fontSize: scaleHeight(20),
   },
 });
 

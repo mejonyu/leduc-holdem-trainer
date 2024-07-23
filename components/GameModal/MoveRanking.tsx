@@ -4,6 +4,7 @@ import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
 import styles, { scaleHeight, scaleIconSize } from "./GameModal.styles";
 import {
+  Strategy,
   player1Strategy,
   player2Strategy,
 } from "@/lib/game/LeducMCCFRStrategy";
@@ -11,8 +12,8 @@ import {
 interface MoveRankingProps {
   game: LeducMCCFRGame | null;
   isPlayer1: boolean;
-  setComputedStrategy: React.Dispatch<SetStateAction<{}>>;
-  setRankingColor: React.Dispatch<SetStateAction<string>>;
+  setComputedStrategy: (newStrategy: Strategy) => void;
+  setRankingColor: (newColor: string) => void;
 }
 
 const MoveRanking: React.FC<MoveRankingProps> = ({
