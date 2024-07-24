@@ -1,27 +1,51 @@
+import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    marginVertical: scaleHeight(15),
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
   dayContainer: {
-    // Add day container styles
+    position: "relative",
+    alignItems: "center",
+    width: scaleWidth(40),
   },
-  dayName: {
-    // Add day name styles
+  hasEntryDayName: {
+    marginTop: scaleHeight(9),
+    fontWeight: "bold",
+    color: "#fba01c",
   },
-  dayNumber: {
-    // Add day number styles
+  missingEntryDayName: {
+    marginTop: scaleHeight(9),
+    fontWeight: "bold",
+    color: "#45a4b9",
+  },
+  emptyDayName: {
+    marginTop: scaleHeight(9),
+    color: "#cbcbcb",
+    // fontWeight: "bold",
+  },
+  hasEntryDayNumber: {
+    fontWeight: "bold",
+    color: "#F27D0C",
+  },
+  missingEntryDayNumber: {
+    fontWeight: "bold",
+    color: "#10667e",
+  },
+  emptyDayNumber: {
+    // fontWeight: "bold",
+    color: "#a6a6a6",
   },
   icon: {
     // Add icon styles
   },
   connectingLine: {
-    // Add connecting line styles
-    height: 2,
-    backgroundColor: "gray",
     position: "absolute",
-    right: 0,
-    left: "50%",
-    top: "50%",
+    left: scaleWidth(-18),
+    top: scaleHeight(-1),
   },
 });
 

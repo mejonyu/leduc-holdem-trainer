@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  ListRenderItemInfo,
-} from "react-native";
+import { View, Text } from "react-native";
 import { supabase } from "@/lib/supabase"; // Adjust import path as needed
 import { PostgrestResponse } from "@supabase/supabase-js";
 import styles from "./WeekDisplay.styles";
+import { Entypo, Feather, Octicons } from "@expo/vector-icons";
+import { scaleHeight } from "@/utils/dimensionScaling";
 
 interface UserEntry {
   created_at: string; // PostgreSQL timestamptz is represented as a string in JSON
@@ -17,7 +13,7 @@ interface UserEntry {
 interface DayItemProps {
   date: Date;
   hasEntry: boolean;
-  isLast: boolean;
+  previousDayHasEntry: boolean;
 }
 
 const WeekDisplay: React.FC = () => {
@@ -75,28 +71,34 @@ const WeekDisplay: React.FC = () => {
     setUserEntries(entriesMap);
   };
 
-  const renderDay = ({ item, index }: ListRenderItemInfo<Date>) => (
-    <DayItem
-      date={item}
-      hasEntry={userEntries[item.toISOString().split("T")[0]] || false}
-      isLast={index === weekDates.length - 1}
-    />
-  );
-
   return (
     <View style={styles.container}>
-      <FlatList
-        data={weekDates}
-        renderItem={renderDay}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.toISOString()}
-      />
+      {weekDates.map((date, index) => {
+        const dateKey = date.toISOString().split("T")[0];
+        const hasEntry = userEntries[dateKey] || false;
+        const previousDate = new Date(date);
+        previousDate.setDate(date.getDate() - 1);
+        const previousDateKey = previousDate.toISOString().split("T")[0];
+        const previousDayHasEntry = userEntries[previousDateKey] || false;
+
+        return (
+          <DayItem
+            key={dateKey}
+            date={date}
+            hasEntry={hasEntry}
+            previousDayHasEntry={previousDayHasEntry}
+          />
+        );
+      })}
     </View>
   );
 };
 
-const DayItem: React.FC<DayItemProps> = ({ date, hasEntry, isLast }) => {
+const DayItem: React.FC<DayItemProps> = ({
+  date,
+  hasEntry,
+  previousDayHasEntry,
+}) => {
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNumber = date.getDate();
   const today = new Date();
@@ -104,17 +106,53 @@ const DayItem: React.FC<DayItemProps> = ({ date, hasEntry, isLast }) => {
   const isPast = date < today;
   const isToday = date.toDateString() === today.toDateString();
 
-  let icon = "•"; // Default dot
+  let icon = (
+    <Entypo name="dot-single" size={scaleHeight(20)} color="#cbcbcb" />
+  ); // Default dot
   if (isPast || isToday) {
-    icon = hasEntry ? "✓" : "★";
+    icon = hasEntry ? (
+      <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
+    ) : (
+      <Feather name="x" size={scaleHeight(20)} color="#45a4b9" />
+    );
   }
 
   return (
     <View style={styles.dayContainer}>
-      <Text style={styles.dayName}>{dayName}</Text>
-      <Text style={styles.dayNumber}>{dayNumber}</Text>
       <Text style={styles.icon}>{icon}</Text>
-      {!isLast && (isPast || isToday) && <View style={styles.connectingLine} />}
+      <Text
+        style={
+          hasEntry
+            ? styles.hasEntryDayName
+            : isPast
+            ? styles.missingEntryDayName
+            : styles.emptyDayName
+        }
+      >
+        {dayName}
+      </Text>
+      <Text
+        style={
+          hasEntry
+            ? styles.hasEntryDayNumber
+            : isPast
+            ? styles.missingEntryDayNumber
+            : styles.emptyDayNumber
+        }
+      >
+        {dayNumber}
+      </Text>
+      {!(dayName === "Sun") && (isPast || isToday) && (
+        <Octicons
+          name="dash"
+          size={scaleHeight(24)}
+          color="black"
+          style={[
+            styles.connectingLine,
+            previousDayHasEntry ? { color: "F27D0C" } : { color: "#10667e" },
+          ]}
+        />
+      )}
     </View>
   );
 };
