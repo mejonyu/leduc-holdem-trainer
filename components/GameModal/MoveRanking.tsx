@@ -2,12 +2,13 @@ import { View, Text } from "react-native";
 import React, { SetStateAction } from "react";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import { AntDesign, Entypo, Ionicons } from "@expo/vector-icons";
-import styles, { scaleHeight, scaleIconSize } from "./GameModal.styles";
+import { scaleHeight, scaleIconSize } from "@/utils/dimensionScaling";
 import {
   Strategy,
   player1Strategy,
   player2Strategy,
 } from "@/lib/game/LeducMCCFRStrategy";
+import styles from "./GameModal.styles";
 
 interface MoveRankingProps {
   moveStrategyWeight: number | null;

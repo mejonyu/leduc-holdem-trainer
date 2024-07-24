@@ -1,7 +1,8 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Feather, FontAwesome6, Ionicons } from "@expo/vector-icons";
-import styles, { scaleHeight, scaleIconSize } from "./GameModal.styles";
+import { scaleHeight, scaleIconSize } from "@/utils/dimensionScaling";
+import styles from "./GameModal.styles";
 
 interface OpponentMoveProps {
   move: string;

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, Image } from "react-native";
 import { FontAwesome5, FontAwesome6 } from "@expo/vector-icons";
-import styles, { scaleIconSize } from "./GameModal.styles";
+import { scaleIconSize } from "@/utils/dimensionScaling";
+import styles from "./GameModal.styles";
 
 interface CardProps {
   type: string;

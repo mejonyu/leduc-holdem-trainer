@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
-import styles, { scaleHeight } from "./GameModal.styles";
+import { scaleHeight } from "@/utils/dimensionScaling";
+import styles from "./GameModal.styles";
 
 interface ChipStackProps {
   count: number;

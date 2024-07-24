@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./HomePageHeader.styles";
+import { scaleHeight } from "@/utils/dimensionScaling";
 
 const HomePageHeader = () => {
   return (
@@ -9,7 +10,7 @@ const HomePageHeader = () => {
       <View style={styles.userInfoContainer}>
         <MaterialCommunityIcons
           name="cards-playing-spade-multiple"
-          size={24}
+          size={scaleHeight(24)}
           color="black"
         />
         <View style={styles.userInfoText}>
@@ -18,9 +19,9 @@ const HomePageHeader = () => {
         </View>
       </View>
       <View style={styles.headerIcons}>
-        <Ionicons name="flame" size={24} color="orange" />
+        <Ionicons name="flame" size={scaleHeight(24)} color="orange" />
         <Text style={styles.flameCount}>3</Text>
-        <Ionicons name="notifications" size={24} color="black" />
+        <Ionicons name="notifications" size={scaleHeight(24)} color="black" />
       </View>
     </View>
   );

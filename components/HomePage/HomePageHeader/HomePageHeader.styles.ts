@@ -1,3 +1,4 @@
+import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -5,26 +6,25 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    padding: 15,
   },
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   userInfoText: {
-    marginLeft: 5,
+    marginLeft: scaleWidth(6),
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
+    width: scaleWidth(40),
+    height: scaleHeight(40),
+    borderRadius: scaleHeight(20),
+    marginRight: scaleWidth(10),
   },
   username: {
     fontWeight: "bold",
   },
   readCount: {
-    fontSize: 12,
+    fontSize: scaleHeight(12),
     color: "gray",
   },
   headerIcons: {
@@ -32,6 +32,6 @@ export const styles = StyleSheet.create({
     alignItems: "center",
   },
   flameCount: {
-    marginRight: 10,
+    marginRight: scaleWidth(10),
   },
 });

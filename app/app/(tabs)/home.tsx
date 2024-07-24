@@ -10,8 +10,9 @@ import React, { useCallback, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
 import { Image } from "react-native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import HomePageHeader from "@/components/HomePage/HomePageHeader";
+import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
+import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
 
 const Home = () => {
   const [moveCount, setMoveCount] = useState(0);
@@ -56,13 +57,15 @@ const Home = () => {
   }, [fetchAllMovesCount]);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.homePage}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
+        style={styles.container}
       >
         <HomePageHeader />
+        <WeekDisplay />
         <Text>Number of moves played: {moveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>
@@ -71,9 +74,12 @@ const Home = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  homePage: {
     flex: 1,
     backgroundColor: "white",
+  },
+  container: {
+    paddingHorizontal: 20,
   },
 });
 

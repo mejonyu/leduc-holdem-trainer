@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { View, Animated, Easing, Alert, Pressable, Text } from "react-native";
-import styles, {
+import { View, Animated, Pressable, Text } from "react-native";
+import {
   scaleHeight,
   scaleIconSize,
   scaleWidth,
-} from "./GameModal.styles";
+} from "@/utils/dimensionScaling";
+import styles from "./GameModal.styles";
 import Card from "./Card";
 import LeducMCCFRGame from "@/lib/game/LeducMCCFRGame";
 import CustomButton from "../CustomButton/CustomButton";
