@@ -16,6 +16,7 @@ export interface AuthContextType {
   ) => Promise<void>;
   fetchAllMovesCount: () => Promise<number | null>;
   fetchEmail: () => string | undefined;
+  fetchTodayMovesCount: () => Promise<number | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -70,13 +71,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     isPlayer1: boolean,
     isPreflop: boolean
   ) => {
-    const { data, error } = await supabase.from("leduc_moves").insert({
+    const { error } = await supabase.from("leduc_moves").insert({
       user_id: session?.user.id,
       move_rank: moveRank,
       is_player_1: isPlayer1,
       is_preflop: isPreflop,
     });
     if (error) throw error;
+  };
+
+  const fetchEmail = () => {
+    return session?.user.email;
   };
 
   const fetchAllMovesCount = async () => {
@@ -90,8 +95,26 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count;
   };
 
-  const fetchEmail = () => {
-    return session?.user.email;
+  const fetchTodayMovesCount = async () => {
+    // Get today's date at the start of the day (midnight) in ISO format
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const todayISOString = today.toISOString();
+
+    // Get tomorrow's date (to use as the upper bound)
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const tomorrowISOString = tomorrow.toISOString();
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", todayISOString)
+      .lt("created_at", tomorrowISOString);
+
+    if (error) throw error;
+
+    return count ?? 0;
   };
 
   return (
@@ -105,6 +128,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         insertMove,
         fetchAllMovesCount,
         fetchEmail,
+        fetchTodayMovesCount,
       }}
     >
       {children}
