@@ -18,6 +18,7 @@ import MoveRanking from "./MoveRanking";
 import ChipStack from "../GameModal/ChipStack";
 import OpponentMove from "./OpponentMove";
 import PotTotal from "./PotTotal";
+import { useAuth } from "@/hooks/useAuth";
 
 const GameModal: React.FC = () => {
   const [isFirstGame, setIsFirstGame] = useState(true);
@@ -49,6 +50,7 @@ const GameModal: React.FC = () => {
   const [currentMoveStrategyWeight, setCurrentMoveStrategyWeight] = useState<
     number | null
   >(null);
+  const { insertMove } = useAuth();
 
   // Callback functions for setting state in child components
   const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
@@ -357,8 +359,8 @@ const GameModal: React.FC = () => {
         } else {
           handleCPUMove();
         }
+        setLoading(false);
       });
-      setLoading(false);
     });
   };
 
@@ -693,13 +695,36 @@ const GameModal: React.FC = () => {
     return strategy[movePlayed];
   };
 
+  const recordMove = async (weight: number) => {
+    let moveRank;
+    if (weight >= 0.5) {
+      moveRank = "optimal";
+    } else if (weight >= 0.25) {
+      moveRank = "good";
+    } else if (weight >= 0.05) {
+      moveRank = "okay";
+    } else {
+      moveRank = "blunder";
+    }
+    try {
+      await insertMove(moveRank, isPlayer1, !game?.getState().isPostFlop());
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleCheck = () => {
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCheck(true);
     game?.getState().move("x");
     setIsPlayerTurn(false);
-    setCurrentMoveStrategyWeight(computeStrategyWeight());
+
+    // Compute strategy weight and record move in database
+    const weight = computeStrategyWeight();
+    recordMove(weight);
+
+    setCurrentMoveStrategyWeight(weight);
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -712,11 +737,14 @@ const GameModal: React.FC = () => {
     setGlowCall(true);
     game?.getState().move("c");
     setPotSize(game?.getState().getMoneyInPot() || 0);
-
     doPutInPot(true);
-
     setIsPlayerTurn(false);
-    setCurrentMoveStrategyWeight(computeStrategyWeight());
+
+    // Compute strategy weight and record move in database
+    const weight = computeStrategyWeight();
+    recordMove(weight);
+
+    setCurrentMoveStrategyWeight(weight);
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -729,11 +757,14 @@ const GameModal: React.FC = () => {
     setGlowRaise(true);
     game?.getState().move("r");
     setPotSize(game?.getState().getMoneyInPot() || 0);
-
     doPutInPot(true);
-
     setIsPlayerTurn(false);
-    setCurrentMoveStrategyWeight(computeStrategyWeight());
+
+    // Compute strategy weight and record move in database
+    const weight = computeStrategyWeight();
+    recordMove(weight);
+
+    setCurrentMoveStrategyWeight(weight);
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -746,7 +777,12 @@ const GameModal: React.FC = () => {
     setGlowFold(true);
     game?.getState().move("f");
     setIsPlayerTurn(false);
-    setCurrentMoveStrategyWeight(computeStrategyWeight());
+
+    // Compute strategy weight and record move in database
+    const weight = computeStrategyWeight();
+    recordMove(weight);
+
+    setCurrentMoveStrategyWeight(weight);
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();

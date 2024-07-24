@@ -16,6 +16,12 @@ export interface AuthContextType {
   logIn: (email: string, password: string) => Promise<Session | null>;
   signOut: () => Promise<void>;
   loading: boolean;
+  insertMove: (
+    moveRank: string,
+    isPlayer1: boolean,
+    isPreflop: boolean
+  ) => Promise<void>;
+  fetchAllMovesCount: () => Promise<number | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -65,8 +71,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setSession(null);
   };
 
+  const insertMove = async (
+    moveRank: string,
+    isPlayer1: boolean,
+    isPreflop: boolean
+  ) => {
+    const { data, error } = await supabase.from("leduc_moves").insert({
+      user_id: session?.user.id,
+      move_rank: moveRank,
+      is_player_1: isPlayer1,
+      is_preflop: isPreflop,
+    });
+    if (error) throw error;
+  };
+
+  const fetchAllMovesCount = async () => {
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", session?.user.id);
+    if (error) {
+      console.error(error);
+    }
+    return count;
+  };
+
   return (
-    <AuthContext.Provider value={{ session, signUp, logIn, signOut, loading }}>
+    <AuthContext.Provider
+      value={{
+        session,
+        signUp,
+        logIn,
+        signOut,
+        loading,
+        insertMove,
+        fetchAllMovesCount,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

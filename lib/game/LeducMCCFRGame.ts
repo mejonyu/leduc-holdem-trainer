@@ -68,7 +68,7 @@ export class State {
 
   isPostFlop(): boolean {
     const currentRoundHistory = this._history.split("|");
-    if (currentRoundHistory.length === 2) {
+    if (currentRoundHistory.length === 2 && currentRoundHistory[1]) {
       return true;
     } else {
       return false;
