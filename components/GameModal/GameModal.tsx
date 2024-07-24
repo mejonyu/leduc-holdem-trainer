@@ -46,6 +46,9 @@ const GameModal: React.FC = () => {
   const [displayContinueButton, setDisplayContinueButton] = useState(false);
   const [potSize, setPotSize] = useState(0);
   const [cardDealFinished, setCardDealFinished] = useState(false);
+  const [currentMoveStrategyWeight, setCurrentMoveStrategyWeight] = useState<
+    number | null
+  >(null);
 
   // Callback functions for setting state in child components
   const handleComputedStrategyChange = useCallback((newStrategy: Strategy) => {
@@ -650,12 +653,53 @@ const GameModal: React.FC = () => {
     });
   };
 
+  const computeStrategyWeight = () => {
+    let strategy;
+    let hand;
+    let currentHistory;
+    if (!isPlayer1) {
+      hand = game?.getState().getP2Card().getRank() || "";
+      if (game?.getState().getCommCard()) {
+        const commCard = game?.getState().getCommCard();
+        hand += `,${commCard}`;
+        // Sort them so that lookup keys are uniform.
+        const [a, b] = hand.split(",");
+        hand = a.localeCompare(b) <= 0 ? `${a},${b}` : `${b},${a}`;
+      }
+      if (game?.getState().isEndOfFirstRound()) {
+        currentHistory = game?.getState().getHistory().slice(0, -2) || "";
+      } else {
+        currentHistory = game?.getState().getHistory().slice(0, -1) || "";
+      }
+      strategy = player2Strategy[hand][currentHistory];
+    } else {
+      hand = game?.getState().getP1Card().getRank() || "";
+      if (game?.getState().getCommCard()) {
+        const commCard = game?.getState().getCommCard();
+        hand += `,${commCard}`;
+        // Sort them so that lookup keys are uniform.
+        const [a, b] = hand.split(",");
+        hand = a.localeCompare(b) <= 0 ? `${a},${b}` : `${b},${a}`;
+      }
+      if (game?.getState().isEndOfFirstRound()) {
+        currentHistory = game?.getState().getHistory().slice(0, -2) || "";
+      } else {
+        currentHistory = game?.getState().getHistory().slice(0, -1) || "";
+      }
+      strategy = player1Strategy[hand][currentHistory];
+    }
+    const movePlayed = game?.getState().getLastMove() || "";
+    setComputedStrategy(strategy);
+    return strategy[movePlayed];
+  };
+
   const handleCheck = () => {
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCheck(true);
     game?.getState().move("x");
     setIsPlayerTurn(false);
+    setCurrentMoveStrategyWeight(computeStrategyWeight());
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -672,6 +716,7 @@ const GameModal: React.FC = () => {
     doPutInPot(true);
 
     setIsPlayerTurn(false);
+    setCurrentMoveStrategyWeight(computeStrategyWeight());
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -688,6 +733,7 @@ const GameModal: React.FC = () => {
     doPutInPot(true);
 
     setIsPlayerTurn(false);
+    setCurrentMoveStrategyWeight(computeStrategyWeight());
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -700,6 +746,7 @@ const GameModal: React.FC = () => {
     setGlowFold(true);
     game?.getState().move("f");
     setIsPlayerTurn(false);
+    setCurrentMoveStrategyWeight(computeStrategyWeight());
     setDisplayMoveRanking(true);
     setDisplayContinueButton(true);
     doContinueButtonFadeIn();
@@ -1004,9 +1051,7 @@ const GameModal: React.FC = () => {
             ]}
           >
             <MoveRanking
-              game={game}
-              isPlayer1={isPlayer1}
-              setComputedStrategy={handleComputedStrategyChange}
+              moveStrategyWeight={currentMoveStrategyWeight}
               setRankingColor={handleRankingColorChange}
             />
           </Animated.View>
