@@ -14,9 +14,9 @@ export interface AuthContextType {
     isPlayer1: boolean,
     isPreflop: boolean
   ) => Promise<void>;
-  fetchAllMovesCount: () => Promise<number | null>;
+  fetchAllMoveCount: () => Promise<number | null>;
   fetchEmail: () => string | undefined;
-  fetchTodayMovesCount: () => Promise<number | null>;
+  fetchTodayMoveCount: () => Promise<number | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -84,7 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return session?.user.email;
   };
 
-  const fetchAllMovesCount = async () => {
+  const fetchAllMoveCount = async () => {
     const { count, error } = await supabase
       .from("leduc_moves")
       .select("*", { count: "exact", head: true })
@@ -95,7 +95,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count;
   };
 
-  const fetchTodayMovesCount = async () => {
+  const fetchTodayMoveCount = async () => {
     // Get today's date at the start of the day (midnight) in ISO format
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -126,9 +126,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         signOut,
         loading,
         insertMove,
-        fetchAllMovesCount,
+        fetchAllMoveCount,
         fetchEmail,
-        fetchTodayMovesCount,
+        fetchTodayMoveCount,
       }}
     >
       {children}

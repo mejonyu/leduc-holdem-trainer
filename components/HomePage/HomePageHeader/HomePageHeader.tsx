@@ -5,29 +5,18 @@ import { styles } from "./HomePageHeader.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import { useAuth } from "@/hooks/useAuth";
 
-const HomePageHeader = () => {
-  const { fetchEmail, fetchTodayMovesCount } = useAuth();
-  const [todayMovesCount, setTodayMovesCount] = useState(0);
+interface HomePageHeaderProps {
+  todayMoveCount: number;
+}
+
+const HomePageHeader: React.FC<HomePageHeaderProps> = ({ todayMoveCount }) => {
+  const { fetchEmail, fetchTodayMoveCount } = useAuth();
 
   const renderEmail = () => {
     const email = fetchEmail();
     // Return everything before the "@" symbol.
     return email?.substring(0, email.indexOf("@"));
   };
-
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const count = await fetchTodayMovesCount();
-        setTodayMovesCount(count || 0);
-      } catch (error) {
-        console.error(error);
-        setTodayMovesCount(0); // or null, depending on how you want to handle errors
-      }
-    };
-
-    fetchCount();
-  }, [fetchTodayMovesCount]);
 
   return (
     <View style={styles.container}>
@@ -39,7 +28,7 @@ const HomePageHeader = () => {
         />
         <View style={styles.userInfoText}>
           <Text style={styles.username}>{renderEmail()}</Text>
-          <Text style={styles.readCount}>{todayMovesCount} solved today</Text>
+          <Text style={styles.readCount}>{todayMoveCount} solved today</Text>
         </View>
       </View>
       <View style={styles.headerIcons}>
