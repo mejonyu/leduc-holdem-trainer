@@ -119,7 +119,7 @@ const DayItem: React.FC<DayItemProps> = ({
 
   return (
     <View style={styles.dayContainer}>
-      <Text style={styles.icon}>{icon}</Text>
+      <Text>{icon}</Text>
       <Text
         style={
           hasEntry

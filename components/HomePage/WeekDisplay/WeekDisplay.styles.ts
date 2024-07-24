@@ -25,7 +25,6 @@ const styles = StyleSheet.create({
   emptyDayName: {
     marginTop: scaleHeight(9),
     color: "#cbcbcb",
-    // fontWeight: "bold",
   },
   hasEntryDayNumber: {
     fontWeight: "bold",
@@ -36,11 +35,7 @@ const styles = StyleSheet.create({
     color: "#10667e",
   },
   emptyDayNumber: {
-    // fontWeight: "bold",
     color: "#a6a6a6",
-  },
-  icon: {
-    // Add icon styles
   },
   connectingLine: {
     position: "absolute",
