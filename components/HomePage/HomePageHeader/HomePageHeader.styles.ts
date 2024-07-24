@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
     marginRight: scaleWidth(10),
   },
   username: {
-    fontWeight: "bold",
+    // fontWeight: "bold",
+    fontSize: scaleHeight(16),
   },
   readCount: {
     fontSize: scaleHeight(12),

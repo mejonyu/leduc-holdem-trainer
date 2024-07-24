@@ -3,18 +3,27 @@ import React from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./HomePageHeader.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
+import { useAuth } from "@/hooks/useAuth";
 
 const HomePageHeader = () => {
+  const { fetchEmail, session } = useAuth();
+
+  const renderEmail = () => {
+    const email = fetchEmail();
+    // Return everything before the "@" symbol.
+    return email?.substring(0, email.indexOf("@"));
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.userInfoContainer}>
         <MaterialCommunityIcons
           name="cards-playing-spade-multiple"
-          size={scaleHeight(24)}
+          size={scaleHeight(26)}
           color="black"
         />
         <View style={styles.userInfoText}>
-          <Text style={styles.username}>jonyu02</Text>
+          <Text style={styles.username}>{renderEmail()}</Text>
           <Text style={styles.readCount}>2 solved today</Text>
         </View>
       </View>

@@ -1,14 +1,7 @@
 // src/contexts/AuthContext.tsx
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  ReactNode,
-} from "react";
+import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "../lib/supabase";
 import { Session } from "@supabase/supabase-js";
-import { Alert } from "react-native";
 
 export interface AuthContextType {
   session: Session | null;
@@ -22,6 +15,7 @@ export interface AuthContextType {
     isPreflop: boolean
   ) => Promise<void>;
   fetchAllMovesCount: () => Promise<number | null>;
+  fetchEmail: () => string | undefined;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -96,6 +90,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count;
   };
 
+  const fetchEmail = () => {
+    return session?.user.email;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -106,6 +104,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         insertMove,
         fetchAllMovesCount,
+        fetchEmail,
       }}
     >
       {children}
