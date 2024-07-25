@@ -19,6 +19,7 @@ export interface AuthContextType {
   fetchEmail: () => string | undefined;
   fetchTodayMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
+  fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -153,6 +154,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return entriesMap;
   };
 
+  const fetchUserMovesWithOnlyRankings = async () => {
+    const { data, error } = await supabase
+      .from("leduc_moves")
+      .select("move_rank")
+      .eq("user_id", session?.user.id);
+    if (error) throw error;
+    const moveRanks = data.map((item) => item.move_rank);
+    return moveRanks;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -166,6 +177,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchEmail,
         fetchTodayMoveCount,
         fetchUserEntries,
+        fetchUserMovesWithOnlyRankings,
       }}
     >
       {children}

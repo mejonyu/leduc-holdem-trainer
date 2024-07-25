@@ -1,17 +1,18 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Svg, { Circle } from "react-native-svg";
-
-type Ranking = "Optimal" | "Good" | "Okay" | "Blunder";
-
-interface Move {
-  id: number;
-  ranking: Ranking;
-}
+import styles from "./MoveRankingCircle.styles";
 
 interface MoveRankingCircleProps {
-  moves: Move[];
+  moves: string[] | null;
 }
+
+const RANKING_COLORS: Record<string, string> = {
+  optimal: "#6495ED",
+  good: "#72bf6a",
+  okay: "#fba01c",
+  blunder: "#F44336",
+};
 
 const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
   const size = 150;
@@ -19,35 +20,27 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
 
-  const rankingColors: Record<Ranking, string> = {
-    Optimal: "#6495ED",
-    Good: "#72bf6a",
-    Okay: "#fba01c",
-    Blunder: "#F44336",
-  };
+  const countMoves = (ranking: string): number | undefined =>
+    moves?.filter((move) => move === ranking).length;
 
-  const countMoves = (ranking: Ranking): number =>
-    moves.filter((move) => move.ranking === ranking).length;
-  const totalMoves = moves.length;
-
-  const rankingCounts: Record<Ranking, number> = {
-    Optimal: countMoves("Optimal"),
-    Good: countMoves("Good"),
-    Okay: countMoves("Okay"),
-    Blunder: countMoves("Blunder"),
+  const rankingCounts: Record<string, number> = {
+    optimal: countMoves("optimal") || 0,
+    good: countMoves("good") || 0,
+    okay: countMoves("okay") || 0,
+    blunder: countMoves("blunder") || 0,
   };
 
   let offset = 0;
   const segments = Object.entries(rankingCounts).map(
     ([ranking, count], index) => {
-      const percentage = count / totalMoves;
+      const percentage = moves ? count / moves.length : 1;
       const strokeDasharray = `${
         circumference * percentage - 1
       } ${circumference}`;
       const segment = (
         <Circle
           key={ranking}
-          stroke={rankingColors[ranking as Ranking]}
+          stroke={RANKING_COLORS[ranking]}
           fill="none"
           cx={size / 2}
           cy={size / 2}
@@ -76,51 +69,28 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
         />
         {segments}
       </Svg>
-      <Text style={styles.totalMoves}>{totalMoves}</Text>
-      <View style={styles.legend}>
-        {(Object.entries(rankingColors) as [Ranking, string][]).map(
-          ([ranking, color]) => (
-            <View key={ranking} style={styles.legendItem}>
-              <View style={[styles.legendColor, { backgroundColor: color }]} />
-              <Text style={styles.legendText}>
-                {ranking}: {rankingCounts[ranking]}
-              </Text>
-            </View>
-          )
-        )}
+      <View style={styles.middleText}>
+        <Text style={styles.totalMoves}>{moves?.length}</Text>
+        <Text style={styles.solved}>Solved</Text>
+      </View>
+      <View style={styles.legendContainer}>
+        <View style={styles.legendContent}>
+          {(Object.entries(RANKING_COLORS) as [string, string][]).map(
+            ([ranking, color]) => (
+              <View key={ranking} style={styles.legendItem}>
+                <View style={[styles.legendColor]}>
+                  <Text style={[styles.rankingCount, { color: color }]}>
+                    {rankingCounts[ranking]}
+                  </Text>
+                </View>
+                <Text style={styles.legendText}>{ranking}</Text>
+              </View>
+            )
+          )}
+        </View>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  totalMoves: {
-    position: "absolute",
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  legend: {
-    marginTop: 20,
-    alignItems: "flex-start",
-  },
-  legendItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 5,
-  },
-  legendColor: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 10,
-  },
-  legendText: {
-    fontSize: 16,
-  },
-});
 
 export default MoveRankingCircle;

@@ -18,9 +18,16 @@ const Home = () => {
   const [todayMoveCount, setTodayMoveCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [userEntries, setUserEntries] = useState<Record<string, boolean>>({});
+  const [userMovesWithOnlyRankings, setUserMovesWithOnlyRankings] = useState<
+    string[] | null
+  >([]);
 
-  const { fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries } =
-    useAuth();
+  const {
+    fetchAllMoveCount,
+    fetchTodayMoveCount,
+    fetchUserEntries,
+    fetchUserMovesWithOnlyRankings,
+  } = useAuth();
 
   // Automatically refetch all data when home page is refocused.
   useFocusEffect(
@@ -60,14 +67,29 @@ const Home = () => {
         }
       };
 
+      const updateUserMovesWithOnlyRankings = async () => {
+        try {
+          const moves = await fetchUserMovesWithOnlyRankings();
+          setUserMovesWithOnlyRankings(moves);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       updateAllMoveCount();
       updateTodayMoveCount();
       updateUserEntries();
+      updateUserMovesWithOnlyRankings();
 
       return () => {
         isActive = false;
       };
-    }, [fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries])
+    }, [
+      fetchAllMoveCount,
+      fetchTodayMoveCount,
+      fetchUserEntries,
+      fetchUserMovesWithOnlyRankings,
+    ])
   );
 
   // Refresh all user data on pulldown.
@@ -77,6 +99,8 @@ const Home = () => {
       const totalCount = await fetchAllMoveCount();
       const todayCount = await fetchTodayMoveCount();
       const newUserEntries = await fetchUserEntries();
+      const newUserMovesWithOnlyRankings =
+        await fetchUserMovesWithOnlyRankings();
 
       if (totalCount) {
         setTotalMoveCount(totalCount);
@@ -88,6 +112,10 @@ const Home = () => {
 
       if (newUserEntries) {
         setUserEntries(newUserEntries);
+      }
+
+      if (newUserMovesWithOnlyRankings) {
+        setUserMovesWithOnlyRankings(newUserMovesWithOnlyRankings);
       }
     } catch (error) {
       console.error(error);
@@ -108,7 +136,9 @@ const Home = () => {
           userEntries={userEntries}
         />
         <WeekDisplay userEntries={userEntries} />
-        <MoveSummaryCard />
+        <MoveSummaryCard
+          userMovesWithOnlyRankings={userMovesWithOnlyRankings}
+        />
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>

@@ -11,6 +11,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: scaleWidth(20),
   },
+  titleContainer: {
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: scaleHeight(18),
+    fontWeight: "bold",
+    color: "#464c55",
+  },
 });
 
 export default styles;
