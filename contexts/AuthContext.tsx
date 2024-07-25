@@ -1,7 +1,9 @@
 // src/contexts/AuthContext.tsx
 import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "../lib/supabase";
-import { Session } from "@supabase/supabase-js";
+import { PostgrestResponse, Session } from "@supabase/supabase-js";
+import calculateWeekDates from "@/utils/calculateWeekDates";
+import weekDates from "@/utils/calculateWeekDates";
 
 export interface AuthContextType {
   session: Session | null;
@@ -17,11 +19,16 @@ export interface AuthContextType {
   fetchAllMoveCount: () => Promise<number | null>;
   fetchEmail: () => string | undefined;
   fetchTodayMoveCount: () => Promise<number | null>;
+  fetchUserEntries: () => Promise<Record<string, boolean> | void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
+
+interface UserEntry {
+  created_at: string; // PostgreSQL timestamptz is represented as a string in JSON
+}
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
@@ -117,6 +124,36 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count ?? 0;
   };
 
+  const fetchUserEntries = async (): Promise<Record<
+    string,
+    boolean
+  > | void> => {
+    if (weekDates.length < 2) return;
+
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { data, error }: PostgrestResponse<UserEntry> = await supabase
+      .from("leduc_moves")
+      .select("created_at")
+      .gte("created_at", startOfWeek)
+      .lte("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    const entriesMap: Record<string, boolean> = {};
+    data?.forEach((entry) => {
+      const dateUTC = new Date(entry.created_at);
+      const date = new Date(
+        dateUTC.getTime() - dateUTC.getTimezoneOffset() * 60000
+      );
+      const dateKey = new Date(date).toISOString().split("T")[0];
+      entriesMap[dateKey] = true;
+    });
+
+    return entriesMap;
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -129,6 +166,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchAllMoveCount,
         fetchEmail,
         fetchTodayMoveCount,
+        fetchUserEntries,
       }}
     >
       {children}

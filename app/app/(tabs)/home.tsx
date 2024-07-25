@@ -18,8 +18,10 @@ const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
   const [todayMoveCount, setTodayMoveCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [userEntries, setUserEntries] = useState<Record<string, boolean>>({});
 
-  const { fetchAllMoveCount, fetchTodayMoveCount } = useAuth();
+  const { fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries } =
+    useAuth();
 
   // Automatically refetch all data when home page is refocused.
   useFocusEffect(
@@ -48,13 +50,25 @@ const Home = () => {
         }
       };
 
+      const updateUserEntries = async () => {
+        try {
+          const newUserEntries = await fetchUserEntries();
+          if (newUserEntries) {
+            setUserEntries(newUserEntries);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       updateAllMoveCount();
       updateTodayMoveCount();
+      updateUserEntries();
 
       return () => {
         isActive = false;
       };
-    }, [fetchAllMoveCount, fetchTodayMoveCount])
+    }, [fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries])
   );
 
   // Refresh all user data on pulldown.
@@ -63,6 +77,7 @@ const Home = () => {
     try {
       const totalCount = await fetchAllMoveCount();
       const todayCount = await fetchTodayMoveCount();
+      const newUserEntries = await fetchUserEntries();
 
       if (totalCount) {
         setTotalMoveCount(totalCount);
@@ -71,11 +86,15 @@ const Home = () => {
       if (todayCount) {
         setTodayMoveCount(todayCount);
       }
+
+      if (newUserEntries) {
+        setUserEntries(newUserEntries);
+      }
     } catch (error) {
       console.error(error);
     }
     setRefreshing(false);
-  }, [fetchAllMoveCount, fetchTodayMoveCount]);
+  }, [fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries]);
 
   return (
     <SafeAreaView style={styles.homePage}>
@@ -86,7 +105,7 @@ const Home = () => {
         style={styles.container}
       >
         <HomePageHeader todayMoveCount={todayMoveCount} />
-        <WeekDisplay />
+        <WeekDisplay userEntries={userEntries} />
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>
