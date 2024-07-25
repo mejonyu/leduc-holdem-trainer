@@ -11,6 +11,7 @@ import { Link, useFocusEffect } from "expo-router";
 import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
+import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
@@ -107,6 +108,7 @@ const Home = () => {
           userEntries={userEntries}
         />
         <WeekDisplay userEntries={userEntries} />
+        <MoveSummaryCard />
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>

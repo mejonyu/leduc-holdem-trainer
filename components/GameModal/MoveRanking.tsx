@@ -56,12 +56,12 @@ const MoveRanking: React.FC<MoveRankingProps> = ({
           </View>
         );
       } else if (moveStrategyWeight >= 0.05) {
-        setRankingColor("#ffd300");
+        setRankingColor("#fba01c");
         return (
           <View
             style={[
               styles.moveRankingContainer,
-              { backgroundColor: "#ffd300" },
+              { backgroundColor: "#fba01c" },
             ]}
           >
             <Entypo
@@ -77,12 +77,12 @@ const MoveRanking: React.FC<MoveRankingProps> = ({
           </View>
         );
       } else {
-        setRankingColor("#cc0000");
+        setRankingColor("#F44336");
         return (
           <View
             style={[
               styles.moveRankingContainer,
-              { backgroundColor: "#cc0000" },
+              { backgroundColor: "#F44336" },
             ]}
           >
             <AntDesign name="warning" size={scaleIconSize(24)} color="black" />

@@ -71,7 +71,7 @@ const DayItem: React.FC<DayItemProps> = ({
       icon = hasEntry ? (
         <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
       ) : (
-        <Feather name="x" size={scaleHeight(20)} color="#45a4b9" />
+        <Feather name="x" size={scaleHeight(20)} color="#6495ED" />
       );
     } else if (isToday) {
       icon = hasEntry ? (
@@ -130,7 +130,7 @@ const DayItem: React.FC<DayItemProps> = ({
                 ? hasEntry
                   ? { color: "#faa11c" }
                   : { color: "#cacaca" }
-                : { color: "#45a4b9" },
+                : { color: "#6495ED" },
             ]}
           />
         )}

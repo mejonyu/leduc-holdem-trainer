@@ -1219,7 +1219,7 @@ const GameModal: React.FC = () => {
         >
           <Pressable
             onPress={handleContinue}
-            style={[styles.continueButton, { backgroundColor: rankingColor }]}
+            style={[styles.continueButton, { backgroundColor: "black" }]}
           >
             <Text style={styles.continueButtonText}>Continue</Text>
             <View style={styles.continueButtonIcon}>

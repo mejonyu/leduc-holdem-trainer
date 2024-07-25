@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   missingEntryDayName: {
     marginTop: scaleHeight(9),
     fontWeight: "bold",
-    color: "#45a4b9",
+    color: "#6495ED",
   },
   emptyTodayDayName: {
     marginTop: scaleHeight(9),
@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   },
   missingEntryDayNumber: {
     fontWeight: "bold",
-    color: "#10667e",
+    color: "#4169E1",
   },
   emptyTodayDayNumber: {
     fontWeight: "bold",
