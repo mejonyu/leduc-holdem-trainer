@@ -2,8 +2,7 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react";
 import { supabase } from "../lib/supabase";
 import { PostgrestResponse, Session } from "@supabase/supabase-js";
-import calculateWeekDates from "@/utils/calculateWeekDates";
-import weekDates from "@/utils/calculateWeekDates";
+import { weekDates } from "@/utils/dateFunctions";
 
 export interface AuthContextType {
   session: Session | null;

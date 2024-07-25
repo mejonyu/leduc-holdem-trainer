@@ -16,6 +16,7 @@ export default function TabOneScreen() {
       signOut();
       // Navigate back to landing page
       router.back();
+      router.back();
       // router.back();
     } catch (error) {
       console.error(error);

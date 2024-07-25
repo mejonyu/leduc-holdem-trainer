@@ -8,8 +8,6 @@ import {
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
-import { Image } from "react-native";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
@@ -104,7 +102,10 @@ const Home = () => {
         }
         style={styles.container}
       >
-        <HomePageHeader todayMoveCount={todayMoveCount} />
+        <HomePageHeader
+          todayMoveCount={todayMoveCount}
+          userEntries={userEntries}
+        />
         <WeekDisplay userEntries={userEntries} />
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>

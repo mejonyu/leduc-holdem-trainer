@@ -1,16 +1,21 @@
 import { View, Text } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./HomePageHeader.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import { useAuth } from "@/hooks/useAuth";
+import { countConsecutiveDays } from "@/utils/dateFunctions";
 
 interface HomePageHeaderProps {
   todayMoveCount: number;
+  userEntries: Record<string, boolean>;
 }
 
-const HomePageHeader: React.FC<HomePageHeaderProps> = ({ todayMoveCount }) => {
-  const { fetchEmail, fetchTodayMoveCount } = useAuth();
+const HomePageHeader: React.FC<HomePageHeaderProps> = ({
+  todayMoveCount,
+  userEntries,
+}) => {
+  const { fetchEmail } = useAuth();
 
   const renderEmail = () => {
     const email = fetchEmail();
@@ -33,8 +38,9 @@ const HomePageHeader: React.FC<HomePageHeaderProps> = ({ todayMoveCount }) => {
       </View>
       <View style={styles.headerIcons}>
         <Ionicons name="flame" size={scaleHeight(24)} color="orange" />
-        <Text style={styles.flameCount}>3</Text>
-        <Ionicons name="notifications" size={scaleHeight(24)} color="black" />
+        <Text style={styles.flameCount}>
+          {countConsecutiveDays(userEntries)}
+        </Text>
       </View>
     </View>
   );

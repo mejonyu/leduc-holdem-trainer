@@ -6,13 +6,16 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+    paddingBottom: scaleHeight(5),
+    borderBottomWidth: 0.25,
+    borderBottomColor: "#a6a6a6",
   },
   userInfoContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   userInfoText: {
-    marginLeft: scaleWidth(6),
+    marginLeft: scaleWidth(6.5),
   },
   avatar: {
     width: scaleWidth(40),
@@ -26,13 +29,15 @@ export const styles = StyleSheet.create({
   },
   readCount: {
     fontSize: scaleHeight(12),
-    color: "gray",
+    color: "#a6a6a6",
   },
   headerIcons: {
     flexDirection: "row",
     alignItems: "center",
   },
   flameCount: {
-    marginRight: scaleWidth(10),
+    marginLeft: scaleWidth(2.5),
+    fontWeight: "bold",
+    // marginRight: scaleWidth(10),
   },
 });

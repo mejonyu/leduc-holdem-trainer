@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { View, Text } from "react-native";
-import { supabase } from "@/lib/supabase"; // Adjust import path as needed
-import { PostgrestResponse } from "@supabase/supabase-js";
 import styles from "./WeekDisplay.styles";
 import { Entypo, Feather, FontAwesome5, Octicons } from "@expo/vector-icons";
 import { scaleHeight } from "@/utils/dimensionScaling";
-import weekDates from "@/utils/calculateWeekDates";
+import { weekDates } from "@/utils/dateFunctions";
+import { getLocalTodayDate } from "@/utils/dateFunctions";
+import { useAuth } from "@/hooks/useAuth";
 
 interface WeekDisplayProps {
   userEntries: Record<string, boolean>;
@@ -15,9 +15,11 @@ interface DayItemProps {
   date: Date;
   hasEntry: boolean;
   previousDayHasEntry: boolean;
+  userCreatedAt: string | undefined;
 }
 
 const WeekDisplay: React.FC<WeekDisplayProps> = ({ userEntries }) => {
+  const { session } = useAuth();
   return (
     <View style={styles.container}>
       {weekDates.map((date, index) => {
@@ -34,6 +36,7 @@ const WeekDisplay: React.FC<WeekDisplayProps> = ({ userEntries }) => {
             date={date}
             hasEntry={hasEntry}
             previousDayHasEntry={previousDayHasEntry}
+            userCreatedAt={session?.user.created_at}
           />
         );
       })}
@@ -45,34 +48,40 @@ const DayItem: React.FC<DayItemProps> = ({
   date,
   hasEntry,
   previousDayHasEntry,
+  userCreatedAt,
 }) => {
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNumber = date.getDate();
-  const todayUTC = new Date();
-  const today = new Date(
-    todayUTC.getTime() - todayUTC.getTimezoneOffset() * 60000
-  );
+  const today = getLocalTodayDate();
   today.setHours(0, 0, 0, 0);
   const isPast = date < today;
   const isToday = date.toDateString() === today.toDateString();
+  const userCreatedAtDate = new Date();
+  if (userCreatedAt) {
+    userCreatedAtDate.setDate(new Date(userCreatedAt).getDate());
+    userCreatedAtDate.setHours(0, 0, 0, 0);
+  }
+  const isBeforeUserCreation = userCreatedAt ? date < userCreatedAtDate : false;
 
   let icon = (
     <Entypo name="dot-single" size={scaleHeight(20)} color="#cbcbcb" />
   ); // Default dot
-  if (isPast) {
-    icon = hasEntry ? (
-      <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
-    ) : (
-      <Feather name="x" size={scaleHeight(20)} color="#45a4b9" />
-    );
-  } else if (isToday) {
-    icon = hasEntry ? (
-      <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
-    ) : (
-      <Text style={{ padding: 1 }}>
-        <FontAwesome5 name="circle" size={scaleHeight(18)} color="#979da5" />
-      </Text>
-    );
+  if (!isBeforeUserCreation || !today) {
+    if (isPast) {
+      icon = hasEntry ? (
+        <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
+      ) : (
+        <Feather name="x" size={scaleHeight(20)} color="#45a4b9" />
+      );
+    } else if (isToday) {
+      icon = hasEntry ? (
+        <Feather name="check" size={scaleHeight(20)} color="#fba01c" />
+      ) : (
+        <Text style={{ padding: 1 }}>
+          <FontAwesome5 name="circle" size={scaleHeight(18)} color="#979da5" />
+        </Text>
+      );
+    }
   }
 
   return (
@@ -83,7 +92,9 @@ const DayItem: React.FC<DayItemProps> = ({
           hasEntry
             ? styles.hasEntryDayName
             : isPast
-            ? styles.missingEntryDayName
+            ? isBeforeUserCreation
+              ? styles.emptyDayName
+              : styles.missingEntryDayName
             : isToday
             ? styles.emptyTodayDayName
             : styles.emptyDayName
@@ -96,7 +107,9 @@ const DayItem: React.FC<DayItemProps> = ({
           hasEntry
             ? styles.hasEntryDayNumber
             : isPast
-            ? styles.missingEntryDayNumber
+            ? isBeforeUserCreation
+              ? styles.emptyDayNumber
+              : styles.missingEntryDayNumber
             : isToday
             ? styles.emptyTodayDayNumber
             : styles.emptyDayNumber
@@ -104,21 +117,23 @@ const DayItem: React.FC<DayItemProps> = ({
       >
         {dayNumber}
       </Text>
-      {!(dayName === "Sun") && (isPast || isToday) && (
-        <Octicons
-          name="dash"
-          size={scaleHeight(24)}
-          color="black"
-          style={[
-            styles.connectingLine,
-            previousDayHasEntry
-              ? hasEntry
-                ? { color: "#faa11c" }
-                : { color: "#cacaca" }
-              : { color: "#45a4b9" },
-          ]}
-        />
-      )}
+      {!(dayName === "Sun") &&
+        ((isPast && !isBeforeUserCreation) ||
+          (isToday && today.getDate() != userCreatedAtDate.getDate())) && (
+          <Octicons
+            name="dash"
+            size={scaleHeight(24)}
+            color="black"
+            style={[
+              styles.connectingLine,
+              previousDayHasEntry
+                ? hasEntry
+                  ? { color: "#faa11c" }
+                  : { color: "#cacaca" }
+                : { color: "#45a4b9" },
+            ]}
+          />
+        )}
     </View>
   );
 };

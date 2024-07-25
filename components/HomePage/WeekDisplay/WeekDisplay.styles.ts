@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: scaleHeight(15),
+    marginVertical: scaleHeight(40),
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -11,9 +11,6 @@ const styles = StyleSheet.create({
     position: "relative",
     alignItems: "center",
     width: scaleWidth(40),
-  },
-  iconContainer: {
-    // marginBottom: 1,
   },
   hasEntryDayName: {
     marginTop: scaleHeight(9),
