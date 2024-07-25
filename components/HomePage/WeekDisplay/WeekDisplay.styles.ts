@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: scaleWidth(40),
   },
+  iconContainer: {
+    // marginBottom: 1,
+  },
   hasEntryDayName: {
     marginTop: scaleHeight(9),
     fontWeight: "bold",
@@ -21,6 +24,11 @@ const styles = StyleSheet.create({
     marginTop: scaleHeight(9),
     fontWeight: "bold",
     color: "#45a4b9",
+  },
+  emptyTodayDayName: {
+    marginTop: scaleHeight(9),
+    fontWeight: "bold",
+    color: "#979da5",
   },
   emptyDayName: {
     marginTop: scaleHeight(9),
@@ -33,6 +41,10 @@ const styles = StyleSheet.create({
   missingEntryDayNumber: {
     fontWeight: "bold",
     color: "#10667e",
+  },
+  emptyTodayDayNumber: {
+    fontWeight: "bold",
+    color: "#464c55",
   },
   emptyDayNumber: {
     color: "#a6a6a6",
