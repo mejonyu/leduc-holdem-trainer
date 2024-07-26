@@ -25,7 +25,7 @@ export const styles = StyleSheet.create({
   },
   username: {
     fontWeight: "600",
-    color: "#464c55",
+    color: "black",
     fontSize: scaleHeight(16),
   },
   readCount: {
@@ -39,7 +39,7 @@ export const styles = StyleSheet.create({
   flameCount: {
     marginLeft: scaleWidth(2.5),
     fontWeight: "bold",
-    color: "#464c55",
+    color: "black",
     // marginRight: scaleWidth(10),
   },
 });
