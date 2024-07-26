@@ -18,6 +18,7 @@ export interface AuthContextType {
   fetchAllMoveCount: () => Promise<number | null>;
   fetchEmail: () => string | undefined;
   fetchTodayMoveCount: () => Promise<number | null>;
+  fetchThisWeekMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
 }
@@ -124,6 +125,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count ?? 0;
   };
 
+  const fetchThisWeekMoveCount = async () => {
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", startOfWeek)
+      .lt("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    return count ?? 0;
+  };
+
   const fetchUserEntries = async (): Promise<Record<
     string,
     boolean
@@ -176,6 +192,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchAllMoveCount,
         fetchEmail,
         fetchTodayMoveCount,
+        fetchThisWeekMoveCount,
         fetchUserEntries,
         fetchUserMovesWithOnlyRankings,
       }}

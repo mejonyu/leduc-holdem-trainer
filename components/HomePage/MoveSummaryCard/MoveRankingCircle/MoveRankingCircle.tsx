@@ -33,7 +33,8 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
   let offset = 0;
   const segments = Object.entries(rankingCounts).map(
     ([ranking, count], index) => {
-      const percentage = moves ? count / moves.length : 1;
+      const percentage = moves ? count / moves.length : 0;
+      if (percentage === 0) return null; // Skip rendering if percentage is 0
       const strokeDasharray = `${
         circumference * percentage - 1
       } ${circumference}`;
@@ -56,6 +57,11 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
     }
   );
 
+  const capitalize = (str: string): string => {
+    if (str.length === 0) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  };
+
   return (
     <View style={styles.container}>
       <Svg width={size} height={size}>
@@ -67,10 +73,10 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
           strokeWidth={strokeWidth}
           fill="none"
         />
-        {segments}
+        {moves && moves.length > 0 ? segments : null}
       </Svg>
       <View style={styles.middleText}>
-        <Text style={styles.totalMoves}>{moves?.length}</Text>
+        <Text style={styles.totalMoves}>{moves?.length || 0}</Text>
         <Text style={styles.solved}>Solved</Text>
       </View>
       <View style={styles.legendContainer}>
@@ -83,7 +89,7 @@ const MoveRankingCircle: React.FC<MoveRankingCircleProps> = ({ moves }) => {
                     {rankingCounts[ranking]}
                   </Text>
                 </View>
-                <Text style={styles.legendText}>{ranking}</Text>
+                <Text style={styles.legendText}>{capitalize(ranking)}</Text>
               </View>
             )
           )}

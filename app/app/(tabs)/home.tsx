@@ -16,6 +16,7 @@ import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCa
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
   const [todayMoveCount, setTodayMoveCount] = useState(0);
+  const [thisWeekMoveCount, setThisWeekMoveCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [userEntries, setUserEntries] = useState<Record<string, boolean>>({});
   const [userMovesWithOnlyRankings, setUserMovesWithOnlyRankings] = useState<
@@ -25,6 +26,7 @@ const Home = () => {
   const {
     fetchAllMoveCount,
     fetchTodayMoveCount,
+    fetchThisWeekMoveCount,
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
   } = useAuth();
@@ -76,10 +78,22 @@ const Home = () => {
         }
       };
 
+      const updateThisWeekMoveCount = async () => {
+        try {
+          const newThisWeekMoveCount = await fetchThisWeekMoveCount();
+          if (newThisWeekMoveCount) {
+            setThisWeekMoveCount(newThisWeekMoveCount);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       updateAllMoveCount();
       updateTodayMoveCount();
       updateUserEntries();
       updateUserMovesWithOnlyRankings();
+      updateThisWeekMoveCount();
 
       return () => {
         isActive = false;
@@ -89,6 +103,7 @@ const Home = () => {
       fetchTodayMoveCount,
       fetchUserEntries,
       fetchUserMovesWithOnlyRankings,
+      fetchThisWeekMoveCount,
     ])
   );
 
@@ -101,6 +116,7 @@ const Home = () => {
       const newUserEntries = await fetchUserEntries();
       const newUserMovesWithOnlyRankings =
         await fetchUserMovesWithOnlyRankings();
+      const newThisWeekMoveCount = await fetchThisWeekMoveCount();
 
       if (totalCount) {
         setTotalMoveCount(totalCount);
@@ -117,11 +133,21 @@ const Home = () => {
       if (newUserMovesWithOnlyRankings) {
         setUserMovesWithOnlyRankings(newUserMovesWithOnlyRankings);
       }
+
+      if (newThisWeekMoveCount) {
+        setThisWeekMoveCount(newThisWeekMoveCount);
+      }
     } catch (error) {
       console.error(error);
     }
     setRefreshing(false);
-  }, [fetchAllMoveCount, fetchTodayMoveCount, fetchUserEntries]);
+  }, [
+    fetchAllMoveCount,
+    fetchTodayMoveCount,
+    fetchUserEntries,
+    fetchUserMovesWithOnlyRankings,
+    fetchThisWeekMoveCount,
+  ]);
 
   return (
     <SafeAreaView style={styles.homePage}>
@@ -138,6 +164,7 @@ const Home = () => {
         <WeekDisplay userEntries={userEntries} />
         <MoveSummaryCard
           userMovesWithOnlyRankings={userMovesWithOnlyRankings}
+          thisWeekMoveCount={thisWeekMoveCount}
         />
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
