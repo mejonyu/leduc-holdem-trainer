@@ -162,10 +162,20 @@ const Home = () => {
           userEntries={userEntries}
         />
         <WeekDisplay userEntries={userEntries} />
-        <MoveSummaryCard
-          userMovesWithOnlyRankings={userMovesWithOnlyRankings}
-          thisWeekMoveCount={thisWeekMoveCount}
-        />
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <MoveSummaryCard
+            userMovesWithOnlyRankings={userMovesWithOnlyRankings}
+            thisWeekMoveCount={thisWeekMoveCount}
+          />
+          <MoveSummaryCard
+            userMovesWithOnlyRankings={userMovesWithOnlyRankings}
+            thisWeekMoveCount={thisWeekMoveCount}
+          />
+          <MoveSummaryCard
+            userMovesWithOnlyRankings={userMovesWithOnlyRankings}
+            thisWeekMoveCount={thisWeekMoveCount}
+          />
+        </ScrollView>
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>

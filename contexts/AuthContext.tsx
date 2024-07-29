@@ -21,6 +21,8 @@ export interface AuthContextType {
   fetchThisWeekMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
+  // fetchAvatarUrl: () => Promise<string>;
+  // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -180,6 +182,63 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return moveRanks;
   };
 
+  // const fetchAvatarUrl = async () => {
+  //   const { data, error } = await supabase
+  //     .from("profiles")
+  //     .select("avatar_url")
+  //     .eq("email", session?.user.email)
+  //     .single();
+
+  //   if (error) throw error;
+  //   return data.avatar_url;
+  // };
+
+  // const uploadAvatar = async (uri: string) => {
+  //   try {
+  //     // Read the file as base64
+  //     const base64 = await FileSystem.readAsStringAsync(uri, {
+  //       encoding: FileSystem.EncodingType.Base64,
+  //     });
+  //     const fileName = `${fetchEmail()}.jpg`;
+
+  //     // Upload the file
+  //     const { data, error } = await supabase.storage
+  //       .from("avatars")
+  //       .upload(fileName, decode(base64), {
+  //         contentType: "image/jpeg",
+  //         upsert: true,
+  //       });
+
+  //     if (error) {
+  //       throw error;
+  //     } else if (data) {
+  //       const { data: publicUrlData } = supabase.storage
+  //         .from("avatars")
+  //         .getPublicUrl(data.path);
+
+  //       console.log(publicUrlData.publicUrl);
+
+  //       if (publicUrlData) {
+  //         await updateProfile(publicUrlData.publicUrl);
+  //       }
+  //       return publicUrlData.publicUrl;
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
+  // const updateProfile = async (avatarUrl: string) => {
+  //   const { error } = await supabase
+  //     .from("profiles")
+  //     .update({ avatar_url: avatarUrl })
+  //     .eq("id", session?.user.id);
+
+  //   if (error) {
+  //     console.error("Error updating profile:", error);
+  //   }
+  // };
+
   return (
     <AuthContext.Provider
       value={{
@@ -195,6 +254,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchThisWeekMoveCount,
         fetchUserEntries,
         fetchUserMovesWithOnlyRankings,
+        // fetchAvatarUrl,
+        // uploadAvatar,
       }}
     >
       {children}
