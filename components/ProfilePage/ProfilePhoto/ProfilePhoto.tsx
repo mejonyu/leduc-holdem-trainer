@@ -12,48 +12,38 @@ import {
   Text,
   StyleProp,
   ImageStyle,
+  ImageSourcePropType,
 } from "react-native";
 import styles from "./ProfilePhoto.styles";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ImageOption {
   label: string;
   value: string;
-  image: any;
-  customStyles?: StyleProp<ImageStyle>;
+  image: ImageSourcePropType;
+  imageStyles?: StyleProp<ImageStyle>;
 }
 
-const imageOptions: ImageOption[] = [
-  {
+const imageOptions: Record<string, ImageOption> = {
+  "@/assets/images/chip-black.png": {
     label: "",
     value: "chip",
-    image: (
-      <Image
-        source={require("@/assets/images/chip-black.png")}
-        style={styles.optionImage}
-      />
-    ),
+    image: require("@/assets/images/chip-black.png"),
+    imageStyles: styles.optionImage,
   },
-  {
+  "@/assets/images/dice.png": {
     label: "",
     value: "dice",
-    image: (
-      <Image
-        source={require("@/assets/images/dice.png")}
-        style={styles.optionImage}
-      />
-    ),
+    image: require("@/assets/images/dice.png"),
+    imageStyles: styles.optionImage,
   },
-  {
+  "@/assets/images/jack.png": {
     label: "",
     value: "jack",
-    image: (
-      <Image
-        source={require("@/assets/images/jack.png")}
-        style={{ height: scaleHeight(90), width: scaleWidth(90) }}
-      />
-    ),
+    image: require("@/assets/images/jack.png"),
+    imageStyles: { height: scaleHeight(90), width: scaleWidth(90) },
   },
-];
+};
 
 interface ProfilePhotoProps {
   selectedImage: any;
@@ -65,16 +55,25 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   onImageSelect,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
+  const { updateAvatarPath } = useAuth();
 
-  const handleImageSelect = (image: any) => {
-    onImageSelect(image);
+  const handleImageSelect = (path: string) => {
+    onImageSelect(path);
     setModalVisible(false);
+    try {
+      updateAvatarPath(path);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <View style={styles.profilePhotoContainer}>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
-        {selectedImage}
+        <Image
+          source={imageOptions[selectedImage].image}
+          style={[styles.optionImage, imageOptions[selectedImage].imageStyles]}
+        />
         <View style={styles.editIconContainer}>
           <Text style={styles.editIcon}>✏️</Text>
         </View>
@@ -99,13 +98,18 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
               />
             </View>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-              {imageOptions.map((item) => (
+              {Object.entries(imageOptions).map(([key, value]) => (
                 <TouchableOpacity
-                  key={item.value}
-                  onPress={() => handleImageSelect(item.image)}
+                  key={value.value}
+                  onPress={() => handleImageSelect(key)}
                 >
-                  <View style={styles.imageContainer}>{item.image}</View>
-                  <Text style={styles.optionLabel}>{item.label}</Text>
+                  <View style={styles.imageContainer}>
+                    <Image
+                      source={value.image}
+                      style={[styles.optionImage, value.imageStyles]}
+                    />
+                  </View>
+                  <Text style={styles.optionLabel}>{value.label}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>

@@ -21,6 +21,8 @@ export interface AuthContextType {
   fetchThisWeekMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
+  fetchAvatarPath: () => Promise<string>;
+  updateAvatarPath: (avatarPath: string) => Promise<void>;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -182,6 +184,24 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return moveRanks;
   };
 
+  const fetchAvatarPath = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("avatar_path")
+      .eq("id", session?.user.id)
+      .single();
+    if (error) throw error;
+    return data.avatar_path;
+  };
+
+  const updateAvatarPath = async (avatarPath: string) => {
+    const { error } = await supabase
+      .from("profiles")
+      .update({ avatar_path: avatarPath })
+      .eq("id", session?.user.id);
+    if (error) throw error;
+  };
+
   // const fetchAvatarUrl = async () => {
   //   const { data, error } = await supabase
   //     .from("profiles")
@@ -254,6 +274,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchThisWeekMoveCount,
         fetchUserEntries,
         fetchUserMovesWithOnlyRankings,
+        fetchAvatarPath,
+        updateAvatarPath,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}
