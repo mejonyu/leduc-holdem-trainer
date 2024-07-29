@@ -1,12 +1,12 @@
 // app/profile.tsx
 import React, { useEffect, useReducer, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Image } from "react-native";
 import ProfilePhoto from "@/components/ProfilePage/ProfilePhoto/ProfilePhoto";
 import { useAuth } from "@/hooks/useAuth";
 import * as ImagePicker from "expo-image-picker";
 
 export default function ProfilePage() {
-  const [avatar, setAvatar] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<Image | null>(null);
   const { fetchEmail } = useAuth();
 
   // useEffect(() => {
@@ -23,17 +23,10 @@ export default function ProfilePage() {
   //   getAvatarUrl();
   // }, []);
 
-  const [selectedImage, setSelectedImage] = useState<any>(
-    require("@/assets/images/chip-black.png")
-  );
-
   return (
     <View style={styles.container}>
       {/* <ProfilePhoto avatarUrl={avatarUrl} onPress={pickImage} /> */}
-      <ProfilePhoto
-        selectedImage={selectedImage}
-        onImageSelect={setSelectedImage}
-      />
+      <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
       <Text style={styles.name}>Victoria Heard</Text>
       <Text style={styles.activeSince}>Active since Jul, 2019</Text>
       <View style={styles.infoContainer}>

@@ -1,6 +1,6 @@
 // ProfilePhoto.tsx
 import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
-import { FontAwesome5 } from "@expo/vector-icons";
+import { FontAwesome5, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -13,6 +13,7 @@ import {
   StyleProp,
   ImageStyle,
 } from "react-native";
+import styles from "./ProfilePhoto.styles";
 
 interface ImageOption {
   label: string;
@@ -24,19 +25,33 @@ interface ImageOption {
 const imageOptions: ImageOption[] = [
   {
     label: "",
-    value: "avatar-1",
-    image: require("@/assets/images/chip-black.png"),
+    value: "chip",
+    image: (
+      <Image
+        source={require("@/assets/images/chip-black.png")}
+        style={styles.optionImage}
+      />
+    ),
   },
   {
     label: "",
-    value: "avatar-3",
-    image: require("@/assets/images/dice.png"),
+    value: "dice",
+    image: (
+      <Image
+        source={require("@/assets/images/dice.png")}
+        style={styles.optionImage}
+      />
+    ),
   },
   {
     label: "",
-    value: "avatar-4",
-    image: require("@/assets/images/jack.png"),
-    customStyles: { height: scaleHeight(65), width: scaleWidth(65) },
+    value: "jack",
+    image: (
+      <Image
+        source={require("@/assets/images/jack.png")}
+        style={{ height: scaleHeight(90), width: scaleWidth(90) }}
+      />
+    ),
   },
 ];
 
@@ -59,7 +74,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   return (
     <View style={styles.profilePhotoContainer}>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Image source={selectedImage} style={styles.profilePhoto} />
+        {selectedImage}
         <View style={styles.editIconContainer}>
           <Text style={styles.editIcon}>✏️</Text>
         </View>
@@ -73,104 +88,32 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Text style={styles.modalHeader}>Select Profile Photo</Text>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalHeaderText}>Select Profile Photo</Text>
+              <Ionicons
+                name="return-up-back"
+                size={scaleHeight(24)}
+                color="black"
+                onPress={() => setModalVisible(false)}
+                style={styles.modalHeaderBackIcon}
+              />
+            </View>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
               {imageOptions.map((item) => (
                 <TouchableOpacity
                   key={item.value}
                   onPress={() => handleImageSelect(item.image)}
                 >
-                  <View style={styles.imageContainer}>
-                    <Image
-                      source={item.image}
-                      style={[styles.optionImage, item.customStyles]}
-                    />
-                  </View>
+                  <View style={styles.imageContainer}>{item.image}</View>
                   <Text style={styles.optionLabel}>{item.label}</Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <TouchableOpacity
-              onPress={() => setModalVisible(false)}
-              style={styles.closeButton}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </Modal>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  profilePhotoContainer: {
-    alignSelf: "center",
-    position: "relative",
-  },
-  profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-  },
-  editIconContainer: {
-    position: "absolute",
-    bottom: 0,
-    right: 0,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    padding: 4,
-  },
-  editIcon: {
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-  },
-  modalContent: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 16,
-    alignItems: "center",
-  },
-  modalHeader: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 16,
-  },
-  scrollViewContent: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    paddingHorizontal: 50,
-  },
-  imageContainer: {
-    width: 80,
-    height: 80,
-    margin: 8,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  optionImage: {
-    width: 80,
-    height: 80,
-    // borderRadius: 30,
-  },
-  optionLabel: {
-    textAlign: "center",
-  },
-  closeButton: {
-    marginTop: 16,
-    padding: 8,
-    backgroundColor: "#007BFF",
-    borderRadius: 4,
-  },
-  closeButtonText: {
-    color: "#fff",
-  },
-});
 
 export default ProfilePhoto;

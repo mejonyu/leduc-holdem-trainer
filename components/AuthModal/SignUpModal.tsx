@@ -57,6 +57,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
         router.replace("/app");
       }
     } catch (error) {
+      console.error(error);
       startShake(invalidInputAnimation);
       setHasTriedToSignUp(true);
     }
@@ -105,7 +106,7 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
           Service, and Privacy Policy.
         </Text>
         <CustomButton
-          text="Continue with email"
+          text="Create Account"
           onPress={signUpWithEmail}
           loading={loading}
         />
