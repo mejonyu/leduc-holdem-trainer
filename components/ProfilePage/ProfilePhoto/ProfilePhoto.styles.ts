@@ -26,6 +26,8 @@ const styles = StyleSheet.create({
     width: scaleHeight(100),
     height: scaleHeight(100),
     borderRadius: scaleHeight(50),
+    justifyContent: "center",
+    alignItems: "center",
   },
   editIconContainer: {
     position: "absolute",
@@ -88,12 +90,6 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     textAlign: "center",
-  },
-  closeButton: {
-    marginTop: 16,
-    padding: 8,
-    backgroundColor: "#007BFF",
-    borderRadius: 4,
   },
 });
 

@@ -24,24 +24,22 @@ interface ImageOption {
   imageStyles?: StyleProp<ImageStyle>;
 }
 
-const imageOptions: Record<string, ImageOption> = {
+export const imageOptions: Record<string, ImageOption> = {
   "@/assets/images/chip-black.png": {
     label: "",
     value: "chip",
     image: require("@/assets/images/chip-black.png"),
-    imageStyles: styles.optionImage,
   },
   "@/assets/images/dice.png": {
     label: "",
     value: "dice",
     image: require("@/assets/images/dice.png"),
-    imageStyles: styles.optionImage,
   },
   "@/assets/images/jack.png": {
     label: "",
     value: "jack",
     image: require("@/assets/images/jack.png"),
-    imageStyles: { height: scaleHeight(90), width: scaleWidth(90) },
+    imageStyles: { height: "85%", width: "85%" },
   },
 };
 
@@ -70,10 +68,15 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   return (
     <View style={styles.profilePhotoContainer}>
       <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <Image
-          source={imageOptions[selectedImage].image}
-          style={[styles.optionImage, imageOptions[selectedImage].imageStyles]}
-        />
+        <View style={styles.profilePhoto}>
+          <Image
+            source={imageOptions[selectedImage].image}
+            style={[
+              styles.optionImage,
+              imageOptions[selectedImage].imageStyles,
+            ]}
+          />
+        </View>
         <View style={styles.editIconContainer}>
           <Text style={styles.editIcon}>✏️</Text>
         </View>

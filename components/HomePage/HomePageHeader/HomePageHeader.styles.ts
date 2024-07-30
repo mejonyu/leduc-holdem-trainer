@@ -21,7 +21,8 @@ export const styles = StyleSheet.create({
     width: scaleWidth(40),
     height: scaleHeight(40),
     borderRadius: scaleHeight(20),
-    marginRight: scaleWidth(10),
+    justifyContent: "center",
+    alignItems: "center",
   },
   username: {
     fontWeight: "600",

@@ -5,15 +5,19 @@ import { styles } from "./HomePageHeader.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import { useAuth } from "@/hooks/useAuth";
 import { countConsecutiveDays } from "@/utils/dateFunctions";
+import { imageOptions } from "@/components/ProfilePage/ProfilePhoto/ProfilePhoto";
+import { Image } from "react-native";
 
 interface HomePageHeaderProps {
   todayMoveCount: number;
   userEntries: Record<string, boolean>;
+  avatarPath: string;
 }
 
 const HomePageHeader: React.FC<HomePageHeaderProps> = ({
   todayMoveCount,
   userEntries,
+  avatarPath,
 }) => {
   const { fetchEmail } = useAuth();
 
@@ -26,11 +30,24 @@ const HomePageHeader: React.FC<HomePageHeaderProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.userInfoContainer}>
-        <MaterialCommunityIcons
-          name="cards-playing-spade-multiple"
-          size={scaleHeight(26)}
-          color="black"
-        />
+        {avatarPath ? (
+          <View style={styles.avatar}>
+            <Image
+              source={imageOptions[avatarPath].image}
+              style={[
+                { height: "100%", width: "100%" },
+                imageOptions[avatarPath].imageStyles,
+              ]}
+            />
+          </View>
+        ) : (
+          <MaterialCommunityIcons
+            name="cards-playing-spade-multiple"
+            size={scaleHeight(26)}
+            color="black"
+          />
+        )}
+
         <View style={styles.userInfoText}>
           <Text style={styles.username}>{renderEmail()}</Text>
           <Text style={styles.readCount}>{todayMoveCount} solved today</Text>

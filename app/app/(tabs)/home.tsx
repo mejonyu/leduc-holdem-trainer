@@ -22,6 +22,7 @@ const Home = () => {
   const [userMovesWithOnlyRankings, setUserMovesWithOnlyRankings] = useState<
     string[] | null
   >([]);
+  const [avatarPath, setAvatarPath] = useState("");
 
   const {
     fetchAllMoveCount,
@@ -29,6 +30,7 @@ const Home = () => {
     fetchThisWeekMoveCount,
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
+    fetchAvatarPath,
   } = useAuth();
 
   // Automatically refetch all data when home page is refocused.
@@ -89,11 +91,23 @@ const Home = () => {
         }
       };
 
+      const updateAvatarPath = async () => {
+        try {
+          const newAvatarPath = await fetchAvatarPath();
+          if (newAvatarPath) {
+            setAvatarPath(newAvatarPath);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       updateAllMoveCount();
       updateTodayMoveCount();
       updateUserEntries();
       updateUserMovesWithOnlyRankings();
       updateThisWeekMoveCount();
+      updateAvatarPath();
 
       return () => {
         isActive = false;
@@ -104,6 +118,7 @@ const Home = () => {
       fetchUserEntries,
       fetchUserMovesWithOnlyRankings,
       fetchThisWeekMoveCount,
+      fetchAvatarPath,
     ])
   );
 
@@ -117,6 +132,7 @@ const Home = () => {
       const newUserMovesWithOnlyRankings =
         await fetchUserMovesWithOnlyRankings();
       const newThisWeekMoveCount = await fetchThisWeekMoveCount();
+      const newAvatarPath = await fetchAvatarPath();
 
       if (totalCount) {
         setTotalMoveCount(totalCount);
@@ -137,6 +153,10 @@ const Home = () => {
       if (newThisWeekMoveCount) {
         setThisWeekMoveCount(newThisWeekMoveCount);
       }
+
+      if (newAvatarPath) {
+        setAvatarPath(newAvatarPath);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -147,6 +167,7 @@ const Home = () => {
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
     fetchThisWeekMoveCount,
+    fetchAvatarPath,
   ]);
 
   return (
@@ -160,6 +181,7 @@ const Home = () => {
         <HomePageHeader
           todayMoveCount={todayMoveCount}
           userEntries={userEntries}
+          avatarPath={avatarPath}
         />
         <WeekDisplay userEntries={userEntries} />
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
