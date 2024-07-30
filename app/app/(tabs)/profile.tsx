@@ -7,7 +7,8 @@ import LoadingPage from "@/components/LoadingPage/LoadingPage";
 
 export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>();
-  const { fetchEmail, fetchAvatarPath } = useAuth();
+  const [name, setName] = useState<string | null>();
+  const { fetchEmail, fetchAvatarPath, fetchName } = useAuth();
 
   useEffect(() => {
     const getAvatarPath = async () => {
@@ -20,15 +21,33 @@ export default function ProfilePage() {
         console.error(error);
       }
     };
+
+    const getName = async () => {
+      try {
+        const name = await fetchName();
+        if (name) {
+          setName(name);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     getAvatarPath();
+    fetchName();
   }, []);
+
+  const truncateEmail = () => {
+    const email = fetchEmail();
+    // Return everything before the "@" symbol.
+    return email?.substring(0, email.indexOf("@"));
+  };
 
   return (
     <View style={styles.container}>
       {avatar ? (
         <>
           <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
-          <Text style={styles.name}>Victoria Heard</Text>
+          <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
           <Text style={styles.activeSince}>Active since Jul, 2019</Text>
           <View style={styles.infoContainer}>
             <Text style={styles.infoLabel}>Email</Text>
@@ -50,12 +69,12 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#888",
+    color: "#464c55",
     marginBottom: 5,
   },
   activeSince: {
     fontSize: 14,
-    color: "#888",
+    color: "#979da5",
     marginBottom: 20,
   },
   infoContainer: {

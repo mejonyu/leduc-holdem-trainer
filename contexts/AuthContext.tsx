@@ -23,6 +23,7 @@ export interface AuthContextType {
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
   fetchAvatarPath: () => Promise<string>;
   updateAvatarPath: (avatarPath: string) => Promise<void>;
+  fetchName: () => Promise<string>;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -202,6 +203,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error) throw error;
   };
 
+  const fetchName = async () => {
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", session?.user.id)
+      .single();
+
+    if (error) throw error;
+    return data.full_name;
+  };
+
   // const fetchAvatarUrl = async () => {
   //   const { data, error } = await supabase
   //     .from("profiles")
@@ -276,6 +288,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchUserMovesWithOnlyRankings,
         fetchAvatarPath,
         updateAvatarPath,
+        fetchName,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}
