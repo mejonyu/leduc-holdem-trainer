@@ -24,6 +24,7 @@ export interface AuthContextType {
   fetchAvatarPath: () => Promise<string>;
   updateAvatarPath: (avatarPath: string) => Promise<void>;
   fetchName: () => Promise<string>;
+  fetchUserCreationDate: () => string | undefined;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -214,6 +215,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return data.full_name;
   };
 
+  const fetchUserCreationDate = () => {
+    return session?.user.created_at;
+  };
+
   // const fetchAvatarUrl = async () => {
   //   const { data, error } = await supabase
   //     .from("profiles")
@@ -289,6 +294,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchAvatarPath,
         updateAvatarPath,
         fetchName,
+        fetchUserCreationDate,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}

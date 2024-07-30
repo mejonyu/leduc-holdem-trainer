@@ -49,3 +49,26 @@ export const countConsecutiveDays = (
 
   return count;
 };
+
+export const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+  const localDate = new Date(date.getTime() - userTimezoneOffset);
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  return `${months[localDate.getUTCMonth()]}, ${localDate.getUTCFullYear()}`;
+};
