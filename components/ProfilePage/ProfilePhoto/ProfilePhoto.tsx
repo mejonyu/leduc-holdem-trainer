@@ -1,6 +1,6 @@
 // ProfilePhoto.tsx
 import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
-import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -78,7 +78,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
           />
         </View>
         <View style={styles.editIconContainer}>
-          <Text style={styles.editIcon}>✏️</Text>
+          <Feather name="edit-2" size={scaleHeight(20)} color="black" />
         </View>
       </TouchableOpacity>
 
