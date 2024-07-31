@@ -50,6 +50,7 @@ const DayItem: React.FC<DayItemProps> = ({
   previousDayHasEntry,
   userCreatedAt,
 }) => {
+  date.setHours(0, 0, 0, 0);
   const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
   const dayNumber = date.getDate();
   const today = getLocalTodayDate();
@@ -119,7 +120,8 @@ const DayItem: React.FC<DayItemProps> = ({
       </Text>
       {!(dayName === "Sun") &&
         ((isPast && !isBeforeUserCreation) ||
-          (isToday && today.getDate() != userCreatedAtDate.getDate())) && (
+          (isToday && today.getDate() != userCreatedAtDate.getDate())) &&
+        date.getDate() != userCreatedAtDate.getDate() && (
           <Octicons
             name="dash"
             size={scaleHeight(24)}
@@ -129,7 +131,7 @@ const DayItem: React.FC<DayItemProps> = ({
               previousDayHasEntry
                 ? hasEntry
                   ? { color: "#faa11c" }
-                  : { color: "#cacaca" }
+                  : { color: "#6495ED" }
                 : { color: "#6495ED" },
             ]}
           />
