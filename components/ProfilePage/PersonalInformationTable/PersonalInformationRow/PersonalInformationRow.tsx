@@ -1,4 +1,11 @@
-import { View, Text, TouchableOpacity, Modal } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
 import React, { useState } from "react";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import {
@@ -61,12 +68,14 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
         </View>
       </View>
       {/* Edit info modal */}
-      <EditInfoModal
-        title={title}
-        modalVisible={modalVisible}
-        closeModal={closeModal}
-        refetchData={refetchData}
-      />
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <EditInfoModal
+          title={title}
+          modalVisible={modalVisible}
+          closeModal={closeModal}
+          refetchData={refetchData}
+        />
+      </TouchableWithoutFeedback>
     </>
   );
 };

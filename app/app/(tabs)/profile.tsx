@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import LoadingPage from "@/components/LoadingPage/LoadingPage";
 import { formatDate } from "@/utils/dateFunctions";
 import PersonalInformationTable from "@/components/ProfilePage/PersonalInformationTable/PersonalInformationTable";
+import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
 
 export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>();
@@ -78,19 +79,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    padding: 20,
+    paddingHorizontal: scaleWidth(20),
+    paddingVertical: scaleHeight(20),
     backgroundColor: "white",
   },
   name: {
-    fontSize: 24,
+    fontSize: scaleHeight(24),
     fontWeight: "bold",
     color: "#464c55",
-    marginBottom: 5,
+    marginBottom: scaleHeight(5),
   },
   activeSince: {
-    fontSize: 14,
+    fontSize: scaleHeight(14),
     color: "#979da5",
-    marginBottom: 20,
+    marginBottom: scaleHeight(20),
   },
   creationDate: {
     fontWeight: "bold",
