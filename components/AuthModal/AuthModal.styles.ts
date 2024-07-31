@@ -1,110 +1,112 @@
+import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
-    borderRadius: 10,
-    padding: 20,
+    borderRadius: scaleHeight(10),
+    padding: scaleHeight(20),
     backgroundColor: "white",
   },
   modalHeaderText: {
     fontWeight: "bold",
-    fontSize: 22,
+    fontSize: scaleHeight(22),
   },
   row: {
     position: "relative",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 38,
+    marginBottom: scaleHeight(38),
   },
   modalContent: {
-    margin: 20,
+    marginHorizontal: scaleWidth(20),
+    marginVertical: scaleHeight(20),
     justifyContent: "center",
     alignItems: "stretch",
   },
   heading: {
     textAlign: "center",
-    fontSize: 21,
+    fontSize: scaleHeight(21),
     fontWeight: "500",
-    marginBottom: 18,
+    marginBottom: scaleHeight(18),
   },
   terms: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: scaleHeight(16),
   },
   inputLabel: {
-    marginTop: 30,
-    marginBottom: 4,
+    marginTop: scaleHeight(30),
+    marginBottom: scaleHeight(4),
     fontWeight: "500",
   },
   input: {
     borderWidth: 1,
     borderColor: "#cdcdcd",
-    borderRadius: 3,
-    padding: 14,
-    marginBottom: 16,
+    borderRadius: scaleHeight(3),
+    paddingHorizontal: scaleWidth(14),
+    paddingVertical: scaleHeight(14),
+    marginBottom: scaleHeight(16),
   },
   uneditableInput: {
-    borderRadius: 3,
+    borderRadius: scaleHeight(3),
     backgroundColor: "#e6e6e6",
-    padding: 14,
-    marginBottom: 16,
+    paddingHorizontal: scaleWidth(14),
+    paddingVertical: scaleHeight(14),
+    marginBottom: scaleHeight(16),
   },
   continueButton: {
     backgroundColor: "black",
-    padding: 15,
-    borderRadius: 3,
+    paddingHorizontal: scaleWidth(15),
+    paddingVertical: scaleHeight(15),
+    borderRadius: scaleHeight(3),
   },
   continueButtonText: {
     color: "white",
     textAlign: "center",
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: scaleHeight(16),
   },
   backButton: {
     alignSelf: "flex-start",
-    marginBottom: 10,
+    marginBottom: scaleHeight(10),
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: scaleHeight(24),
     fontWeight: "bold",
   },
   subheading: {
     textAlign: "center",
-    fontSize: 16,
+    fontSize: scaleHeight(16),
   },
   forgotPassword: {
     color: "blue",
     textDecorationLine: "underline",
-    marginBottom: 20,
+    marginBottom: scaleHeight(20),
   },
   invalidInput: {
     borderColor: "#fcd2cd",
   },
   errorText: {
     color: "#dc303d",
-    marginBottom: 16,
+    marginBottom: scaleHeight(16),
   },
   headerStyle: {
     backgroundColor: "white",
   },
-
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    // Copy over any styles from your original input that relate to the container
-    // such as borderWidth, borderColor, borderRadius, etc.
   },
   showButton: {
     position: "absolute",
-    right: 10,
-    top: 14,
+    right: scaleWidth(10),
+    top: scaleHeight(14),
     justifyContent: "center",
   },
   showButtonText: {
     color: "black", // Or any color you prefer
-    fontSize: 16,
+    fontSize: scaleHeight(16),
   },
 });
 

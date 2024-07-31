@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     padding: scaleHeight(15),
     borderRadius: 3,
+    // width: "100%",
   },
   flexRow: {
     display: "flex",

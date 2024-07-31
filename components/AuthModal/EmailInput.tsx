@@ -1,12 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  Text,
-  Animated,
-  Easing,
-} from "react-native";
+import React, { useEffect } from "react";
+import { TextInput } from "react-native";
 import styles from "./AuthModal.styles";
 
 interface EmailInputProps {

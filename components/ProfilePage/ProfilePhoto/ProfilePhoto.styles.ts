@@ -31,11 +31,11 @@ const styles = StyleSheet.create({
   },
   editIconContainer: {
     position: "absolute",
-    bottom: 4,
-    right: 4,
+    bottom: scaleHeight(4),
+    right: scaleWidth(4),
     backgroundColor: "white",
     borderRadius: scaleHeight(30),
-    padding: 4,
+    padding: scaleHeight(4),
   },
   modalContainer: {
     flex: 1,

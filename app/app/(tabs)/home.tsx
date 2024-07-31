@@ -12,6 +12,7 @@ import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader"
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
 import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard";
+import { scaleWidth } from "@/utils/dimensionScaling";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
@@ -184,7 +185,11 @@ const Home = () => {
           avatarPath={avatarPath}
         />
         <WeekDisplay userEntries={userEntries} />
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          style={{ marginHorizontal: scaleWidth(-20) }}
+        >
           <MoveSummaryCard
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   container: {
-    paddingHorizontal: 20,
+    paddingHorizontal: scaleWidth(20),
   },
 });
 

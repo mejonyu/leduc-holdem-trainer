@@ -1,13 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  Keyboard,
-  Animated,
-  Easing,
-} from "react-native";
+import { View, Text, Keyboard, Animated, Easing } from "react-native";
 import { supabase } from "../../lib/supabase";
 
 import styles from "./AuthModal.styles";

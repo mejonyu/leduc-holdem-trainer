@@ -5,6 +5,7 @@ import ProfilePhoto from "@/components/ProfilePage/ProfilePhoto/ProfilePhoto";
 import { useAuth } from "@/hooks/useAuth";
 import LoadingPage from "@/components/LoadingPage/LoadingPage";
 import { formatDate } from "@/utils/dateFunctions";
+import PersonalInformationTable from "@/components/ProfilePage/PersonalInformationTable/PersonalInformationTable";
 
 export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>();
@@ -35,7 +36,7 @@ export default function ProfilePage() {
       }
     };
     getAvatarPath();
-    fetchName();
+    getName();
   }, []);
 
   const truncateEmail = () => {
@@ -58,17 +59,17 @@ export default function ProfilePage() {
       {avatar ? (
         <>
           <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
-          <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
-          <Text style={styles.activeSince}>
-            Active Since •{" "}
-            <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
-          </Text>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoLabel}>Email</Text>
-            <Text style={styles.infoValue}>{fetchEmail()}</Text>
-          </View>
         </>
       ) : null}
+      <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
+      <Text style={styles.activeSince}>
+        Active Since •{" "}
+        <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
+      </Text>
+      <PersonalInformationTable
+        email={fetchEmail()}
+        name={name ? name : null}
+      />
     </View>
   );
 }
@@ -90,20 +91,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#979da5",
     marginBottom: 20,
-  },
-  infoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 10,
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: "#888",
-  },
-  infoValue: {
-    fontSize: 16,
-    color: "#888",
   },
   creationDate: {
     fontWeight: "bold",

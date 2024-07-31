@@ -41,11 +41,7 @@ const HomePageHeader: React.FC<HomePageHeaderProps> = ({
             />
           </View>
         ) : (
-          <MaterialCommunityIcons
-            name="cards-playing-spade-multiple"
-            size={scaleHeight(26)}
-            color="black"
-          />
+          <View style={styles.avatar} />
         )}
 
         <View style={styles.userInfoText}>
