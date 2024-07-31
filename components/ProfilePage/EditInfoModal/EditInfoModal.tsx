@@ -1,6 +1,6 @@
 import { View, Text, Modal, Easing } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import styles from "./EditInfoModal.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import { Animated } from "react-native";
@@ -14,12 +14,14 @@ interface EditInfoModalProps {
   title: string;
   modalVisible: boolean;
   closeModal: () => void;
+  refetchData?: () => Promise<void>;
 }
 
 const EditInfoModal: React.FC<EditInfoModalProps> = ({
   title,
   modalVisible,
   closeModal,
+  refetchData,
 }) => {
   const [info, setInfo] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
@@ -83,6 +85,9 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
       try {
         updateName(info);
         closeModal();
+        if (refetchData) {
+          refetchData();
+        }
       } catch (error) {
         console.error(error);
       }
@@ -111,13 +116,30 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
           return "Name cannot be empty";
         }
       default:
-        return "";
+        return null;
     }
   };
 
   const handleCloseModal = () => {
     setHasFocusedOnce(false);
     closeModal();
+  };
+
+  const renderInputLabel = () => {
+    switch (title) {
+      case "Name":
+        return (
+          <>
+            <View style={styles.inputLabelIcon}>
+              <FontAwesome name="id-badge" size={24} color="black" />
+            </View>
+            <Text style={styles.inputLabelText}>{title}</Text>
+          </>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -141,7 +163,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
           </View>
 
           <View style={styles.modalForm}>
-            <Text style={styles.inputLabel}>{title}</Text>
+            <View style={styles.inputLabel}>{renderInputLabel()}</View>
             <Animated.View
               style={[
                 styles.inputContainer,

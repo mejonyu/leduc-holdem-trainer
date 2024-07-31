@@ -13,30 +13,29 @@ export default function ProfilePage() {
   const { fetchEmail, fetchAvatarPath, fetchName, fetchUserCreationDate } =
     useAuth();
 
-  useEffect(() => {
-    const getAvatarPath = async () => {
-      try {
-        const path = await fetchAvatarPath();
-        if (path) {
-          setAvatar(path);
-        }
-      } catch (error) {
-        console.error(error);
+  const refetchData = async () => {
+    try {
+      const path = await fetchAvatarPath();
+      if (path) {
+        setAvatar(path);
       }
-    };
+    } catch (error) {
+      console.error(error);
+    }
 
-    const getName = async () => {
-      try {
-        const name = await fetchName();
-        if (name) {
-          setName(name);
-        }
-      } catch (error) {
-        console.error(error);
+    try {
+      const name = await fetchName();
+      console.log(name);
+      if (name) {
+        setName(name);
       }
-    };
-    getAvatarPath();
-    getName();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    refetchData();
   }, []);
 
   const truncateEmail = () => {
@@ -69,6 +68,7 @@ export default function ProfilePage() {
       <PersonalInformationTable
         email={fetchEmail()}
         name={name ? name : null}
+        refetchData={refetchData}
       />
     </View>
   );

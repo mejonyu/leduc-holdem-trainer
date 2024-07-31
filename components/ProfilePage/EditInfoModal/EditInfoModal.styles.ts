@@ -48,6 +48,17 @@ const styles = StyleSheet.create({
   inputLabel: {
     marginTop: scaleHeight(24),
     marginBottom: scaleHeight(4),
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  inputLabelIcon: {
+    marginRight: scaleWidth(2),
+    justifyContent: "center",
+    alignItems: "center",
+    height: scaleHeight(30),
+    width: scaleWidth(30),
+  },
+  inputLabelText: {
     fontWeight: "500",
   },
 });

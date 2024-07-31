@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
   },
   right: {},
   icon: {
-    marginRight: scaleWidth(6),
+    marginRight: scaleWidth(3),
     justifyContent: "center",
     alignItems: "center",
     height: scaleHeight(30),

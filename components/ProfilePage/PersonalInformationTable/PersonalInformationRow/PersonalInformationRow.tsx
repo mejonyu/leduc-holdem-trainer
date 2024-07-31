@@ -16,11 +16,13 @@ import EditInfoModal from "../../EditInfoModal/EditInfoModal";
 interface PersonalInformationRowProps {
   title: string;
   data: string | null;
+  refetchData?: () => Promise<void>;
 }
 
 const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
   title,
   data,
+  refetchData,
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -53,7 +55,7 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
             <Text style={styles.data}>{data}</Text>
           ) : (
             <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <FontAwesome6 name="plus" size={18} color="#4169E1" />
+              <Ionicons name="add" size={scaleHeight(20)} color="black" />
             </TouchableOpacity>
           )}
         </View>
@@ -63,6 +65,7 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
         title={title}
         modalVisible={modalVisible}
         closeModal={closeModal}
+        refetchData={refetchData}
       />
     </>
   );
