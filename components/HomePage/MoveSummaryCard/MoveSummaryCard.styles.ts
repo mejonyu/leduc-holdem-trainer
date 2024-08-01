@@ -1,16 +1,22 @@
 import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
 import { StyleSheet } from "react-native";
 
+export const CARD_WIDTH = scaleWidth(320);
+export const CARD_SPACING = scaleWidth(10);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: scaleHeight(360),
-    width: scaleWidth(300),
+    width: CARD_WIDTH,
     backgroundColor: "#f4f4f4",
     borderRadius: scaleHeight(20),
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: scaleWidth(13),
+    marginHorizontal: CARD_SPACING,
+    // shadowColor: "gray",
+    // shadowRadius: 5,
+    // shadowOpacity: 0.5,
   },
   titleContainer: {
     alignItems: "center",

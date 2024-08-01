@@ -1,20 +1,49 @@
-import { View, Text } from "react-native";
+import { View, Text, Animated } from "react-native";
 import React, { useEffect, useState } from "react";
-import styles from "./MoveSummaryCard.styles";
+import styles, { CARD_SPACING, CARD_WIDTH } from "./MoveSummaryCard.styles";
 import MoveRankingCircle from "./MoveRankingCircle/MoveRankingCircle";
 import { useAuth } from "@/hooks/useAuth";
+import { scaleWidth } from "@/utils/dimensionScaling";
 
 interface MoveSummaryCardProps {
   userMovesWithOnlyRankings: string[] | null;
   thisWeekMoveCount: number;
+  index: number;
+  scrollX: Animated.Value;
 }
 
 const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
   userMovesWithOnlyRankings,
   thisWeekMoveCount,
+  index,
+  scrollX,
 }) => {
+  const inputRange = [
+    (index - 1) * (CARD_WIDTH + CARD_SPACING),
+    index * (CARD_WIDTH + CARD_SPACING),
+    (index + 1) * (CARD_WIDTH + CARD_SPACING),
+  ];
+
+  const rotate = scrollX.interpolate({
+    inputRange,
+    outputRange: ["3deg", "0deg", "-3deg"],
+    extrapolate: "clamp",
+  });
+
+  const opacity = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.5, 1, 0.5],
+    extrapolate: "clamp",
+  });
+
+  const scale = scrollX.interpolate({
+    inputRange,
+    outputRange: [0.9, 1, 0.9],
+    extrapolate: "clamp",
+  });
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, { transform: [{ rotate }] }]}>
       <View style={styles.titleContainer}>
         <Text style={styles.title}>Your Stats</Text>
         <Text style={styles.subTitle}>
@@ -22,7 +51,7 @@ const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
         </Text>
       </View>
       <MoveRankingCircle moves={userMovesWithOnlyRankings} />
-    </View>
+    </Animated.View>
   );
 };
 

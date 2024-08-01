@@ -7,13 +7,21 @@ import {
   RefreshControl,
   Animated,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
 import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
 import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard";
-import { scaleWidth, SCREEN_WIDTH } from "@/utils/dimensionScaling";
+import {
+  scaleHeight,
+  scaleWidth,
+  SCREEN_WIDTH,
+} from "@/utils/dimensionScaling";
+import {
+  CARD_SPACING,
+  CARD_WIDTH,
+} from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard.styles";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
@@ -25,6 +33,8 @@ const Home = () => {
     string[] | null
   >([]);
   const [avatarPath, setAvatarPath] = useState("");
+
+  const scrollX = useRef(new Animated.Value(0)).current;
 
   const {
     fetchAllMoveCount,
@@ -189,23 +199,36 @@ const Home = () => {
         <Animated.ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          style={{ marginHorizontal: scaleWidth(-20) }}
+          style={{
+            marginHorizontal: scaleWidth(-20),
+            paddingVertical: scaleHeight(30),
+          }}
           pagingEnabled
-          snapToInterval={scaleWidth(300) + scaleWidth(26)}
+          snapToInterval={CARD_WIDTH + CARD_SPACING * 2}
           decelerationRate="fast"
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: true }
+          )}
           contentContainerStyle={styles.scrollViewContent}
         >
           <MoveSummaryCard
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
+            index={0}
+            scrollX={scrollX}
           />
           <MoveSummaryCard
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
+            index={1}
+            scrollX={scrollX}
           />
           <MoveSummaryCard
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
+            index={2}
+            scrollX={scrollX}
           />
         </Animated.ScrollView>
         <Text>Number of moves played: {totalMoveCount}</Text>
@@ -224,7 +247,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleWidth(20),
   },
   scrollViewContent: {
-    paddingHorizontal: (SCREEN_WIDTH - scaleWidth(300)) / 2 - scaleWidth(13),
+    paddingHorizontal: (SCREEN_WIDTH - CARD_WIDTH) / 2 - CARD_SPACING,
   },
 });
 
