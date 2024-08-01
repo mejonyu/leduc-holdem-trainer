@@ -5,6 +5,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     height: scaleHeight(360),
+    width: scaleWidth(300),
     backgroundColor: "#f4f4f4",
     borderRadius: scaleHeight(20),
     justifyContent: "center",

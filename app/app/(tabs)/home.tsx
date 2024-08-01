@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   RefreshControl,
+  Animated,
 } from "react-native";
 import React, { useCallback, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
@@ -12,7 +13,7 @@ import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader"
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
 import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard";
-import { scaleWidth } from "@/utils/dimensionScaling";
+import { scaleWidth, SCREEN_WIDTH } from "@/utils/dimensionScaling";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
@@ -185,10 +186,14 @@ const Home = () => {
           avatarPath={avatarPath}
         />
         <WeekDisplay userEntries={userEntries} />
-        <ScrollView
+        <Animated.ScrollView
           horizontal={true}
           showsHorizontalScrollIndicator={false}
           style={{ marginHorizontal: scaleWidth(-20) }}
+          pagingEnabled
+          snapToInterval={scaleWidth(300) + scaleWidth(26)}
+          decelerationRate="fast"
+          contentContainerStyle={styles.scrollViewContent}
         >
           <MoveSummaryCard
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
@@ -202,7 +207,7 @@ const Home = () => {
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
           />
-        </ScrollView>
+        </Animated.ScrollView>
         <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>
@@ -217,6 +222,9 @@ const styles = StyleSheet.create({
   },
   container: {
     paddingHorizontal: scaleWidth(20),
+  },
+  scrollViewContent: {
+    paddingHorizontal: (SCREEN_WIDTH - scaleWidth(300)) / 2 - scaleWidth(13),
   },
 });
 
