@@ -57,17 +57,18 @@ const DayItem: React.FC<DayItemProps> = ({
   today.setHours(0, 0, 0, 0);
   const isPast = date < today;
   const isToday = date.toDateString() === today.toDateString();
-  const userCreatedAtDate = new Date();
+  let userCreatedAtDate = new Date();
   if (userCreatedAt) {
-    userCreatedAtDate.setDate(new Date(userCreatedAt).getDate());
+    userCreatedAtDate = new Date(userCreatedAt);
     userCreatedAtDate.setHours(0, 0, 0, 0);
   }
+
   const isBeforeUserCreation = userCreatedAt ? date < userCreatedAtDate : false;
 
   let icon = (
     <Entypo name="dot-single" size={scaleHeight(20)} color="#cbcbcb" />
   ); // Default dot
-  if (!isBeforeUserCreation || !today) {
+  if (!isBeforeUserCreation || isToday) {
     if (isPast) {
       icon = hasEntry ? (
         <Feather name="check" size={scaleHeight(20)} color="#fba01c" />

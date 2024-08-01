@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingBottom: scaleHeight(5),
-    borderBottomWidth: 0.25,
+    borderBottomWidth: 0.2,
     borderBottomColor: "#a6a6a6",
   },
   userInfoContainer: {
