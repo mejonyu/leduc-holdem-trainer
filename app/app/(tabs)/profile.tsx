@@ -26,7 +26,6 @@ export default function ProfilePage() {
 
     try {
       const name = await fetchName();
-      console.log(name);
       if (name) {
         setName(name);
       }
@@ -56,11 +55,11 @@ export default function ProfilePage() {
 
   return (
     <View style={styles.container}>
-      {avatar ? (
-        <>
+      <View style={styles.profilePhoto}>
+        {avatar ? (
           <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
-        </>
-      ) : null}
+        ) : null}
+      </View>
       <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
       <Text style={styles.activeSince}>
         Active Since •{" "}
@@ -96,5 +95,12 @@ const styles = StyleSheet.create({
   },
   creationDate: {
     fontWeight: "bold",
+  },
+  profilePhoto: {
+    width: scaleHeight(100),
+    height: scaleHeight(100),
+    borderRadius: scaleHeight(50),
+    // justifyContent: "center",
+    // alignItems: "center",
   },
 });

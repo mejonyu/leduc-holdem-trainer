@@ -317,7 +317,6 @@ const Home = () => {
             scrollX={scrollX}
           />
         </Animated.ScrollView>
-        <Text>Number of moves played: {totalMoveCount}</Text>
         <Link href="/app/game">Go to game</Link>
       </ScrollView>
     </SafeAreaView>
