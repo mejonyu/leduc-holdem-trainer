@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     // borderWidth: 2,
   },
   legendText: {
-    fontSize: scaleHeight(13),
+    fontSize: scaleHeight(12),
     color: "#464c55",
     fontWeight: "600",
   },

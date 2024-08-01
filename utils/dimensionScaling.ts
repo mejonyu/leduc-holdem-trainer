@@ -16,5 +16,5 @@ export const scaleWidth = (size: number) => {
 };
 
 export const scaleIconSize = (size: number) => {
-  return (size / IPHONE_15_PRO_MAX_HEIGHT) * SCREEN_WIDTH;
+  return (size / IPHONE_15_PRO_MAX_HEIGHT) * SCREEN_HEIGHT;
 };

@@ -12,7 +12,6 @@ import { Link, useFocusEffect } from "expo-router";
 import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";
-import MoveSummaryCard from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard";
 import {
   scaleHeight,
   scaleWidth,
@@ -21,17 +20,24 @@ import {
 import {
   CARD_SPACING,
   CARD_WIDTH,
-} from "@/components/HomePage/MoveSummaryCard/MoveSummaryCard.styles";
+} from "@/components/HomePage/SummaryCards/MoveSummaryCard/MoveSummaryCard.styles";
+import MoveSummaryCard from "@/components/HomePage/SummaryCards/MoveSummaryCard/MoveSummaryCard";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
   const [todayMoveCount, setTodayMoveCount] = useState(0);
   const [thisWeekMoveCount, setThisWeekMoveCount] = useState(0);
+  const [player1ThisWeekMoveCount, setPlayer1ThisWeekMoveCount] = useState(0);
+  const [player2ThisWeekMoveCount, setPlayer2ThisWeekMoveCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [userEntries, setUserEntries] = useState<Record<string, boolean>>({});
   const [userMovesWithOnlyRankings, setUserMovesWithOnlyRankings] = useState<
     string[] | null
   >([]);
+  const [player1MovesWithOnlyRankings, setPlayer1MovesWithOnlyRankings] =
+    useState<string[] | null>([]);
+  const [player2MovesWithOnlyRankings, setPlayer2MovesWithOnlyRankings] =
+    useState<string[] | null>([]);
   const [avatarPath, setAvatarPath] = useState("");
 
   const scrollX = useRef(new Animated.Value(0)).current;
@@ -40,8 +46,12 @@ const Home = () => {
     fetchAllMoveCount,
     fetchTodayMoveCount,
     fetchThisWeekMoveCount,
+    fetchPlayer1ThisWeekMoveCount,
+    fetchPlayer2ThisWeekMoveCount,
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
+    fetchPlayer1MovesWithOnlyRankings,
+    fetchPlayer2MovesWithOnlyRankings,
     fetchAvatarPath,
   } = useAuth();
 
@@ -92,11 +102,53 @@ const Home = () => {
         }
       };
 
+      const updatePlayer1MovesWithOnlyRankings = async () => {
+        try {
+          const moves = await fetchPlayer1MovesWithOnlyRankings();
+          setPlayer1MovesWithOnlyRankings(moves);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const updatePlayer2MovesWithOnlyRankings = async () => {
+        try {
+          const moves = await fetchPlayer2MovesWithOnlyRankings();
+          setPlayer2MovesWithOnlyRankings(moves);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       const updateThisWeekMoveCount = async () => {
         try {
           const newThisWeekMoveCount = await fetchThisWeekMoveCount();
           if (newThisWeekMoveCount) {
             setThisWeekMoveCount(newThisWeekMoveCount);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const updatePlayer1ThisWeekMoveCount = async () => {
+        try {
+          const newPlayer1ThisWeekMoveCount =
+            await fetchPlayer1ThisWeekMoveCount();
+          if (newPlayer1ThisWeekMoveCount) {
+            setPlayer1ThisWeekMoveCount(newPlayer1ThisWeekMoveCount);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const updatePlayer2ThisWeekMoveCount = async () => {
+        try {
+          const newPlayer2ThisWeekMoveCount =
+            await fetchPlayer2ThisWeekMoveCount();
+          if (newPlayer2ThisWeekMoveCount) {
+            setPlayer2ThisWeekMoveCount(newPlayer2ThisWeekMoveCount);
           }
         } catch (error) {
           console.error(error);
@@ -118,7 +170,11 @@ const Home = () => {
       updateTodayMoveCount();
       updateUserEntries();
       updateUserMovesWithOnlyRankings();
+      updatePlayer1MovesWithOnlyRankings();
+      updatePlayer2MovesWithOnlyRankings();
       updateThisWeekMoveCount();
+      updatePlayer1ThisWeekMoveCount();
+      updatePlayer2ThisWeekMoveCount();
       updateAvatarPath();
 
       return () => {
@@ -129,7 +185,11 @@ const Home = () => {
       fetchTodayMoveCount,
       fetchUserEntries,
       fetchUserMovesWithOnlyRankings,
+      fetchPlayer1MovesWithOnlyRankings,
+      fetchPlayer2MovesWithOnlyRankings,
       fetchThisWeekMoveCount,
+      fetchPlayer1ThisWeekMoveCount,
+      fetchPlayer2ThisWeekMoveCount,
       fetchAvatarPath,
     ])
   );
@@ -143,7 +203,13 @@ const Home = () => {
       const newUserEntries = await fetchUserEntries();
       const newUserMovesWithOnlyRankings =
         await fetchUserMovesWithOnlyRankings();
+      const newPlayer1MovesWithOnlyRankings =
+        await fetchPlayer1MovesWithOnlyRankings();
+      const newPlayer2MovesWithOnlyRankings =
+        await fetchPlayer2MovesWithOnlyRankings();
       const newThisWeekMoveCount = await fetchThisWeekMoveCount();
+      const newPlayer1ThisWeekMoveCount = await fetchPlayer1ThisWeekMoveCount();
+      const newPlayer2ThisWeekMoveCount = await fetchPlayer2ThisWeekMoveCount();
       const newAvatarPath = await fetchAvatarPath();
 
       if (totalCount) {
@@ -162,8 +228,24 @@ const Home = () => {
         setUserMovesWithOnlyRankings(newUserMovesWithOnlyRankings);
       }
 
+      if (newPlayer1MovesWithOnlyRankings) {
+        setPlayer1MovesWithOnlyRankings(newPlayer1MovesWithOnlyRankings);
+      }
+
+      if (newPlayer2MovesWithOnlyRankings) {
+        setPlayer2MovesWithOnlyRankings(newPlayer2MovesWithOnlyRankings);
+      }
+
       if (newThisWeekMoveCount) {
         setThisWeekMoveCount(newThisWeekMoveCount);
+      }
+
+      if (newPlayer1ThisWeekMoveCount) {
+        setPlayer1ThisWeekMoveCount(newPlayer1ThisWeekMoveCount);
+      }
+
+      if (newPlayer2ThisWeekMoveCount) {
+        setPlayer2ThisWeekMoveCount(newPlayer2ThisWeekMoveCount);
       }
 
       if (newAvatarPath) {
@@ -178,7 +260,11 @@ const Home = () => {
     fetchTodayMoveCount,
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
+    fetchPlayer1MovesWithOnlyRankings,
+    fetchPlayer2MovesWithOnlyRankings,
     fetchThisWeekMoveCount,
+    fetchPlayer1ThisWeekMoveCount,
+    fetchPlayer2ThisWeekMoveCount,
     fetchAvatarPath,
   ]);
 
@@ -219,14 +305,14 @@ const Home = () => {
             scrollX={scrollX}
           />
           <MoveSummaryCard
-            userMovesWithOnlyRankings={userMovesWithOnlyRankings}
-            thisWeekMoveCount={thisWeekMoveCount}
+            userMovesWithOnlyRankings={player1MovesWithOnlyRankings}
+            thisWeekMoveCount={player1ThisWeekMoveCount}
             index={1}
             scrollX={scrollX}
           />
           <MoveSummaryCard
-            userMovesWithOnlyRankings={userMovesWithOnlyRankings}
-            thisWeekMoveCount={thisWeekMoveCount}
+            userMovesWithOnlyRankings={player2MovesWithOnlyRankings}
+            thisWeekMoveCount={player2ThisWeekMoveCount}
             index={2}
             scrollX={scrollX}
           />

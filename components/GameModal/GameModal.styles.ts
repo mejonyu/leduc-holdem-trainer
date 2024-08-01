@@ -1,8 +1,8 @@
 import {
-  height,
+  SCREEN_HEIGHT,
   scaleHeight,
   scaleWidth,
-  width,
+  SCREEN_WIDTH,
 } from "@/utils/dimensionScaling";
 import { StyleSheet } from "react-native";
 
@@ -18,11 +18,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   pokerTable: {
-    width: width * 0.8,
-    height: height * 0.6,
+    width: SCREEN_WIDTH * 0.8,
+    height: SCREEN_HEIGHT * 0.6,
     // backgroundColor: "#24314d",
     backgroundColor: "#f4f4f4",
-    borderRadius: (width * 0.8) / 2,
+    borderRadius: (SCREEN_WIDTH * 0.8) / 2,
     position: "relative",
     justifyContent: "center",
     alignItems: "center",
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     backgroundColor: "#f4f4f4",
     borderWidth: scaleHeight(3),
-    borderRadius: 100,
+    borderRadius: scaleHeight(100),
     borderColor: "#eaeaea",
     padding: scaleHeight(5),
     top: 0,
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4f4f4",
     borderColor: "#eaeaea",
     borderWidth: scaleHeight(3),
-    borderRadius: 100,
+    borderRadius: scaleHeight(100),
     padding: scaleHeight(5),
     bottom: 0,
     right: 0,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     // backgroundColor: "#4CAF53",
     paddingVertical: scaleHeight(15),
     paddingHorizontal: scaleWidth(15),
-    borderRadius: 3,
+    borderRadius: scaleHeight(3),
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",

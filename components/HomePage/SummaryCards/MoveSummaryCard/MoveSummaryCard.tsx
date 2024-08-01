@@ -1,9 +1,7 @@
 import { View, Text, Animated } from "react-native";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styles, { CARD_SPACING, CARD_WIDTH } from "./MoveSummaryCard.styles";
-import MoveRankingCircle from "./MoveRankingCircle/MoveRankingCircle";
-import { useAuth } from "@/hooks/useAuth";
-import { scaleWidth } from "@/utils/dimensionScaling";
+import MoveRankingCircle from "../MoveRankingCircle/MoveRankingCircle";
 
 interface MoveSummaryCardProps {
   userMovesWithOnlyRankings: string[] | null;
@@ -45,7 +43,7 @@ const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
   return (
     <Animated.View style={[styles.container, { transform: [{ rotate }] }]}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Your Stats</Text>
+        <Text style={styles.title}>Overall Stats</Text>
         <Text style={styles.subTitle}>
           +{thisWeekMoveCount} solved this week
         </Text>

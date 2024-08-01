@@ -19,8 +19,12 @@ export interface AuthContextType {
   fetchEmail: () => string | undefined;
   fetchTodayMoveCount: () => Promise<number | null>;
   fetchThisWeekMoveCount: () => Promise<number | null>;
+  fetchPlayer1ThisWeekMoveCount: () => Promise<number | null>;
+  fetchPlayer2ThisWeekMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
+  fetchPlayer1MovesWithOnlyRankings: () => Promise<string[] | null>;
+  fetchPlayer2MovesWithOnlyRankings: () => Promise<string[] | null>;
   fetchAvatarPath: () => Promise<string>;
   updateAvatarPath: (avatarPath: string) => Promise<void>;
   fetchName: () => Promise<string>;
@@ -147,6 +151,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count ?? 0;
   };
 
+  const fetchPlayer1ThisWeekMoveCount = async () => {
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .eq("is_player_1", true)
+      .gte("created_at", startOfWeek)
+      .lt("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    return count ?? 0;
+  };
+
+  const fetchPlayer2ThisWeekMoveCount = async () => {
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .eq("is_player_1", false)
+      .gte("created_at", startOfWeek)
+      .lt("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    return count ?? 0;
+  };
+
   const fetchUserEntries = async (): Promise<Record<
     string,
     boolean
@@ -182,6 +218,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .from("leduc_moves")
       .select("move_rank")
       .eq("user_id", session?.user.id);
+    if (error) throw error;
+    const moveRanks = data.map((item) => item.move_rank);
+    return moveRanks;
+  };
+
+  const fetchPlayer1MovesWithOnlyRankings = async () => {
+    const { data, error } = await supabase
+      .from("leduc_moves")
+      .select("move_rank")
+      .eq("user_id", session?.user.id)
+      .eq("is_player_1", true);
+    if (error) throw error;
+    const moveRanks = data.map((item) => item.move_rank);
+    return moveRanks;
+  };
+
+  const fetchPlayer2MovesWithOnlyRankings = async () => {
+    const { data, error } = await supabase
+      .from("leduc_moves")
+      .select("move_rank")
+      .eq("user_id", session?.user.id)
+      .eq("is_player_1", false);
     if (error) throw error;
     const moveRanks = data.map((item) => item.move_rank);
     return moveRanks;
@@ -298,8 +356,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchEmail,
         fetchTodayMoveCount,
         fetchThisWeekMoveCount,
+        fetchPlayer1ThisWeekMoveCount,
+        fetchPlayer2ThisWeekMoveCount,
         fetchUserEntries,
         fetchUserMovesWithOnlyRankings,
+        fetchPlayer1MovesWithOnlyRankings,
+        fetchPlayer2MovesWithOnlyRankings,
         fetchAvatarPath,
         updateAvatarPath,
         fetchName,
