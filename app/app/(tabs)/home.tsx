@@ -6,6 +6,7 @@ import {
   ScrollView,
   RefreshControl,
   Animated,
+  Image,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
 import { Link, useFocusEffect } from "expo-router";
@@ -22,6 +23,7 @@ import {
   CARD_WIDTH,
 } from "@/components/HomePage/SummaryCards/MoveSummaryCard/MoveSummaryCard.styles";
 import MoveSummaryCard from "@/components/HomePage/SummaryCards/MoveSummaryCard/MoveSummaryCard";
+import PlayGameButton from "@/components/HomePage/PlayGameButton/PlayGameButton";
 
 const Home = () => {
   const [totalMoveCount, setTotalMoveCount] = useState(0);
@@ -29,6 +31,8 @@ const Home = () => {
   const [thisWeekMoveCount, setThisWeekMoveCount] = useState(0);
   const [player1ThisWeekMoveCount, setPlayer1ThisWeekMoveCount] = useState(0);
   const [player2ThisWeekMoveCount, setPlayer2ThisWeekMoveCount] = useState(0);
+  const [preflopThisWeekMoveCount, setPreflopThisWeekMoveCount] = useState(0);
+  const [postflopThisWeekMoveCount, setPostflopThisWeekMoveCount] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [userEntries, setUserEntries] = useState<Record<string, boolean>>({});
   const [userMovesWithOnlyRankings, setUserMovesWithOnlyRankings] = useState<
@@ -37,6 +41,10 @@ const Home = () => {
   const [player1MovesWithOnlyRankings, setPlayer1MovesWithOnlyRankings] =
     useState<string[] | null>([]);
   const [player2MovesWithOnlyRankings, setPlayer2MovesWithOnlyRankings] =
+    useState<string[] | null>([]);
+  const [preflopMovesWithOnlyRankings, setPreflopMovesWithOnlyRankings] =
+    useState<string[] | null>([]);
+  const [postflopMovesWithOnlyRankings, setPostflopMovesWithOnlyRankings] =
     useState<string[] | null>([]);
   const [avatarPath, setAvatarPath] = useState("");
 
@@ -48,10 +56,14 @@ const Home = () => {
     fetchThisWeekMoveCount,
     fetchPlayer1ThisWeekMoveCount,
     fetchPlayer2ThisWeekMoveCount,
+    fetchPreflopThisWeekMoveCount,
+    fetchPostflopThisWeekMoveCount,
     fetchUserEntries,
     fetchUserMovesWithOnlyRankings,
     fetchPlayer1MovesWithOnlyRankings,
     fetchPlayer2MovesWithOnlyRankings,
+    fetchPreflopMovesWithOnlyRankings,
+    fetchPostflopMovesWithOnlyRankings,
     fetchAvatarPath,
   } = useAuth();
 
@@ -120,6 +132,24 @@ const Home = () => {
         }
       };
 
+      const updatePreflopMovesWithOnlyRankings = async () => {
+        try {
+          const moves = await fetchPreflopMovesWithOnlyRankings();
+          setPreflopMovesWithOnlyRankings(moves);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const updatePostflopMovesWithOnlyRankings = async () => {
+        try {
+          const moves = await fetchPostflopMovesWithOnlyRankings();
+          setPostflopMovesWithOnlyRankings(moves);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       const updateThisWeekMoveCount = async () => {
         try {
           const newThisWeekMoveCount = await fetchThisWeekMoveCount();
@@ -155,6 +185,30 @@ const Home = () => {
         }
       };
 
+      const updatePreflopThisWeekMoveCount = async () => {
+        try {
+          const newPreflopThisWeekMoveCount =
+            await fetchPreflopThisWeekMoveCount();
+          if (newPreflopThisWeekMoveCount) {
+            setPreflopThisWeekMoveCount(newPreflopThisWeekMoveCount);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
+      const updatePostflopThisWeekMoveCount = async () => {
+        try {
+          const newPostflopThisWeekMoveCount =
+            await fetchPostflopThisWeekMoveCount();
+          if (newPostflopThisWeekMoveCount) {
+            setPostflopThisWeekMoveCount(newPostflopThisWeekMoveCount);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       const updateAvatarPath = async () => {
         try {
           const newAvatarPath = await fetchAvatarPath();
@@ -172,9 +226,13 @@ const Home = () => {
       updateUserMovesWithOnlyRankings();
       updatePlayer1MovesWithOnlyRankings();
       updatePlayer2MovesWithOnlyRankings();
+      updatePreflopMovesWithOnlyRankings();
+      updatePostflopMovesWithOnlyRankings();
       updateThisWeekMoveCount();
       updatePlayer1ThisWeekMoveCount();
       updatePlayer2ThisWeekMoveCount();
+      updatePreflopThisWeekMoveCount();
+      updatePostflopThisWeekMoveCount();
       updateAvatarPath();
 
       return () => {
@@ -187,9 +245,13 @@ const Home = () => {
       fetchUserMovesWithOnlyRankings,
       fetchPlayer1MovesWithOnlyRankings,
       fetchPlayer2MovesWithOnlyRankings,
+      fetchPreflopMovesWithOnlyRankings,
+      fetchPostflopMovesWithOnlyRankings,
       fetchThisWeekMoveCount,
       fetchPlayer1ThisWeekMoveCount,
       fetchPlayer2ThisWeekMoveCount,
+      fetchPreflopThisWeekMoveCount,
+      fetchPostflopThisWeekMoveCount,
       fetchAvatarPath,
     ])
   );
@@ -207,6 +269,10 @@ const Home = () => {
         await fetchPlayer1MovesWithOnlyRankings();
       const newPlayer2MovesWithOnlyRankings =
         await fetchPlayer2MovesWithOnlyRankings();
+      const newPreflopMovesWithOnlyRankings =
+        await fetchPreflopMovesWithOnlyRankings();
+      const newPostflopMovesWithOnlyRankings =
+        await fetchPostflopMovesWithOnlyRankings();
       const newThisWeekMoveCount = await fetchThisWeekMoveCount();
       const newPlayer1ThisWeekMoveCount = await fetchPlayer1ThisWeekMoveCount();
       const newPlayer2ThisWeekMoveCount = await fetchPlayer2ThisWeekMoveCount();
@@ -236,6 +302,14 @@ const Home = () => {
         setPlayer2MovesWithOnlyRankings(newPlayer2MovesWithOnlyRankings);
       }
 
+      if (newPreflopMovesWithOnlyRankings) {
+        setPreflopMovesWithOnlyRankings(newPreflopMovesWithOnlyRankings);
+      }
+
+      if (newPostflopMovesWithOnlyRankings) {
+        setPostflopMovesWithOnlyRankings(newPostflopMovesWithOnlyRankings);
+      }
+
       if (newThisWeekMoveCount) {
         setThisWeekMoveCount(newThisWeekMoveCount);
       }
@@ -262,9 +336,13 @@ const Home = () => {
     fetchUserMovesWithOnlyRankings,
     fetchPlayer1MovesWithOnlyRankings,
     fetchPlayer2MovesWithOnlyRankings,
+    fetchPreflopMovesWithOnlyRankings,
+    fetchPostflopMovesWithOnlyRankings,
     fetchThisWeekMoveCount,
     fetchPlayer1ThisWeekMoveCount,
     fetchPlayer2ThisWeekMoveCount,
+    fetchPreflopThisWeekMoveCount,
+    fetchPostflopThisWeekMoveCount,
     fetchAvatarPath,
   ]);
 
@@ -299,25 +377,51 @@ const Home = () => {
           contentContainerStyle={styles.scrollViewContent}
         >
           <MoveSummaryCard
+            title="Overall Stats"
             userMovesWithOnlyRankings={userMovesWithOnlyRankings}
             thisWeekMoveCount={thisWeekMoveCount}
             index={0}
             scrollX={scrollX}
           />
           <MoveSummaryCard
+            title="Player 1 Stats"
             userMovesWithOnlyRankings={player1MovesWithOnlyRankings}
             thisWeekMoveCount={player1ThisWeekMoveCount}
             index={1}
             scrollX={scrollX}
           />
           <MoveSummaryCard
+            title="Player 2 Stats"
             userMovesWithOnlyRankings={player2MovesWithOnlyRankings}
             thisWeekMoveCount={player2ThisWeekMoveCount}
             index={2}
             scrollX={scrollX}
           />
+          <MoveSummaryCard
+            title="Pre-Flop Stats"
+            userMovesWithOnlyRankings={preflopMovesWithOnlyRankings}
+            thisWeekMoveCount={preflopThisWeekMoveCount}
+            index={3}
+            scrollX={scrollX}
+          />
+          <MoveSummaryCard
+            title="Post-Flop Stats"
+            userMovesWithOnlyRankings={postflopMovesWithOnlyRankings}
+            thisWeekMoveCount={postflopThisWeekMoveCount}
+            index={4}
+            scrollX={scrollX}
+          />
         </Animated.ScrollView>
-        <Link href="/app/game">Go to game</Link>
+        <View style={{ alignItems: "center" }}>
+          <PlayGameButton />
+        </View>
+        <View style={styles.pointingPersonContainer}>
+          <Image
+            source={require("@/assets/images/pointing-person.png")}
+            resizeMode="contain"
+            style={{ width: "100%", height: "100%" }}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -333,6 +437,13 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     paddingHorizontal: (SCREEN_WIDTH - CARD_WIDTH) / 2 - CARD_SPACING,
+  },
+  pointingPersonContainer: {
+    position: "absolute",
+    width: scaleWidth(180),
+    height: scaleHeight(180),
+    bottom: scaleHeight(-148),
+    right: 0,
   },
 });
 

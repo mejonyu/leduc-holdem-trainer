@@ -21,10 +21,14 @@ export interface AuthContextType {
   fetchThisWeekMoveCount: () => Promise<number | null>;
   fetchPlayer1ThisWeekMoveCount: () => Promise<number | null>;
   fetchPlayer2ThisWeekMoveCount: () => Promise<number | null>;
+  fetchPreflopThisWeekMoveCount: () => Promise<number | null>;
+  fetchPostflopThisWeekMoveCount: () => Promise<number | null>;
   fetchUserEntries: () => Promise<Record<string, boolean> | void>;
   fetchUserMovesWithOnlyRankings: () => Promise<string[] | null>;
   fetchPlayer1MovesWithOnlyRankings: () => Promise<string[] | null>;
   fetchPlayer2MovesWithOnlyRankings: () => Promise<string[] | null>;
+  fetchPreflopMovesWithOnlyRankings: () => Promise<string[] | null>;
+  fetchPostflopMovesWithOnlyRankings: () => Promise<string[] | null>;
   fetchAvatarPath: () => Promise<string>;
   updateAvatarPath: (avatarPath: string) => Promise<void>;
   fetchName: () => Promise<string>;
@@ -183,6 +187,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return count ?? 0;
   };
 
+  const fetchPreflopThisWeekMoveCount = async () => {
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .eq("is_preflop", true)
+      .gte("created_at", startOfWeek)
+      .lt("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    return count ?? 0;
+  };
+
+  const fetchPostflopThisWeekMoveCount = async () => {
+    const startOfWeek = weekDates[0].toISOString();
+    const endOfWeek = new Date(weekDates[6].getTime() + 86399999).toISOString(); // End of Saturday
+
+    const { count, error } = await supabase
+      .from("leduc_moves")
+      .select("*", { count: "exact", head: true })
+      .eq("is_preflop", false)
+      .gte("created_at", startOfWeek)
+      .lt("created_at", endOfWeek);
+
+    if (error) throw error;
+
+    return count ?? 0;
+  };
+
   const fetchUserEntries = async (): Promise<Record<
     string,
     boolean
@@ -240,6 +276,28 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       .select("move_rank")
       .eq("user_id", session?.user.id)
       .eq("is_player_1", false);
+    if (error) throw error;
+    const moveRanks = data.map((item) => item.move_rank);
+    return moveRanks;
+  };
+
+  const fetchPreflopMovesWithOnlyRankings = async () => {
+    const { data, error } = await supabase
+      .from("leduc_moves")
+      .select("move_rank")
+      .eq("user_id", session?.user.id)
+      .eq("is_preflop", true);
+    if (error) throw error;
+    const moveRanks = data.map((item) => item.move_rank);
+    return moveRanks;
+  };
+
+  const fetchPostflopMovesWithOnlyRankings = async () => {
+    const { data, error } = await supabase
+      .from("leduc_moves")
+      .select("move_rank")
+      .eq("user_id", session?.user.id)
+      .eq("is_preflop", false);
     if (error) throw error;
     const moveRanks = data.map((item) => item.move_rank);
     return moveRanks;
@@ -358,10 +416,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchThisWeekMoveCount,
         fetchPlayer1ThisWeekMoveCount,
         fetchPlayer2ThisWeekMoveCount,
+        fetchPreflopThisWeekMoveCount,
+        fetchPostflopThisWeekMoveCount,
         fetchUserEntries,
         fetchUserMovesWithOnlyRankings,
         fetchPlayer1MovesWithOnlyRankings,
         fetchPlayer2MovesWithOnlyRankings,
+        fetchPreflopMovesWithOnlyRankings,
+        fetchPostflopMovesWithOnlyRankings,
         fetchAvatarPath,
         updateAvatarPath,
         fetchName,

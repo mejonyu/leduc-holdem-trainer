@@ -4,6 +4,7 @@ import styles, { CARD_SPACING, CARD_WIDTH } from "./MoveSummaryCard.styles";
 import MoveRankingCircle from "../MoveRankingCircle/MoveRankingCircle";
 
 interface MoveSummaryCardProps {
+  title: string;
   userMovesWithOnlyRankings: string[] | null;
   thisWeekMoveCount: number;
   index: number;
@@ -11,6 +12,7 @@ interface MoveSummaryCardProps {
 }
 
 const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
+  title,
   userMovesWithOnlyRankings,
   thisWeekMoveCount,
   index,
@@ -43,7 +45,7 @@ const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
   return (
     <Animated.View style={[styles.container, { transform: [{ rotate }] }]}>
       <View style={styles.titleContainer}>
-        <Text style={styles.title}>Overall Stats</Text>
+        <Text style={styles.title}>{title}</Text>
         <Text style={styles.subTitle}>
           +{thisWeekMoveCount} solved this week
         </Text>
