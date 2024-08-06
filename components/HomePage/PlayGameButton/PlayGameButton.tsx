@@ -13,7 +13,7 @@ const PlayGameButton = () => {
       {/* <Link href="/app/game" style={styles.buttonText}>
         Go to game
       </Link> */}
-      <Text style={styles.buttonText}>Play</Text>
+      <Text style={styles.buttonText}>Train</Text>
     </TouchableOpacity>
   );
 };

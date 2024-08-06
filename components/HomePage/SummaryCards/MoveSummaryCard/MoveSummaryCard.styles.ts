@@ -15,7 +15,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginHorizontal: CARD_SPACING,
     shadowColor: "gray",
-    shadowRadius: 10,
+    shadowRadius: scaleHeight(10),
     shadowOpacity: 0.4,
     shadowOffset: { width: 0, height: 0 },
   },
