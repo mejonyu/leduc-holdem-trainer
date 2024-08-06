@@ -19,7 +19,7 @@ const PersonalInformationTable: React.FC<PersonalInformationTableProps> = ({
       <Text style={styles.title}>Personal Information</Text>
       <View style={styles.container}>
         <PersonalInformationRow title={"Email"} data={email ? email : null} />
-        <View style={styles.separator}></View>
+        <View style={styles.separator} />
         <PersonalInformationRow
           title={"Name"}
           data={name}

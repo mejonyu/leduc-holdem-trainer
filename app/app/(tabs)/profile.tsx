@@ -61,11 +61,13 @@ export default function ProfilePage() {
             <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
           ) : null}
         </View>
-        <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
-        <Text style={styles.activeSince}>
-          Active Since •{" "}
-          <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
-        </Text>
+        <View style={styles.headerText}>
+          <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
+          <Text style={styles.activeSince}>
+            Active Since •{" "}
+            <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
+          </Text>
+        </View>
         <PersonalInformationTable
           email={fetchEmail()}
           name={name ? name : null}
@@ -86,6 +88,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: scaleWidth(20),
     paddingVertical: scaleHeight(20),
+  },
+  headerText: {
+    alignItems: "center",
+    marginBottom: scaleHeight(20),
   },
   name: {
     fontSize: scaleHeight(28),
