@@ -1,6 +1,6 @@
 // app/profile.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
 import ProfilePhoto from "@/components/ProfilePage/ProfilePhoto/ProfilePhoto";
 import { useAuth } from "@/hooks/useAuth";
 import LoadingPage from "@/components/LoadingPage/LoadingPage";
@@ -54,33 +54,38 @@ export default function ProfilePage() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.profilePhoto}>
-        {avatar ? (
-          <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
-        ) : null}
+    <SafeAreaView style={styles.profilePage}>
+      <View style={styles.container}>
+        <View style={styles.profilePhoto}>
+          {avatar ? (
+            <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
+          ) : null}
+        </View>
+        <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
+        <Text style={styles.activeSince}>
+          Active Since •{" "}
+          <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
+        </Text>
+        <PersonalInformationTable
+          email={fetchEmail()}
+          name={name ? name : null}
+          refetchData={refetchData}
+        />
       </View>
-      <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
-      <Text style={styles.activeSince}>
-        Active Since •{" "}
-        <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
-      </Text>
-      <PersonalInformationTable
-        email={fetchEmail()}
-        name={name ? name : null}
-        refetchData={refetchData}
-      />
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  profilePage: {
+    backgroundColor: "white",
+    flex: 1,
+  },
   container: {
     flex: 1,
     alignItems: "center",
     paddingHorizontal: scaleWidth(20),
     paddingVertical: scaleHeight(20),
-    backgroundColor: "white",
   },
   name: {
     fontSize: scaleHeight(24),
