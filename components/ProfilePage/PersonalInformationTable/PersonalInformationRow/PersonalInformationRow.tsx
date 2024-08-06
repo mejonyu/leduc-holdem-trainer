@@ -31,7 +31,9 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
           <MaterialIcons name="email" size={scaleHeight(24)} color="black" />
         );
       case "Name":
-        return <FontAwesome name="id-badge" size={24} color="black" />;
+        return (
+          <FontAwesome name="id-badge" size={scaleHeight(24)} color="black" />
+        );
     }
   };
 

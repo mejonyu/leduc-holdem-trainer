@@ -1,18 +1,30 @@
 // app/profile.tsx
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Image, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  TouchableOpacity,
+} from "react-native";
 import ProfilePhoto from "@/components/ProfilePage/ProfilePhoto/ProfilePhoto";
 import { useAuth } from "@/hooks/useAuth";
 import LoadingPage from "@/components/LoadingPage/LoadingPage";
 import { formatDate } from "@/utils/dateFunctions";
 import PersonalInformationTable from "@/components/ProfilePage/PersonalInformationTable/PersonalInformationTable";
 import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
+import UtilitiesTable from "@/components/ProfilePage/UtilitiesTable/UtilitiesTable";
+import { Feather } from "@expo/vector-icons";
+import { Modal } from "react-native";
+import SettingsModal from "@/components/ProfilePage/SettingsModal/SettingsModal";
 
 export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>();
   const [name, setName] = useState<string | null>();
   const { fetchEmail, fetchAvatarPath, fetchName, fetchUserCreationDate } =
     useAuth();
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   const refetchData = async () => {
     try {
@@ -54,27 +66,45 @@ export default function ProfilePage() {
   };
 
   return (
-    <SafeAreaView style={styles.profilePage}>
-      <View style={styles.container}>
-        <View style={styles.profilePhoto}>
-          {avatar ? (
-            <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
-          ) : null}
+    <>
+      <SafeAreaView style={styles.profilePage}>
+        <View style={styles.container}>
+          <TouchableOpacity
+            style={styles.settings}
+            onPress={() => setShowModal(true)}
+          >
+            <Feather name="settings" size={scaleHeight(24)} color="black" />
+          </TouchableOpacity>
+          <View style={styles.profilePhoto}>
+            {avatar ? (
+              <ProfilePhoto selectedImage={avatar} onImageSelect={setAvatar} />
+            ) : null}
+          </View>
+          <View style={styles.headerText}>
+            <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
+            <Text style={styles.activeSince}>
+              Active Since •{" "}
+              <Text style={styles.creationDate}>
+                {renderUserCreationDate()}
+              </Text>
+            </Text>
+          </View>
+          <PersonalInformationTable
+            email={fetchEmail()}
+            name={name ? name : null}
+            refetchData={refetchData}
+          />
+          <UtilitiesTable />
         </View>
-        <View style={styles.headerText}>
-          <Text style={styles.name}>{name ? name : truncateEmail()}</Text>
-          <Text style={styles.activeSince}>
-            Active Since •{" "}
-            <Text style={styles.creationDate}>{renderUserCreationDate()}</Text>
-          </Text>
-        </View>
-        <PersonalInformationTable
-          email={fetchEmail()}
-          name={name ? name : null}
-          refetchData={refetchData}
-        />
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+
+      {/* Settings Modal */}
+      <SettingsModal
+        modalVisible={showModal}
+        closeModal={() => setShowModal(false)}
+        refetchData={refetchData}
+      />
+    </>
   );
 }
 
@@ -88,6 +118,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: scaleWidth(20),
     paddingVertical: scaleHeight(20),
+  },
+  settings: {
+    alignSelf: "flex-end",
   },
   headerText: {
     alignItems: "center",

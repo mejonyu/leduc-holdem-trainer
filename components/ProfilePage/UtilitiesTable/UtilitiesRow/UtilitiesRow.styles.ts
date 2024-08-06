@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  right: {},
   icon: {
     marginRight: scaleWidth(3),
     justifyContent: "center",
@@ -25,10 +24,6 @@ const styles = StyleSheet.create({
     width: scaleWidth(30),
   },
   title: {
-    color: "black",
-  },
-  data: {
-    fontWeight: "600",
     color: "black",
   },
 });

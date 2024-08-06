@@ -34,6 +34,7 @@ export interface AuthContextType {
   fetchName: () => Promise<string>;
   fetchUserCreationDate: () => string | undefined;
   updateName: (name: string) => Promise<void>;
+  deleteUser: () => Promise<void>;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -87,6 +88,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     setSession(null);
+  };
+
+  const deleteUser = async () => {
+    const userId = session?.user.id;
+    if (userId) {
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+      if (error) throw error;
+    } else {
+      console.error("User does not exist.");
+    }
   };
 
   const insertMove = async (
@@ -429,6 +440,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchName,
         fetchUserCreationDate,
         updateName,
+        deleteUser,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}
