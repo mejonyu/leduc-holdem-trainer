@@ -1,18 +1,14 @@
-import { View, Text, Modal, Easing } from "react-native";
-import React, { useEffect, useRef, useState } from "react";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { View, Text, Modal } from "react-native";
+import React from "react";
+import { Ionicons } from "@expo/vector-icons";
 import { scaleHeight } from "@/utils/dimensionScaling";
-import { Animated } from "react-native";
-import { Keyboard } from "react-native";
-import { useAuth } from "@/hooks/useAuth";
-import { startShake } from "@/utils/animations";
-import CustomButton from "@/components/CustomButton/CustomButton";
 import styles from "./SettingsModal.styles";
+import SettingsTable from "./SettingsTable/SettingsTable";
 
 interface SettingsModalProps {
   modalVisible: boolean;
   closeModal: () => void;
-  refetchData?: () => Promise<void>;
+  refetchData: () => Promise<void>;
 }
 
 const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -21,6 +17,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   refetchData,
 }) => {
   const handleCloseModal = () => {
+    refetchData();
     closeModal();
   };
 
@@ -43,6 +40,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               style={styles.modalHeaderBackIcon}
             />
           </View>
+          <SettingsTable />
         </View>
       </View>
     </Modal>

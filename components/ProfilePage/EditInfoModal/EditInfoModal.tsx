@@ -15,6 +15,7 @@ interface EditInfoModalProps {
   modalVisible: boolean;
   closeModal: () => void;
   refetchData?: () => Promise<void>;
+  customAnimationType?: "slide" | "fade" | "none";
 }
 
 const EditInfoModal: React.FC<EditInfoModalProps> = ({
@@ -22,6 +23,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
   modalVisible,
   closeModal,
   refetchData,
+  customAnimationType,
 }) => {
   const [info, setInfo] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
@@ -72,6 +74,8 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
             setHasFocusedOnce={setHasFocusedOnce}
           />
         );
+
+      // case "Email":
 
       default:
         break;
@@ -145,7 +149,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
   return (
     <Modal
       visible={modalVisible}
-      animationType="slide"
+      animationType={customAnimationType ? customAnimationType : "slide"}
       presentationStyle="pageSheet"
       onRequestClose={handleCloseModal}
     >

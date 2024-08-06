@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     borderRadius: scaleHeight(8),
     paddingVertical: scaleHeight(16),
-    paddingHorizontal: scaleWidth(16),
+    paddingHorizontal: scaleWidth(12),
     alignItems: "center",
     flex: 1,
     width: "100%",
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
   modalHeaderBackIcon: {
     position: "absolute",
-    left: scaleWidth(-10), // To offset padding.
+    left: scaleWidth(-6), // To offset padding.
   },
 });
 
