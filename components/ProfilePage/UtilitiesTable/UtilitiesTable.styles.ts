@@ -7,8 +7,9 @@ const styles = StyleSheet.create({
     marginTop: scaleHeight(20),
   },
   container: {
-    backgroundColor: "#f4f4f4",
-    borderRadius: scaleHeight(20),
+    // backgroundColor: "#f4f4f4",
+    backgroundColor: "white",
+    // borderRadius: scaleHeight(20),
     paddingVertical: scaleHeight(4),
   },
   title: {
@@ -19,8 +20,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleWidth(3),
   },
   separator: {
-    height: scaleHeight(4),
-    backgroundColor: "white",
+    height: scaleHeight(1),
+    backgroundColor: "#a6a6a6",
   },
 });
 

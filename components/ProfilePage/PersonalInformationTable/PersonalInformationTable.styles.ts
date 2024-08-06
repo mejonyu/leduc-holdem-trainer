@@ -4,9 +4,10 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    backgroundColor: "#f4f4f4",
-    borderRadius: scaleHeight(20),
+    backgroundColor: "white",
+    // borderRadius: scaleHeight(20),
     paddingVertical: scaleHeight(4),
+    // borderWidth: scaleHeight(0.5),
   },
   title: {
     alignSelf: "flex-start",
@@ -16,8 +17,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: scaleWidth(3),
   },
   separator: {
-    height: scaleHeight(4),
-    backgroundColor: "white",
+    height: scaleHeight(1),
+    backgroundColor: "#a6a6a6",
   },
 });
 
