@@ -14,9 +14,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginHorizontal: CARD_SPACING,
-    // shadowColor: "gray",
-    // shadowRadius: 5,
-    // shadowOpacity: 0.5,
+    shadowColor: "gray",
+    shadowRadius: 10,
+    shadowOpacity: 0.4,
+    shadowOffset: { width: 0, height: 0 },
   },
   titleContainer: {
     alignItems: "center",

@@ -30,18 +30,6 @@ const MoveSummaryCard: React.FC<MoveSummaryCardProps> = ({
     extrapolate: "clamp",
   });
 
-  const opacity = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.5, 1, 0.5],
-    extrapolate: "clamp",
-  });
-
-  const scale = scrollX.interpolate({
-    inputRange,
-    outputRange: [0.9, 1, 0.9],
-    extrapolate: "clamp",
-  });
-
   return (
     <Animated.View style={[styles.container, { transform: [{ rotate }] }]}>
       <View style={styles.titleContainer}>
