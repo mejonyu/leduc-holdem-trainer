@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     // backgroundColor: "gray",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: scaleWidth(10),
+    paddingLeft: scaleWidth(10),
+    paddingRight: scaleWidth(12),
     paddingVertical: scaleHeight(10),
   },
   left: {
@@ -23,9 +24,14 @@ const styles = StyleSheet.create({
     height: scaleHeight(30),
     width: scaleWidth(30),
   },
-
-  title: {},
-  data: {},
+  title: {
+    fontSize: scaleHeight(12),
+    color: "black",
+  },
+  data: {
+    fontWeight: "600",
+    color: "black",
+  },
 });
 
 export default styles;

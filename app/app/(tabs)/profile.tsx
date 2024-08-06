@@ -88,18 +88,20 @@ const styles = StyleSheet.create({
     paddingVertical: scaleHeight(20),
   },
   name: {
-    fontSize: scaleHeight(24),
+    fontSize: scaleHeight(28),
     fontWeight: "bold",
-    color: "#464c55",
+    color: "black",
     marginBottom: scaleHeight(5),
   },
   activeSince: {
-    fontSize: scaleHeight(14),
-    color: "#979da5",
+    fontSize: scaleHeight(12),
+    color: "black",
     marginBottom: scaleHeight(20),
   },
   creationDate: {
     fontWeight: "bold",
+    fontSize: scaleHeight(14),
+    color: "black",
   },
   profilePhoto: {
     width: scaleHeight(100),

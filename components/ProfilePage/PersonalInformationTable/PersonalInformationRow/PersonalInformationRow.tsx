@@ -2,21 +2,12 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
 import React, { useState } from "react";
 import { scaleHeight } from "@/utils/dimensionScaling";
-import {
-  AntDesign,
-  Entypo,
-  Feather,
-  FontAwesome,
-  FontAwesome6,
-  Ionicons,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./PersonalInformationRow.styles";
 import EditInfoModal from "../../EditInfoModal/EditInfoModal";
 

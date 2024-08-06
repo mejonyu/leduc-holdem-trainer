@@ -15,15 +15,18 @@ const PersonalInformationTable: React.FC<PersonalInformationTableProps> = ({
   refetchData,
 }) => {
   return (
-    <View style={styles.container}>
-      <Text>PersonalInformationTable</Text>
-      <PersonalInformationRow title={"Email"} data={email ? email : null} />
-      <PersonalInformationRow
-        title={"Name"}
-        data={name}
-        refetchData={refetchData}
-      />
-    </View>
+    <>
+      <Text style={styles.title}>Personal Information</Text>
+      <View style={styles.container}>
+        <PersonalInformationRow title={"Email"} data={email ? email : null} />
+        <View style={styles.separator}></View>
+        <PersonalInformationRow
+          title={"Name"}
+          data={name}
+          refetchData={refetchData}
+        />
+      </View>
+    </>
   );
 };
 
