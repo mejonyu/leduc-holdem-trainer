@@ -47,6 +47,7 @@ const Home = () => {
   const [postflopMovesWithOnlyRankings, setPostflopMovesWithOnlyRankings] =
     useState<string[] | null>([]);
   const [avatarPath, setAvatarPath] = useState("");
+  const [name, setName] = useState<string | null>(null);
 
   const scrollX = useRef(new Animated.Value(0)).current;
 
@@ -65,6 +66,7 @@ const Home = () => {
     fetchPreflopMovesWithOnlyRankings,
     fetchPostflopMovesWithOnlyRankings,
     fetchAvatarPath,
+    fetchName,
   } = useAuth();
 
   // Automatically refetch all data when home page is refocused.
@@ -220,6 +222,17 @@ const Home = () => {
         }
       };
 
+      const updateName = async () => {
+        try {
+          const newName = await fetchName();
+          if (newName) {
+            setName(newName);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       updateAllMoveCount();
       updateTodayMoveCount();
       updateUserEntries();
@@ -234,6 +247,7 @@ const Home = () => {
       updatePreflopThisWeekMoveCount();
       updatePostflopThisWeekMoveCount();
       updateAvatarPath();
+      updateName();
 
       return () => {
         isActive = false;
@@ -253,6 +267,7 @@ const Home = () => {
       fetchPreflopThisWeekMoveCount,
       fetchPostflopThisWeekMoveCount,
       fetchAvatarPath,
+      fetchName,
     ])
   );
 
@@ -277,6 +292,7 @@ const Home = () => {
       const newPlayer1ThisWeekMoveCount = await fetchPlayer1ThisWeekMoveCount();
       const newPlayer2ThisWeekMoveCount = await fetchPlayer2ThisWeekMoveCount();
       const newAvatarPath = await fetchAvatarPath();
+      const newName = await fetchName();
 
       if (totalCount) {
         setTotalMoveCount(totalCount);
@@ -325,6 +341,10 @@ const Home = () => {
       if (newAvatarPath) {
         setAvatarPath(newAvatarPath);
       }
+
+      if (newName) {
+        setName(newName);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -344,6 +364,7 @@ const Home = () => {
     fetchPreflopThisWeekMoveCount,
     fetchPostflopThisWeekMoveCount,
     fetchAvatarPath,
+    fetchName,
   ]);
 
   return (
@@ -358,6 +379,7 @@ const Home = () => {
           todayMoveCount={todayMoveCount}
           userEntries={userEntries}
           avatarPath={avatarPath}
+          name={name ? name : null}
         />
         <WeekDisplay userEntries={userEntries} />
         <Animated.ScrollView

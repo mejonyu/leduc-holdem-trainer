@@ -12,19 +12,28 @@ interface HomePageHeaderProps {
   todayMoveCount: number;
   userEntries: Record<string, boolean>;
   avatarPath: string;
+  name: string | null;
 }
 
 const HomePageHeader: React.FC<HomePageHeaderProps> = ({
   todayMoveCount,
   userEntries,
   avatarPath,
+  name,
 }) => {
   const { fetchEmail } = useAuth();
 
-  const renderEmail = () => {
+  const truncateEmail = () => {
     const email = fetchEmail();
     // Return everything before the "@" symbol.
     return email?.substring(0, email.indexOf("@"));
+  };
+
+  const renderName = () => {
+    if (name) {
+      return name;
+    }
+    return truncateEmail();
   };
 
   return (
@@ -45,7 +54,7 @@ const HomePageHeader: React.FC<HomePageHeaderProps> = ({
         )}
 
         <View style={styles.userInfoText}>
-          <Text style={styles.username}>{renderEmail()}</Text>
+          <Text style={styles.username}>{renderName()}</Text>
           <Text style={styles.readCount}>{todayMoveCount} solved today</Text>
         </View>
       </View>
