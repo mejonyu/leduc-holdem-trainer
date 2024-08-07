@@ -28,6 +28,8 @@ const SettingsRow: React.FC<SettingsRowProps> = ({ title }) => {
         return (
           <FontAwesome name="id-badge" size={scaleHeight(24)} color="black" />
         );
+      case "Change Password":
+        return <FontAwesome name="lock" size={scaleHeight(24)} color="black" />;
     }
   };
 
@@ -41,6 +43,8 @@ const SettingsRow: React.FC<SettingsRowProps> = ({ title }) => {
         return "Email";
       case "Edit Name":
         return "Name";
+      case "Change Password":
+        return "Password";
       default:
         return "Field Doesn't Exist";
     }

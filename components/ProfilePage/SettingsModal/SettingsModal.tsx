@@ -40,7 +40,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               style={styles.modalHeaderBackIcon}
             />
           </View>
-          <SettingsTable />
+          <SettingsTable title="Account Information" />
         </View>
       </View>
     </Modal>

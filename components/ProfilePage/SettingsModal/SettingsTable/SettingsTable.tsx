@@ -3,14 +3,20 @@ import React from "react";
 import styles from "./SettingsTable.styles";
 import SettingsRow from "./SettingsRow/SettingsRow";
 
-const SettingsTable: React.FC = () => {
+interface SettingsTableProps {
+  title: string;
+}
+
+const SettingsTable: React.FC<SettingsTableProps> = ({ title }) => {
   return (
     <View style={styles.table}>
-      <Text style={styles.title}>Personal Information</Text>
+      <Text style={styles.title}>{title}</Text>
       <View style={styles.container}>
         <SettingsRow title="Change Email" />
         <View style={styles.separator} />
         <SettingsRow title="Edit Name" />
+        <View style={styles.separator} />
+        <SettingsRow title="Change Password" />
       </View>
     </View>
   );

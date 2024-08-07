@@ -37,6 +37,7 @@ export interface AuthContextType {
   deleteUser: () => Promise<void>;
   checkIfEmailExists: (email: string) => Promise<{ id: any } | null>;
   updateEmail: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -372,6 +373,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (error) throw error;
   };
 
+  const updatePassword = async (password: string) => {
+    const { error } = await supabase.auth.updateUser({
+      password: password,
+    });
+    if (error) throw error;
+  };
+
   // const fetchAvatarUrl = async () => {
   //   const { data, error } = await supabase
   //     .from("profiles")
@@ -460,6 +468,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         deleteUser,
         checkIfEmailExists,
         updateEmail,
+        updatePassword,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}

@@ -10,6 +10,7 @@ import { startShake } from "@/utils/animations";
 import NameInput from "./NameInput/NameInput";
 import CustomButton from "@/components/CustomButton/CustomButton";
 import EmailInput from "@/components/AuthModal/EmailInput";
+import PasswordInput from "@/components/AuthModal/PasswordInput";
 
 interface EditInfoModalProps {
   title: string;
@@ -34,7 +35,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
   const [removeUserExistsOnNextEdit, setRemoveUserExistsMessageOnNextEdit] =
     useState(false);
 
-  const { updateName, checkIfEmailExists, updateEmail } = useAuth();
+  const { updateName, updateEmail, updatePassword } = useAuth();
 
   const invalidInputAnimation = useRef(new Animated.Value(0)).current;
   const errorAnimation = useRef(new Animated.Value(0)).current;
@@ -51,6 +52,9 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
           break;
         case "Email":
           setErrorText("Must be a valid email");
+          break;
+        case "Password":
+          setErrorText("8+ characters required");
           break;
         default:
           return null;
@@ -133,6 +137,15 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
           />
         );
 
+      case "Password":
+        return (
+          <PasswordInput
+            password={info}
+            setPassword={setInfo}
+            hasSubmitted={hasFocusedOnce}
+          />
+        );
+
       default:
         break;
     }
@@ -171,7 +184,6 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
         await updateEmail(info);
         closeModal();
       } catch (error) {
-        console.log(error);
         setErrorText("A user with this email already exists");
         doUserExistsErrorAnimation();
         startShake(invalidInputAnimation);
@@ -182,13 +194,29 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
     setLoading(false);
   };
 
+  const handleSavePassword = async () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    try {
+      await updatePassword(info);
+      closeModal();
+    } catch (error) {
+      setHasFocusedOnce(true);
+      startShake(invalidInputAnimation);
+      console.error(error);
+    }
+
+    setLoading(false);
+  };
+
   const getSaveFunction = () => {
     switch (title) {
       case "Name":
         return handleSaveName;
       case "Email":
         return handleSaveEmail;
-
+      case "Password":
+        return handleSavePassword;
       default:
         return () => {};
     }
@@ -214,7 +242,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
                 color="black"
               />
             </View>
-            <Text style={styles.inputLabelText}>{title}</Text>
+            <Text style={styles.inputLabelText}>New {title}</Text>
           </>
         );
       case "Email":
@@ -227,7 +255,17 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
                 color="black"
               />
             </View>
-            <Text style={styles.inputLabelText}>{title}</Text>
+            <Text style={styles.inputLabelText}>New {title}</Text>
+          </>
+        );
+
+      case "Password":
+        return (
+          <>
+            <View style={styles.inputLabelIcon}>
+              <FontAwesome name="lock" size={scaleHeight(24)} color="black" />
+            </View>
+            <Text style={styles.inputLabelText}>New {title}</Text>
           </>
         );
 
