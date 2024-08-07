@@ -138,12 +138,18 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
     }
   };
 
+  const capitalizeName = () => {
+    return info.replace(/\b\w/g, function (l) {
+      return l.toUpperCase();
+    });
+  };
+
   const handleSaveName = async () => {
     Keyboard.dismiss();
     setLoading(true);
     if (isValid) {
       try {
-        updateName(info);
+        updateName(capitalizeName());
         closeModal();
         if (refetchData) {
           refetchData();
