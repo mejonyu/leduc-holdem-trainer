@@ -35,6 +35,8 @@ export interface AuthContextType {
   fetchUserCreationDate: () => string | undefined;
   updateName: (name: string) => Promise<void>;
   deleteUser: () => Promise<void>;
+  checkIfEmailExists: (email: string) => Promise<{ id: any } | null>;
+  updateEmail: (email: string) => Promise<void>;
   // fetchAvatarUrl: () => Promise<string>;
   // uploadAvatar: (uri: string) => Promise<string | undefined>;
 }
@@ -355,6 +357,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return session?.user.created_at;
   };
 
+  const checkIfEmailExists = async (email: string) => {
+    let { data, error } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("email", email)
+      .single();
+    if (error) throw error;
+    return data;
+  };
+
+  const updateEmail = async (email: string) => {
+    const { error } = await supabase.auth.updateUser({ email: email });
+    if (error) throw error;
+  };
+
   // const fetchAvatarUrl = async () => {
   //   const { data, error } = await supabase
   //     .from("profiles")
@@ -441,6 +458,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         fetchUserCreationDate,
         updateName,
         deleteUser,
+        checkIfEmailExists,
+        updateEmail,
         // fetchAvatarUrl,
         // uploadAvatar,
       }}

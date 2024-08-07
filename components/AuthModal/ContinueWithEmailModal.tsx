@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import EmailInput from "./EmailInput";
 import { startShake } from "@/utils/animations";
 import CustomButton from "../CustomButton/CustomButton";
+import { useAuth } from "@/hooks/useAuth";
 
 interface ContinueWithEmailModalProps {
   signUpLink: string;
@@ -24,6 +25,8 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
   const [hasFocusedOnce, setHasFocusedOnce] = useState(false);
   const invalidInputAnimation = useRef(new Animated.Value(0)).current;
   const errorAnimation = useRef(new Animated.Value(0)).current;
+
+  const { checkIfEmailExists } = useAuth();
 
   useEffect(() => {
     if (!isValid && hasFocusedOnce) {
@@ -56,14 +59,11 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
     Keyboard.dismiss();
     setLoading(true);
     if (isValid) {
-      let { data, error } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", email)
-        .single();
-      if (data) {
+      try {
+        const data = await checkIfEmailExists(email);
         router.push(logInLink + `/${email}`);
-      } else {
+      } catch (error) {
+        // Email doesn't exist yet
         router.push(signUpLink + `/${email}`);
       }
     } else {

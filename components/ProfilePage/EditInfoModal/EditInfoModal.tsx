@@ -1,6 +1,6 @@
 import { View, Text, Modal, Easing } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./EditInfoModal.styles";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import { Animated } from "react-native";
@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { startShake } from "@/utils/animations";
 import NameInput from "./NameInput/NameInput";
 import CustomButton from "@/components/CustomButton/CustomButton";
+import EmailInput from "@/components/AuthModal/EmailInput";
 
 interface EditInfoModalProps {
   title: string;
@@ -29,13 +30,35 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [hasFocusedOnce, setHasFocusedOnce] = useState(false);
-  const { updateName } = useAuth();
+  const [errorText, setErrorText] = useState("");
+  const [removeUserExistsOnNextEdit, setRemoveUserExistsMessageOnNextEdit] =
+    useState(false);
+
+  const { updateName, checkIfEmailExists, updateEmail } = useAuth();
 
   const invalidInputAnimation = useRef(new Animated.Value(0)).current;
   const errorAnimation = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
+    const getErrorText = async () => {
+      switch (title) {
+        case "Name":
+          if (info) {
+            setErrorText("Must be 30 characters or less");
+          } else {
+            setErrorText("Name cannot be empty");
+          }
+          break;
+        case "Email":
+          setErrorText("Must be a valid email");
+          break;
+        default:
+          return null;
+      }
+    };
+
     if (!isValid && hasFocusedOnce) {
+      getErrorText();
       Animated.timing(errorAnimation, {
         toValue: 1,
         duration: 300,
@@ -50,6 +73,29 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
       }).start();
     }
   }, [isValid, hasFocusedOnce]);
+
+  // Remove user with this email already exists message after edit.
+  useEffect(() => {
+    if (removeUserExistsOnNextEdit) {
+      Animated.timing(errorAnimation, {
+        toValue: 0,
+        duration: 0,
+        useNativeDriver: true,
+      }).start(() => {
+        setRemoveUserExistsMessageOnNextEdit(false);
+      });
+    }
+  }, [info]);
+
+  const doUserExistsErrorAnimation = () => {
+    setRemoveUserExistsMessageOnNextEdit(true);
+    Animated.timing(errorAnimation, {
+      toValue: 1,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+      useNativeDriver: true,
+    }).start();
+  };
 
   const errorOpacity = errorAnimation.interpolate({
     inputRange: [0, 1],
@@ -75,7 +121,17 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
           />
         );
 
-      // case "Email":
+      case "Email":
+        return (
+          <EmailInput
+            email={info}
+            setEmail={setInfo}
+            isValid={isValid}
+            setIsValid={setIsValid}
+            hasFocusedOnce={hasFocusedOnce}
+            setHasFocusedOnce={setHasFocusedOnce}
+          />
+        );
 
       default:
         break;
@@ -101,32 +157,43 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
     setLoading(false);
   };
 
+  const handleSaveEmail = async () => {
+    Keyboard.dismiss();
+    setLoading(true);
+    if (isValid) {
+      try {
+        await updateEmail(info);
+        closeModal();
+      } catch (error) {
+        console.log(error);
+        setErrorText("A user with this email already exists");
+        doUserExistsErrorAnimation();
+        startShake(invalidInputAnimation);
+      }
+    } else {
+      startShake(invalidInputAnimation);
+    }
+    setLoading(false);
+  };
+
   const getSaveFunction = () => {
     switch (title) {
       case "Name":
         return handleSaveName;
+      case "Email":
+        return handleSaveEmail;
 
       default:
         return () => {};
     }
   };
 
-  const getErrorText = () => {
-    switch (title) {
-      case "Name":
-        if (info) {
-          return "Must be 30 characters or less";
-        } else {
-          return "Name cannot be empty";
-        }
-      default:
-        return null;
-    }
-  };
-
   const handleCloseModal = () => {
-    setHasFocusedOnce(false);
     closeModal();
+    setTimeout(() => {
+      setHasFocusedOnce(false);
+      setInfo("");
+    }, 300);
   };
 
   const renderInputLabel = () => {
@@ -135,7 +202,24 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
         return (
           <>
             <View style={styles.inputLabelIcon}>
-              <FontAwesome name="id-badge" size={24} color="black" />
+              <FontAwesome
+                name="id-badge"
+                size={scaleHeight(24)}
+                color="black"
+              />
+            </View>
+            <Text style={styles.inputLabelText}>{title}</Text>
+          </>
+        );
+      case "Email":
+        return (
+          <>
+            <View style={styles.inputLabelIcon}>
+              <MaterialIcons
+                name="email"
+                size={scaleHeight(24)}
+                color="black"
+              />
             </View>
             <Text style={styles.inputLabelText}>{title}</Text>
           </>
@@ -183,7 +267,10 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
               }}
             >
               {!isValid && hasFocusedOnce && (
-                <Text style={styles.errorText}>{getErrorText()}</Text>
+                <Text style={styles.errorText}>{errorText}</Text>
+              )}
+              {removeUserExistsOnNextEdit && (
+                <Text style={styles.errorText}>{errorText}</Text>
               )}
             </Animated.View>
             <CustomButton
