@@ -2,6 +2,7 @@ import React from "react";
 import { Stack, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "@/components/AuthModal/AuthModal.styles";
+import { scaleIconSize } from "@/utils/dimensionScaling";
 
 const AuthLayout = () => {
   const router = useRouter();
@@ -22,7 +23,7 @@ const AuthLayout = () => {
           headerLeft: () => (
             <Ionicons
               name="return-up-back"
-              size={24}
+              size={scaleIconSize(28)}
               color="black"
               onPress={navBack}
             />
@@ -41,7 +42,7 @@ const AuthLayout = () => {
           headerLeft: () => (
             <Ionicons
               name="return-up-back"
-              size={24}
+              size={scaleIconSize(28)}
               color="black"
               onPress={navBack}
             />
@@ -60,7 +61,7 @@ const AuthLayout = () => {
           headerLeft: () => (
             <Ionicons
               name="return-up-back"
-              size={24}
+              size={scaleIconSize(28)}
               color="black"
               onPress={navBack}
             />

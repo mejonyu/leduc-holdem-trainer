@@ -14,6 +14,7 @@ import { useColorScheme } from "@/components/useColorScheme";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "@/components/AuthModal/AuthModal.styles";
+import { scaleIconSize } from "@/utils/dimensionScaling";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -96,7 +97,7 @@ function RootLayoutNav() {
               headerLeft: () => (
                 <Ionicons
                   name="return-up-back"
-                  size={24}
+                  size={scaleIconSize(28)}
                   color="black"
                   onPress={navBack}
                 />

@@ -2,7 +2,7 @@ import { View, Text, Modal, Easing } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./EditInfoModal.styles";
-import { scaleHeight } from "@/utils/dimensionScaling";
+import { scaleHeight, scaleIconSize } from "@/utils/dimensionScaling";
 import { Animated } from "react-native";
 import { Keyboard } from "react-native";
 import { useAuth } from "@/hooks/useAuth";
@@ -279,7 +279,13 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
       visible={modalVisible}
       animationType={customAnimationType ? customAnimationType : "slide"}
       presentationStyle="pageSheet"
-      onRequestClose={handleCloseModal}
+      onRequestClose={
+        customAnimationType
+          ? customAnimationType === "none"
+            ? () => {}
+            : handleCloseModal
+          : handleCloseModal
+      }
     >
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
@@ -289,7 +295,7 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
             </Text>
             <Ionicons
               name="return-up-back"
-              size={scaleHeight(24)}
+              size={scaleIconSize(28)}
               color="black"
               onPress={handleCloseModal}
               style={styles.modalHeaderBackIcon}

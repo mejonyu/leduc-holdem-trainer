@@ -1,7 +1,7 @@
 import { View, Text, Modal } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { scaleHeight } from "@/utils/dimensionScaling";
+import { scaleHeight, scaleIconSize } from "@/utils/dimensionScaling";
 import styles from "./SettingsModal.styles";
 import SettingsTable from "./SettingsTable/SettingsTable";
 
@@ -34,7 +34,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             <Text style={styles.modalHeaderText}>Settings</Text>
             <Ionicons
               name="return-up-back"
-              size={scaleHeight(24)}
+              size={scaleIconSize(28)}
               color="black"
               onPress={handleCloseModal}
               style={styles.modalHeaderBackIcon}

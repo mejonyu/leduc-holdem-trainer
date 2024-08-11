@@ -1,5 +1,9 @@
 // ProfilePhoto.tsx
-import { scaleHeight, scaleWidth } from "@/utils/dimensionScaling";
+import {
+  scaleHeight,
+  scaleIconSize,
+  scaleWidth,
+} from "@/utils/dimensionScaling";
 import { Feather, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -94,7 +98,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
               <Text style={styles.modalHeaderText}>Select Profile Photo</Text>
               <Ionicons
                 name="return-up-back"
-                size={scaleHeight(24)}
+                size={scaleIconSize(28)}
                 color="black"
                 onPress={() => setModalVisible(false)}
                 style={styles.modalHeaderBackIcon}
