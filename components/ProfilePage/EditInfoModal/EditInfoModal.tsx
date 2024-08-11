@@ -284,7 +284,9 @@ const EditInfoModal: React.FC<EditInfoModalProps> = ({
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalHeaderText}>Edit {title}</Text>
+            <Text style={styles.modalHeaderText}>
+              {title === "Name" ? "Edit" : "Change"} {title}
+            </Text>
             <Ionicons
               name="return-up-back"
               size={scaleHeight(24)}
