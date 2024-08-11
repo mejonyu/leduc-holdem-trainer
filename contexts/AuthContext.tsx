@@ -96,7 +96,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteUser = async () => {
     const userId = session?.user.id;
     if (userId) {
-      const { error } = await supabase.auth.admin.deleteUser(userId);
+      const { data, error } = await supabase.functions.invoke("delete-user", {
+        method: "DELETE",
+      });
       if (error) throw error;
     } else {
       console.error("User does not exist.");

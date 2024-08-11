@@ -101,10 +101,10 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
             <Text style={styles.errorText}>8+ characters required</Text>
           )}
         </Animated.View>
-        <Text style={[styles.terms, { marginBottom: 16 }]}>
+        {/* <Text style={[styles.terms, { marginBottom: 16 }]}>
           By creating an account, you agree to the Terms of Sale, Terms of
           Service, and Privacy Policy.
-        </Text>
+        </Text> */}
         <CustomButton
           text="Create Account"
           onPress={signUpWithEmail}
