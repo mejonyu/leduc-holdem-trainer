@@ -1,5 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-import { View, Text, Keyboard, Animated, Easing } from "react-native";
+import {
+  View,
+  Text,
+  Keyboard,
+  Animated,
+  Easing,
+  Button,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
 import { supabase } from "../../lib/supabase";
 
 import styles from "./AuthModal.styles";
@@ -72,13 +81,26 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
     setLoading(false);
   };
 
+  const handleOpenPrivacyPolicy = () => {
+    Linking.openURL(
+      "https://www.termsfeed.com/live/1c0124f9-0766-4de4-9c6d-6940a53fe5f9"
+    );
+  };
+
   return (
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
         <Text style={styles.heading}>Log in or create an account</Text>
         <Text style={styles.terms}>
-          By continuing, you agree to the Terms of Sale, Terms of Service, and
-          Privacy Policy.
+          By continuing, you agree to the{" "}
+          {/* Terms of Sale, Terms of Service, and */}
+          <Text
+            onPress={handleOpenPrivacyPolicy}
+            style={{ textDecorationLine: "underline" }}
+          >
+            Privacy Policy
+          </Text>
+          .
         </Text>
         <Text style={styles.inputLabel}>Email Address</Text>
         <Animated.View

@@ -5,6 +5,7 @@ import {
   Keyboard,
   Animated,
   Easing,
+  Linking,
 } from "react-native";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -68,6 +69,12 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
     setLoading(false);
   };
 
+  const handleOpenPrivacyPolicy = () => {
+    Linking.openURL(
+      "https://www.termsfeed.com/live/1c0124f9-0766-4de4-9c6d-6940a53fe5f9"
+    );
+  };
+
   return (
     <View style={styles.modalContainer}>
       <View style={styles.modalContent}>
@@ -101,10 +108,17 @@ const SignUpModal: React.FC<SignUpModalProps> = ({ email }) => {
             <Text style={styles.errorText}>8+ characters required</Text>
           )}
         </Animated.View>
-        {/* <Text style={[styles.terms, { marginBottom: 16 }]}>
-          By creating an account, you agree to the Terms of Sale, Terms of
-          Service, and Privacy Policy.
-        </Text> */}
+        <Text style={[styles.terms, { marginBottom: 16 }]}>
+          By continuing, you agree to the{" "}
+          {/* Terms of Sale, Terms of Service, and */}
+          <Text
+            onPress={handleOpenPrivacyPolicy}
+            style={{ textDecorationLine: "underline" }}
+          >
+            Privacy Policy
+          </Text>
+          .
+        </Text>
         <CustomButton
           text="Create Account"
           onPress={signUpWithEmail}
