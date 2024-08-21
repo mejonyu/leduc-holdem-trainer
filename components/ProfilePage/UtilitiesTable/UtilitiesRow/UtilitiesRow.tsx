@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { scaleHeight } from "@/utils/dimensionScaling";
 import {
   AntDesign,
@@ -10,6 +10,7 @@ import {
 import styles from "./UtilitiesRow.styles";
 import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
+import DeleteUserModal from "./DeleteUserModal/DeleteUserModal";
 
 interface PersonalInformationRowProps {
   title: string;
@@ -19,6 +20,7 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
   title,
 }) => {
   const { signOut, deleteUser } = useAuth();
+  const [deleteUserModalVisible, setDeleteUserModalVisible] = useState(false);
 
   const handleSignOut = () => {
     try {
@@ -32,14 +34,12 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
     }
   };
 
-  const handleDeleteAccount = () => {
-    try {
-      deleteUser();
-      router.back();
-      router.back();
-    } catch (error) {
-      console.error(error);
-    }
+  const openDeleteUserModal = () => {
+    setDeleteUserModalVisible(true);
+  };
+
+  const closeDeleteUserModal = () => {
+    setDeleteUserModalVisible(false);
   };
 
   const renderRow = () => {
@@ -58,7 +58,7 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
 
       case "Delete Account":
         return (
-          <TouchableOpacity style={styles.row} onPress={handleDeleteAccount}>
+          <TouchableOpacity style={styles.row} onPress={openDeleteUserModal}>
             <View style={styles.left}>
               <View style={styles.icon}>
                 <AntDesign
@@ -74,7 +74,15 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
     }
   };
 
-  return <>{renderRow()}</>;
+  return (
+    <>
+      {renderRow()}
+      <DeleteUserModal
+        modalVisible={deleteUserModalVisible}
+        handleCloseModal={closeDeleteUserModal}
+      />
+    </>
+  );
 };
 
 export default PersonalInformationRow;
