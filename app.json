@@ -2,9 +2,9 @@
   "expo": {
     "name": "Bluff Buddy",
     "slug": "bluff-buddy",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/bluff-buddy-icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.mejonyu.bluffbuddy"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +30,14 @@
     "plugins": ["expo-router"],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "b17c5763-8551-406b-9b1f-067ac1fd3e46"
+      }
     }
   }
 }
