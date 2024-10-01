@@ -1,10 +1,12 @@
 import { Text, TouchableOpacity } from "react-native";
 import React from "react";
-import { Link, router } from "expo-router";
+import { router } from "expo-router";
 import styles from "./PlayGameButton.styles";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 const PlayGameButton = () => {
   const routeToGame = () => {
+    triggerButtonHapticFeedback();
     router.push("/app/game");
   };
 

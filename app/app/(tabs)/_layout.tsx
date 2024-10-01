@@ -5,6 +5,7 @@ import { Pressable, Image } from "react-native";
 
 import Colors from "@/constants/Colors";
 import { useColorScheme } from "@/components/useColorScheme";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
@@ -61,6 +62,7 @@ export default function TabLayout() {
           //   </Link>
           // ),
         }}
+        listeners={{ tabPress: triggerButtonHapticFeedback }}
       />
       <Tabs.Screen
         name="profile"
@@ -94,6 +96,7 @@ export default function TabLayout() {
           //   </Link>
           // ),
         }}
+        listeners={{ tabPress: triggerButtonHapticFeedback }}
       />
     </Tabs>
   );
