@@ -20,6 +20,7 @@ import ChipStack from "../GameModal/ChipStack";
 import OpponentMove from "./OpponentMove";
 import PotTotal from "./PotTotal";
 import { useAuth } from "@/hooks/useAuth";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 const GameModal: React.FC = () => {
   const [isFirstGame, setIsFirstGame] = useState(true);
@@ -95,6 +96,7 @@ const GameModal: React.FC = () => {
   }, [cardDealFinished]);
 
   const dealCards = () => {
+    triggerButtonHapticFeedback();
     // Fade out components from prior games
     doPotTotalFadeOut();
     doOpponentMoveTransitionOut();
@@ -715,6 +717,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleCheck = () => {
+    triggerButtonHapticFeedback();
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCheck(true);
@@ -733,6 +736,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleCall = () => {
+    triggerButtonHapticFeedback();
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowCall(true);
@@ -753,6 +757,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleRaise = () => {
+    triggerButtonHapticFeedback();
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowRaise(true);
@@ -773,6 +778,7 @@ const GameModal: React.FC = () => {
   };
 
   const handleFold = () => {
+    triggerButtonHapticFeedback();
     doOpponentMoveTransitionOut();
     setLoading(true);
     setGlowFold(true);
@@ -874,6 +880,7 @@ const GameModal: React.FC = () => {
   }, [computedStrategy]);
 
   const handleContinue = () => {
+    triggerButtonHapticFeedback();
     doContinueButtonFadeOut();
     setLoading(true);
     setGlowCheck(false);
