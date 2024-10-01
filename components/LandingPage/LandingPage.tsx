@@ -1,9 +1,9 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
-import { Link, router } from "expo-router";
+import { View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { router } from "expo-router";
 import styles from "./LandingPage.styles";
 import CustomButton from "../CustomButton/CustomButton";
-import { useAuth } from "@/hooks/useAuth";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 const LandingPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +23,7 @@ const LandingPage: React.FC = () => {
 
   const handleStart = () => {
     setLoading(true);
+    triggerButtonHapticFeedback();
     router.push("/continue-with-email");
     setLoading(false);
   };

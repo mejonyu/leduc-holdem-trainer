@@ -2,7 +2,7 @@
   "expo": {
     "name": "Bluff Buddy",
     "slug": "bluff-buddy",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/bluff-buddy-icon.png",
     "scheme": "myapp",
