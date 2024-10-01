@@ -1,8 +1,10 @@
 import { Animated, Easing } from "react-native";
+import { triggerErrorHapticFeedback } from "./haptics";
 
 export const startShake = (animation: Animated.Value) => {
   // Reset the animation value
   animation.setValue(0);
+  triggerErrorHapticFeedback();
 
   // Define the animation sequence
   Animated.sequence([

@@ -17,6 +17,7 @@ import EmailInput from "./EmailInput";
 import { startShake } from "@/utils/animations";
 import CustomButton from "../CustomButton/CustomButton";
 import { useAuth } from "@/hooks/useAuth";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface ContinueWithEmailModalProps {
   signUpLink: string;
@@ -67,6 +68,7 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
   const handleContinueWithEmail = async () => {
     Keyboard.dismiss();
     setLoading(true);
+    triggerButtonHapticFeedback();
     if (isValid) {
       try {
         const data = await checkIfEmailExists(email);

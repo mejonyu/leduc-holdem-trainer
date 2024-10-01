@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { startShake } from "@/utils/animations";
 import CustomButton from "../CustomButton/CustomButton";
 import PasswordInput from "./PasswordInput";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface LogInModalProps {
   email: string;
@@ -51,6 +52,7 @@ const LogInModal: React.FC<LogInModalProps> = ({ email }) => {
   const logInWithPassowrd = async (): Promise<void> => {
     Keyboard.dismiss();
     setLoading(true);
+    triggerButtonHapticFeedback();
     const session = await logIn(email, password);
     if (session) {
       router.replace("/app");

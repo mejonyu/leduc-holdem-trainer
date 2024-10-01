@@ -101,8 +101,8 @@ const GameModal: React.FC = () => {
     setCardDealFinished(false);
     setLoading(true);
 
-    // Check if we need to animate deck back to center
-    if (game?.getState().isPostFlop()) {
+    // Check if we need to animate deck back to center and fade out cards
+    if (!isFirstGame) {
       Animated.parallel([
         Animated.timing(middleChipsOpacity, {
           toValue: 0,
