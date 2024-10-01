@@ -18,6 +18,7 @@ import UtilitiesTable from "@/components/ProfilePage/UtilitiesTable/UtilitiesTab
 import { Feather } from "@expo/vector-icons";
 import { Modal } from "react-native";
 import SettingsModal from "@/components/ProfilePage/SettingsModal/SettingsModal";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 export default function ProfilePage() {
   const [avatar, setAvatar] = useState<string | null>();
@@ -71,7 +72,10 @@ export default function ProfilePage() {
         <View style={styles.container}>
           <TouchableOpacity
             style={styles.settings}
-            onPress={() => setShowModal(true)}
+            onPress={() => {
+              setShowModal(true);
+              triggerButtonHapticFeedback();
+            }}
           >
             <Feather name="settings" size={scaleHeight(24)} color="black" />
           </TouchableOpacity>

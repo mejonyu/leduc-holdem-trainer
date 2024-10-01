@@ -10,6 +10,7 @@ import { scaleHeight } from "@/utils/dimensionScaling";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./PersonalInformationRow.styles";
 import EditInfoModal from "../../EditInfoModal/EditInfoModal";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface PersonalInformationRowProps {
   title: string;
@@ -54,7 +55,12 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
           {data ? (
             <Text style={styles.data}>{data}</Text>
           ) : (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <TouchableOpacity
+              onPress={() => {
+                triggerButtonHapticFeedback();
+                setModalVisible(true);
+              }}
+            >
               <Ionicons name="add" size={scaleHeight(20)} color="black" />
             </TouchableOpacity>
           )}

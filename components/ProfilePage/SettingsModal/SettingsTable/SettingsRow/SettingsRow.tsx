@@ -10,6 +10,7 @@ import { scaleHeight, scaleIconSize } from "@/utils/dimensionScaling";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import styles from "./SettingsRow.styles";
 import EditInfoModal from "@/components/ProfilePage/EditInfoModal/EditInfoModal";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface SettingsRowProps {
   title: string;
@@ -54,7 +55,10 @@ const SettingsRow: React.FC<SettingsRowProps> = ({ title }) => {
     <>
       <TouchableOpacity
         style={styles.row}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          triggerButtonHapticFeedback();
+          setModalVisible(true);
+        }}
       >
         {/* Left side of row */}
         <View style={styles.left}>

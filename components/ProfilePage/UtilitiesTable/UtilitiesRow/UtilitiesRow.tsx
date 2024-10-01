@@ -1,16 +1,12 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { scaleHeight } from "@/utils/dimensionScaling";
-import {
-  AntDesign,
-  Feather,
-  FontAwesome,
-  MaterialIcons,
-} from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import styles from "./UtilitiesRow.styles";
 import { useAuth } from "@/hooks/useAuth";
 import { router } from "expo-router";
 import DeleteUserModal from "./DeleteUserModal/DeleteUserModal";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface PersonalInformationRowProps {
   title: string;
@@ -19,10 +15,11 @@ interface PersonalInformationRowProps {
 const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
   title,
 }) => {
-  const { signOut, deleteUser } = useAuth();
+  const { signOut } = useAuth();
   const [deleteUserModalVisible, setDeleteUserModalVisible] = useState(false);
 
   const handleSignOut = () => {
+    triggerButtonHapticFeedback();
     try {
       signOut();
       // Navigate back to landing page
@@ -35,6 +32,7 @@ const PersonalInformationRow: React.FC<PersonalInformationRowProps> = ({
   };
 
   const openDeleteUserModal = () => {
+    triggerButtonHapticFeedback();
     setDeleteUserModalVisible(true);
   };
 

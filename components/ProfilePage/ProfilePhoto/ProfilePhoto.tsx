@@ -20,6 +20,7 @@ import {
 } from "react-native";
 import styles from "./ProfilePhoto.styles";
 import { useAuth } from "@/hooks/useAuth";
+import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
 interface ImageOption {
   label: string;
@@ -60,6 +61,7 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
   const { updateAvatarPath } = useAuth();
 
   const handleImageSelect = (path: string) => {
+    triggerButtonHapticFeedback();
     onImageSelect(path);
     setModalVisible(false);
     try {
@@ -71,7 +73,12 @@ const ProfilePhoto: React.FC<ProfilePhotoProps> = ({
 
   return (
     <View style={styles.profilePhotoContainer}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        onPress={() => {
+          triggerButtonHapticFeedback();
+          setModalVisible(true);
+        }}
+      >
         <View style={styles.profilePhoto}>
           <Image
             source={imageOptions[selectedImage].image}
