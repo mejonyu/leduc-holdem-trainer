@@ -46,10 +46,14 @@ const FallingChips: React.FC = () => {
     };
 
     // Start initial animations with a stagger
+    const startAnimation = () => {
+      chips.forEach((chip, index) => {
+        setTimeout(() => animate(chip), index * 250);
+      });
+    };
 
-    chips.forEach((chip, index) => {
-      setTimeout(() => animate(chip), index * 250);
-    });
+    // Wait for 2 seconds before starting animations on mount
+    setTimeout(startAnimation, 1000);
   }, []);
 
   return (
