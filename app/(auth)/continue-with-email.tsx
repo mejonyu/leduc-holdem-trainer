@@ -5,7 +5,7 @@ import { Keyboard, TouchableWithoutFeedback } from "react-native";
 const continueWithEmail = () => {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <ContinueWithEmailModal signUpLink="/sign-up" logInLink="/log-in" />
+      <ContinueWithEmailModal />
     </TouchableWithoutFeedback>
   );
 };

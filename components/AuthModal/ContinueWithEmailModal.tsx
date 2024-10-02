@@ -1,15 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import {
-  View,
-  Text,
-  Keyboard,
-  Animated,
-  Easing,
-  Button,
-  TouchableOpacity,
-  Linking,
-} from "react-native";
-import { supabase } from "../../lib/supabase";
+import { View, Text, Keyboard, Animated, Easing, Linking } from "react-native";
 
 import styles from "./AuthModal.styles";
 import { useRouter } from "expo-router";
@@ -19,15 +9,7 @@ import CustomButton from "../CustomButton/CustomButton";
 import { useAuth } from "@/hooks/useAuth";
 import { triggerButtonHapticFeedback } from "@/utils/haptics";
 
-interface ContinueWithEmailModalProps {
-  signUpLink: string;
-  logInLink: string;
-}
-
-const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
-  signUpLink,
-  logInLink,
-}) => {
+const ContinueWithEmailModal: React.FC = () => {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
@@ -72,10 +54,10 @@ const ContinueWithEmailModal: React.FC<ContinueWithEmailModalProps> = ({
     if (isValid) {
       try {
         const data = await checkIfEmailExists(email);
-        router.push(logInLink + `/${email}`);
+        router.push(`/log-in/${email}`);
       } catch (error) {
         // Email doesn't exist yet
-        router.push(signUpLink + `/${email}`);
+        router.push(`/sign-up/${email}`);
       }
     } else {
       startShake(invalidInputAnimation);
