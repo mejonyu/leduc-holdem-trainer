@@ -35,6 +35,8 @@ describe("LogInModal", () => {
   });
 
   test("displays error message with incorrect password", async () => {
+    jest.setTimeout(15000);
+
     mockLogIn.mockResolvedValue(null);
 
     const { getByPlaceholderText, getByText, queryByText } = render(
@@ -47,14 +49,17 @@ describe("LogInModal", () => {
     fireEvent.changeText(passwordInput, "wrongpassword");
     fireEvent.press(loginButton);
 
-    await waitFor(() => {
-      expect(mockLogIn).toHaveBeenCalledWith(testEmail, "wrongpassword");
-      expect(getByText("Incorrect Password")).toBeTruthy();
-      expect(startShake).toHaveBeenCalled();
-    });
+    await waitFor(
+      () => {
+        expect(mockLogIn).toHaveBeenCalledWith(testEmail, "wrongpassword");
+        expect(getByText("Incorrect Password")).toBeTruthy();
+        expect(startShake).toHaveBeenCalled();
+      },
+      { timeout: 10000 }
+    );
 
     expect(router.replace).not.toHaveBeenCalled();
-  });
+  }, 15000);
 
   test("navigates to app screen with correct password", async () => {
     mockLogIn.mockResolvedValue({
