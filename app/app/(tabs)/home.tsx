@@ -1,6 +1,5 @@
 import {
   View,
-  Text,
   SafeAreaView,
   StyleSheet,
   ScrollView,
@@ -9,7 +8,7 @@ import {
   Image,
 } from "react-native";
 import React, { useCallback, useRef, useState } from "react";
-import { Link, useFocusEffect } from "expo-router";
+import { useFocusEffect } from "expo-router";
 import HomePageHeader from "@/components/HomePage/HomePageHeader/HomePageHeader";
 import { useAuth } from "@/hooks/useAuth";
 import WeekDisplay from "@/components/HomePage/WeekDisplay/WeekDisplay";

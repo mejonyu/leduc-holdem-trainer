@@ -7,7 +7,7 @@ type SearchParam = {
   email: string;
 };
 
-const SignUp = () => {
+const LogIn = () => {
   const { email } = useLocalSearchParams<SearchParam>();
 
   return (
@@ -17,4 +17,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default LogIn;
